@@ -1,4 +1,5 @@
 from datasets import load_dataset
+import torch
 
 # Login using e.g. `huggingface-cli login` to access this dataset
 ds = load_dataset("wenhu/Health-Bench")["test"]
