@@ -11,6 +11,7 @@ model_name = "Qwen/Qwen3-8B"
 num_samples = 100
 useful_columns = ['Text ID', 'Text', 'Sentences', 'Error Flag']
 ds = pd.read_csv("data/MEDEC/MEDEC-UW/MEDEC-UW-ValidationSet-with-GroundTruth-and-ErrorType.csv")[useful_columns]
+examples = pd.read_csv("data/MEDEC/MEDEC-UW/MEDEC-UW-Examples.csv")
 print(ds.head())
 print(ds.columns)
 
@@ -40,8 +41,17 @@ else:
     device = torch.device("cpu")
 model = model.to(device)
 
+# Select 2 positive (Error Flag == 1) and 2 negative (Error Flag == 0) examples for demonstration
+pos_examples = examples[examples["Error Flag"] == 1].head(2)
+neg_examples = examples[examples["Error Flag"] == 0].head(2)
+demo_examples = pd.concat([pos_examples, neg_examples])
+demo_ids = set(demo_examples["Text ID"])
+
+# Exclude demo examples from main evaluation
+eval_ds = ds[~ds["Text ID"].isin(demo_ids)].head(num_samples)
+
 results = []
-for idx, row in tqdm(list(ds.head(num_samples).iterrows()), desc="Inference"):
+for idx, row in tqdm(list(eval_ds.iterrows()), desc="Inference"):
     medical_note = row["Text"]
     print("Medical Note: ", medical_note)
     error_flag = row["Error Flag"]  # 1: incorrect, 0: correct
@@ -61,26 +71,40 @@ for idx, row in tqdm(list(ds.head(num_samples).iterrows()), desc="Inference"):
 
     import time
     start_time = time.time()
-    outputs = model.generate(**inputs, max_new_tokens=1024)
+    outputs = model.generate(**inputs, max_new_tokens=1024)  # Reduce max_new_tokens to save GPU memory
     end_time = time.time()
 
     response = tokenizer.decode(outputs[0][inputs["input_ids"].shape[-1]:])
+
+    # Convert ground truth and model output for comparison
+    gt_label = "INCORRECT" if error_flag == 1 else "CORRECT"
+    # Try to extract answer from model response
+    import re
+    match = re.search(r'"answer"\s*:\s*"?(CORRECT|INCORRECT)"?', response)
+    model_label = match.group(1) if match else "UNKNOWN"
+
     print(f"Example {idx}:")
     print("Model response:", response)
-    print("Ground truth Error Flag:", error_flag)
+    print("Model label:", model_label)
+    print("Ground truth Error Flag:", error_flag, "->", gt_label)
     print(f"Inference time: {end_time - start_time:.2f} seconds")
     print("-" * 60)
 
     results.append({
         "idx": idx,
         "response": response,
+        "model_label": model_label,
         "error_flag": error_flag,
+        "gt_label": gt_label,
         "inference_time": end_time - start_time
     })
 
+    # Free up GPU memory after each inference (if using CUDA)
+    if device.type == "cuda":
+        torch.cuda.empty_cache()
+
 # Save results to CSV with timestamp, model, and sample count in filename
 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-
 model_short = model_name.replace("/", "_")
 results_dir = "data/results"
 os.makedirs(results_dir, exist_ok=True)
