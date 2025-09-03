@@ -7,11 +7,10 @@ import os
 from datetime import datetime
 
 #Set parameters
-model_name = "Qwen/Qwen3-8B"
+model_name = "Qwen/Qwen3-4B-Instruct-2507"
 num_samples = 100
 useful_columns = ['Text ID', 'Text', 'Sentences', 'Error Flag']
 ds = pd.read_csv("data/MEDEC/MEDEC-UW/MEDEC-UW-ValidationSet-with-GroundTruth-and-ErrorType.csv")[useful_columns]
-examples = pd.read_csv("data/MEDEC/MEDEC-UW/MEDEC-UW-Examples.csv")
 print(ds.head())
 print(ds.columns)
 
@@ -41,14 +40,34 @@ else:
     device = torch.device("cpu")
 model = model.to(device)
 
-# Select 2 positive (Error Flag == 1) and 2 negative (Error Flag == 0) examples for demonstration
-pos_examples = examples[examples["Error Flag"] == 1].head(2)
-neg_examples = examples[examples["Error Flag"] == 0].head(2)
+# Exclude examples from testing candidates
+testing_candidates = ds.copy()
+
+# Select 100 examples for testing
+eval_ds = testing_candidates.sample(n=100, random_state=42).reset_index(drop=True)
+eval_ids = set(eval_ds["Text ID"])
+
+# Select demo examples from the remaining data (not used for testing)
+remaining_ds = testing_candidates[~testing_candidates["Text ID"].isin(eval_ids)]
+pos_examples = remaining_ds[remaining_ds["Error Flag"] == 1].head(2)
+neg_examples = remaining_ds[remaining_ds["Error Flag"] == 0].head(2)
 demo_examples = pd.concat([pos_examples, neg_examples])
 demo_ids = set(demo_examples["Text ID"])
 
 # Exclude demo examples from main evaluation
-eval_ds = ds[~ds["Text ID"].isin(demo_ids)].head(num_samples)
+eval_ds = ds[~ds["Text ID"].isin(demo_ids)]
+
+# Prepare in-context examples for the prompt
+def format_demo_example(row):
+    note = row["Text"]
+    label = "INCORRECT" if row["Error Flag"] == 1 else "CORRECT"
+    reasoning = "Example reasoning."  # Optionally, you can add a real reasoning if available
+    return (
+        f"Medical Note: {note}\n"
+        f'{{"answer": "{label}", "reasoning": "{reasoning}"}}\n'
+    )
+
+in_context_examples = "\n".join([format_demo_example(row) for _, row in demo_examples.iterrows()])
 
 results = []
 for idx, row in tqdm(list(eval_ds.iterrows()), desc="Inference"):
@@ -56,7 +75,13 @@ for idx, row in tqdm(list(eval_ds.iterrows()), desc="Inference"):
     print("Medical Note: ", medical_note)
     error_flag = row["Error Flag"]  # 1: incorrect, 0: correct
 
-    formatted_user = prompt_user.format(medical_note=medical_note)
+    # Add in-context examples to the user prompt
+    formatted_user = (
+        in_context_examples +
+        "\n" +
+        prompt_user.format(medical_note=medical_note)
+    )
+
     messages = [
         {"role": "system", "content": prompt_system},
         {"role": "user", "content": formatted_user}
