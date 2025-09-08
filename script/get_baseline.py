@@ -6,9 +6,11 @@ from tqdm import tqdm
 import os
 from datetime import datetime
 
-#Set parameters
-model_name = "Qwen/Qwen3-4B-Instruct-2507"
-num_samples = 100
+# Set parameters
+model_name = "meta-llama/Llama-3.2-3B-Instruct"
+num_test_samples = 100         # Number of samples to test
+num_pos_examples = 2           # Number of positive in-context examples
+num_neg_examples = 2           # Number of negative in-context examples
 useful_columns = ['Text ID', 'Text', 'Sentences', 'Error Flag']
 ds = pd.read_csv("data/MEDEC/MEDEC-UW/MEDEC-UW-ValidationSet-with-GroundTruth-and-ErrorType.csv")[useful_columns]
 print(ds.head())
@@ -31,7 +33,7 @@ prompt_user = (
 tokenizer = AutoTokenizer.from_pretrained(model_name)
 model = AutoModelForCausalLM.from_pretrained(model_name)
 
-# Move model to MPS if available
+# Device selection
 if torch.backends.mps.is_available():
     device = torch.device("mps")
 elif torch.cuda.is_available():
@@ -43,25 +45,25 @@ model = model.to(device)
 # Exclude examples from testing candidates
 testing_candidates = ds.copy()
 
-# Select 100 examples for testing
-eval_ds = testing_candidates.sample(n=100, random_state=42).reset_index(drop=True)
+# Select test samples
+eval_ds = testing_candidates.sample(n=num_test_samples, random_state=42).reset_index(drop=True)
 eval_ids = set(eval_ds["Text ID"])
 
-# Select demo examples from the remaining data (not used for testing)
+# Select in-context examples from the remaining data (not used for testing)
 remaining_ds = testing_candidates[~testing_candidates["Text ID"].isin(eval_ids)]
-pos_examples = remaining_ds[remaining_ds["Error Flag"] == 1].head(2)
-neg_examples = remaining_ds[remaining_ds["Error Flag"] == 0].head(2)
+pos_examples = remaining_ds[remaining_ds["Error Flag"] == 1].head(num_pos_examples)
+neg_examples = remaining_ds[remaining_ds["Error Flag"] == 0].head(num_neg_examples)
 demo_examples = pd.concat([pos_examples, neg_examples])
 demo_ids = set(demo_examples["Text ID"])
 
 # Exclude demo examples from main evaluation
-eval_ds = ds[~ds["Text ID"].isin(demo_ids)]
+eval_ds = eval_ds[~eval_ds["Text ID"].isin(demo_ids)]
 
 # Prepare in-context examples for the prompt
 def format_demo_example(row):
     note = row["Text"]
     label = "INCORRECT" if row["Error Flag"] == 1 else "CORRECT"
-    reasoning = "Example reasoning."  # Optionally, you can add a real reasoning if available
+    reasoning = "Example reasoning."
     return (
         f"Medical Note: {note}\n"
         f'{{"answer": "{label}", "reasoning": "{reasoning}"}}\n'
@@ -72,14 +74,12 @@ in_context_examples = "\n".join([format_demo_example(row) for _, row in demo_exa
 results = []
 for idx, row in tqdm(list(eval_ds.iterrows()), desc="Inference"):
     medical_note = row["Text"]
-    print("Medical Note: ", medical_note)
-    error_flag = row["Error Flag"]  # 1: incorrect, 0: correct
+    error_flag = row["Error Flag"]
 
-    # Add in-context examples to the user prompt
     formatted_user = (
-        in_context_examples +
+        prompt_user.format(medical_note=medical_note) +
         "\n" +
-        prompt_user.format(medical_note=medical_note)
+        in_context_examples 
     )
 
     messages = [
@@ -96,20 +96,16 @@ for idx, row in tqdm(list(eval_ds.iterrows()), desc="Inference"):
 
     import time
     start_time = time.time()
-    outputs = model.generate(**inputs, max_new_tokens=1024)  # Reduce max_new_tokens to save GPU memory
+    outputs = model.generate(**inputs, max_new_tokens=1024)
     end_time = time.time()
 
     response = tokenizer.decode(outputs[0][inputs["input_ids"].shape[-1]:])
 
-    # Convert ground truth and model output for comparison
     gt_label = "INCORRECT" if error_flag == 1 else "CORRECT"
-    # Try to extract answer from model response
     import re
     match = re.search(r'"answer"\s*:\s*"?(CORRECT|INCORRECT)"?', response)
     model_label = match.group(1) if match else "UNKNOWN"
 
-    print(f"Example {idx}:")
-    print("Model response:", response)
     print("Model label:", model_label)
     print("Ground truth Error Flag:", error_flag, "->", gt_label)
     print(f"Inference time: {end_time - start_time:.2f} seconds")
@@ -124,16 +120,18 @@ for idx, row in tqdm(list(eval_ds.iterrows()), desc="Inference"):
         "inference_time": end_time - start_time
     })
 
-    # Free up GPU memory after each inference (if using CUDA)
     if device.type == "cuda":
         torch.cuda.empty_cache()
+    del inputs, outputs
+    import gc
+    gc.collect()
 
 # Save results to CSV with timestamp, model, and sample count in filename
 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 model_short = model_name.replace("/", "_")
 results_dir = "data/results"
 os.makedirs(results_dir, exist_ok=True)
-results_path = f"{results_dir}/results_{model_short}_{num_samples}_{timestamp}.csv"
+results_path = f"{results_dir}/results_{model_short}_{len(eval_ds)}_{timestamp}.csv"
 
 pd.DataFrame(results).to_csv(results_path, index=False)
 print(f"Results saved to {results_path}")
