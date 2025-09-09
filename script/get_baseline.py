@@ -37,10 +37,13 @@ model = AutoModelForCausalLM.from_pretrained(model_name)
 # Device selection
 if torch.backends.mps.is_available():
     device = torch.device("mps")
+    print("Using device: MPS (Apple Silicon GPU)")
 elif torch.cuda.is_available():
     device = torch.device("cuda")
+    print("Using device: CUDA (NVIDIA GPU)")
 else:
     device = torch.device("cpu")
+    print("Using device: CPU")
 model = model.to(device)
 
 # Exclude examples from testing candidates
