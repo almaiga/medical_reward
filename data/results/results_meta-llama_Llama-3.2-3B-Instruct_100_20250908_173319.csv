@@ -1,0 +1,1764 @@
+idx,response,model_label,error_flag,gt_label,inference_time
+0,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient is indeed being treated for withdrawal symptoms, not cellulitis.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient is being managed for pressure ulcers, not metastatic breast cancer.""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""The laboratory finding is hypokalemia, not hypervalinemia.""
+  }
+]<|eot_id|>",CORRECT,0,CORRECT,10.069101810455322
+1,"[
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""Hypokalemia is characterized by low potassium levels, not hypervalinemia.""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""The patient is experiencing neutropenic fever, not febrile to 38.3 overnight.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient is being managed for withdrawal symptoms consistent with opioid and alcohol dependence.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient has stage 2 pressure ulcers on coccyx and sacrum, which are present on admission.""
+  }
+]<|eot_id|>",INCORRECT,0,CORRECT,10.60569715499878
+2,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""CIWA scores are a standardized assessment tool for opioid withdrawal symptoms.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""CIWA scores are a standardized assessment tool for opioid withdrawal symptoms.""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""Hypervalinemia is not a recognized medical condition, but hypokalemia is.""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""Hypervalinemia is not a recognized medical condition, but hypokalemia is.""
+  }<|eot_id|>",CORRECT,0,CORRECT,8.87883996963501
+3,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""No error found in the description of Morvan's syndrome and stage 2 pressure ulcer.""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""Incorrectly stated as hypervalinemia instead of hypokalemia.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Accurate description of systemic inflammatory response syndrome, AML treatment, and symptoms.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Accurate description of opioid and alcohol dependence, withdrawal symptoms, and treatment.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Accurate description of metastatic breast cancer, spinal metastasis, and pressure ulcers.""
+  }
+]<|eot_id|>",CORRECT,0,CORRECT,10.881202220916748
+4,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Diagnosis of opioid and alcohol dependence is accurate given patient's CIWA scores and symptoms of withdrawal.""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""Hypokalemia is not supported by the mention of 'hypervalinemia' in the laboratory findings.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Diagnosis of pressure ulcers is accurate given patient's stage and location of ulcers.""
+  }
+]<|eot_id|>",CORRECT,1,INCORRECT,7.832529067993164
+5,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""CIWA scores are used to assess the severity of opioid withdrawal, not alcohol withdrawal.""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""The patient has neutropenia, not hypervalinemia, which is an elevated level of valine in the blood.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient is being managed for pressure ulcers, which is a correct diagnosis given the stage and location of the ulcers.""
+  }
+]<|eot_id|>",CORRECT,0,CORRECT,8.128350019454956
+6,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Accurate diagnosis of opioid and alcohol dependence with withdrawal symptoms""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Accurate diagnosis of pressure ulcers on Coccyx and sacrum""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""Incorrect diagnosis of hypokalemia as hypervalinemia""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""Incorrect diagnosis of systemic inflammatory response syndrome due to heart failure, and inaccurate medication treatment""
+  }<|eot_id|>",CORRECT,1,INCORRECT,8.489927053451538
+7,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Thrombocytopenia is documented on admission and present on admission.""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""Hypervalinemia is mentioned instead of hypokalemia.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Thrombocytopenia is documented on admission and present on admission.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Thrombocytopenia is documented on admission and present on admission.""
+  }<|eot_id|>",CORRECT,0,CORRECT,8.53723406791687
+8,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient's symptoms and treatment for withdrawal from opioids and alcohol are accurately described.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient's diagnosis of metastatic breast cancer with spinal metastasis and dural compression is accurately described.""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""The patient is diagnosed with hypervalinemia, which is incorrect; hypokalemia is the correct diagnosis.""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""The patient is diagnosed with systemic inflammatory response syndrome due to heart failure, which is incorrect; the patient has heart failure and SIRS due to neutropenic fever and VRE bacteremia.""
+  }<|eot_id|>",CORRECT,1,INCORRECT,11.317224979400635
+9,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Diagnosis is consistent with opioid and alcohol dependence, with CIWA scores indicating severity of withdrawal""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Diagnosis is consistent with metastatic breast cancer with spinal metastasis, with stage 2 pressure ulcers""
+  }
+]<|eot_id|>",CORRECT,1,INCORRECT,5.319658041000366
+10,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient is being treated for withdrawal, not cellulitis, as they have a history of multiple abscesses due to IVDU.""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""The patient has hypokalemia, not hypervalinemia, which may contribute to cardiac arrhythmia.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient is being treated for withdrawal, as they are experiencing symptoms of opioid withdrawal, including CIWA scores and behavioral changes.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient has stage 2 pressure ulcers on the coccyx and sacrum, and the recommendations provided are appropriate for wound care and management.""
+  }
+]<|eot_id|>",CORRECT,1,INCORRECT,12.08416199684143
+11,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Accurate description of spinal cord injury and herniation, and management for spinal cord edema""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""Incorrectly stated hypokalemia as hypervalinemia, a rare condition""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Accurate description of patient's condition, treatment for withdrawal, and CIWA scoring""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Accurate description of patient's condition, stage 2 pressure ulcers, and management recommendations""
+  }
+]<|eot_id|>",CORRECT,0,CORRECT,9.108057975769043
+12,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient is being treated for withdrawal, as indicated by CIWA scores and nursing notes.""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""Hypokalemia is a condition characterized by low potassium levels, not hypervalinemia.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient is being managed for pressure ulcers, Stage 2 on Coccyx/sacrum, as indicated by wound care and recommendations.""
+  }<|eot_id|>",CORRECT,1,INCORRECT,7.707494020462036
+13,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""CIWA scores are a standard assessment tool for opioid withdrawal, not hypervalinemia.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Patient's symptoms and treatment align with opioid withdrawal, not hypervalinemia or cardiac arrhythmia.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient's presentation and treatment for pressure ulcers are accurate.""
+  }
+]<|eot_id|>",CORRECT,1,INCORRECT,6.97612190246582
+14,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient has a history of opioid and alcohol dependence, which is a well-documented risk factor for withdrawal and dependence.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient is admitted with likely cellulitis, a common cause of skin and soft tissue infections in individuals with a history of intravenous drug use.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient has stage 2 pressure ulcers, which are a recognized complication in individuals with spinal metastatic progression and dural compression.""
+  }
+]<|eot_id|>",CORRECT,1,INCORRECT,8.69493293762207
+15,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The diagnosis of hypervalinemia is not supported by the laboratory findings, and the correct diagnosis should be hypokalemia.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient is indeed experiencing systemic inflammatory response syndrome due to heart failure, with symptoms such as orthostatic hypotension and tachycardia.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient's presentation of withdrawal symptoms, including CIWA scores and nursing notes, accurately describe opioid and alcohol dependence.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient's presentation of low back pain and pressure ulcers is consistent with metastatic breast cancer and dural compression.""
+  }
+]<|eot_id|>",CORRECT,1,INCORRECT,11.05705976486206
+16,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""CIWA scores are used to assess the severity of opioid withdrawal, not alcohol withdrawal.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Patient is being managed for pressure ulcers, not hypokalemia or hypervalinemia.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Patient is being managed for pressure ulcers, not systemic inflammatory response syndrome or cardiac arrhythmia.""
+  }<|eot_id|>",CORRECT,0,CORRECT,7.329056024551392
+17,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient is being managed for opioid and alcohol dependence, consistent with CIWA scores indicating withdrawal symptoms.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient has stage 2 pressure ulcers on Coccyx and sacrum, which are being managed with wound care, Alevyn dressing, offload pressure, and optimization of nutrition.""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""The patient has hypokalemia, not hypervalinemia, which may contribute to cardiac arrhythmia, and replacement is ordered.""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""The patient has a history of failed induction therapy for AML, which is not relevant to the current management for systemic inflammatory response syndrome due to heart failure.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient is being managed for coagulopathy due to liver disease, as indicated by the INR increase from 2.1 to 1.6 and the administration of vitamin K.""
+  }<|eot_id|>",CORRECT,0,CORRECT,15.391360998153687
+18,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""CIWA scores are used to assess the severity of alcohol withdrawal, not hypervalinemia.""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""The patient's laboratory findings show elevated creatinine, indicating pre-renal azotemia, not hypervalinemia.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient is being managed for pressure ulcers, which is a correct diagnosis given the stage and location of the ulcers.""
+  }
+]<|eot_id|>",CORRECT,0,CORRECT,7.992517948150635
+19,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Patient has systemic inflammatory response syndrome due to heart failure, not SIRS due to G-CLAM and sorafenib""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""The medical note incorrectly states the patient has hypervalinemia instead of hypokalemia""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The medical note correctly identifies the patient's condition as continuous opioid and alcohol dependence with withdrawal""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The medical note accurately describes the patient's metastatic breast cancer with spinal metastatic progression and dural compression""
+  }<|eot_id|>",CORRECT,1,INCORRECT,10.034265041351318
+20,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Mention of hypervalinemia instead of hypokalemia is not a clinically harmful inaccuracy.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Correct identification of patient's condition as AML with FLT3 ITD positive, systemic inflammatory response syndrome due to heart failure, and management for G-CLAM and sorafenib.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Accurate description of patient's opioid and alcohol dependence, withdrawal, and treatment with morphine, oxycodone, IV lorazepam, and CIWA protocol scoring.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Accurate description of patient's metastatic breast cancer, spinal metastatic progression, dural compression, pressure ulcers, and management for wound care, Alevyn dressing, offload pressure, and optimize nutrition.""
+  }
+]<|eot_id|>",CORRECT,1,INCORRECT,13.486188888549805
+21,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Accurate description of a patient with a history of opioid and alcohol dependence, including CIWA scores and medication treatment.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Correct diagnosis of a patient with metastatic breast cancer and spinal metastasis, with stage 2 pressure ulcers on Coccyx and sacrum.""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""Incorrectly states hypervalinemia instead of hypokalemia, which can contribute to cardiac arrhythmia.""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""Incorrectly diagnoses systemic inflammatory response syndrome due to heart failure, when the patient has AML and neutropenic fever.""
+  }
+]<|eot_id|>",CORRECT,0,CORRECT,11.566015005111694
+22,"[
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""Hypokalemia is a condition of low potassium levels, not hypervalinemia.""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""The patient is experiencing neutropenic fever, not febrile to 38.3 overnight.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient is being treated for withdrawal symptoms consistent with opioid and alcohol dependence.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient is being managed for pressure ulcers, accurately documented as Stage 2 on Coccyx and sacrum.""
+  }<|eot_id|>",INCORRECT,1,INCORRECT,10.084946870803833
+23,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Diagnosis of chronic constipation is likely incorrect, as it is not supported by the patient's history of hemicolectomy and symptoms of abdominal pain and nausea.""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""Hypervalinemia is not a recognized medical condition; hypokalemia is a condition characterized by low potassium levels.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient's history of opioid and alcohol dependence is accurately described, and the patient's CIWA scores and symptoms are consistent with opioid withdrawal.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient's diagnosis of metastatic breast cancer with spinal metastasis and dural compression is accurately described, and the stage and location of the pressure ulcers are correctly identified.""
+  }
+]<|eot_id|>",CORRECT,0,CORRECT,12.597793102264404
+24,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Diabetic foot ulcers occur on the feet, not the elbow.""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""Hypervalinemia is not a recognized medical term, hypokalemia is the correct term.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient is being treated for withdrawal from opioids and alcohol.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient has stage 2 pressure ulcers on the coccyx and sacrum, not on the coccyx and elbow.""
+  }
+]<|eot_id|>",CORRECT,1,INCORRECT,10.32728886604309
+25,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""CIWA scores range 11-16, indicating moderate to severe withdrawal symptoms""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""CIWA scores range 11-16, indicating moderate to severe withdrawal symptoms""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Patient's anemia is present on admission, and Hct 27 is recorded, indicating the need for standard transfusion threshold of Hct 25""
+  }
+]<|eot_id|>",CORRECT,1,INCORRECT,8.279051065444946
+26,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The medical note correctly identifies hypokalemia as the cause of the patient's symptoms and orders replacement.""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""The medical note incorrectly diagnoses hypervalinemia instead of hypokalemia.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The medical note accurately diagnoses the patient with opioid and alcohol dependence and withdrawal symptoms.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The medical note correctly identifies the patient's stage 2 pressure ulcers on the coccyx and sacrum.""
+  }]<|eot_id|>",CORRECT,1,INCORRECT,10.373481273651123
+27,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The note correctly identifies hypokalemia as a condition, but incorrectly states it as hypervalinemia.""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""The note incorrectly states that the patient has systemic inflammatory response syndrome due to heart failure.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The note correctly identifies the patient's condition as withdrawal and provides relevant details.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The note correctly identifies the patient's condition as pressure ulcers and provides relevant details.""
+  }
+]<|eot_id|>",CORRECT,1,INCORRECT,10.441878080368042
+28,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""CIWA scores are used to assess alcohol withdrawal severity, and a score of 11-16 is consistent with moderate to severe withdrawal.""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""Hypokalemia is a condition characterized by low potassium levels, not hypervalinemia, which is a condition of high valine levels.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient is being managed for pressure ulcers, which is a correct diagnosis based on the provided information.""
+  }<|eot_id|>",CORRECT,1,INCORRECT,9.54063892364502
+29,"[
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""Incorrect diagnosis of hypervalinemia instead of hypokalemia.""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""Incorrect diagnosis of systemic inflammatory response syndrome due to heart failure instead of SIRS due to AML.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Accurate diagnosis of opioid and alcohol dependence with withdrawal symptoms.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Accurate diagnosis of pressure ulcers, Stage 2 on Coccyx/sacrum.""
+  }
+]<|eot_id|>",INCORRECT,0,CORRECT,10.722778081893921
+30,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""CIWA scores indicate opioid withdrawal symptoms, consistent with treatment for continuous opioid and alcohol dependence with withdrawal.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Patient has metastatic breast cancer with spinal metastasis, consistent with Stage 2 pressure ulcers on Coccyx and sacrum.""
+  }
+]<|eot_id|>",CORRECT,0,CORRECT,6.935255765914917
+31,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""CIWA scores are used to assess opioid withdrawal symptoms, not hypervalinemia.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Patient is being treated for withdrawal, not hypervalinemia, which is an elevated vitamin B12 level.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Patient is being managed for withdrawal, not pressure ulcers.""
+  }
+]<|eot_id|>",CORRECT,1,INCORRECT,7.661208868026733
+32,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Diagnosis of opioid and alcohol dependence is consistent with withdrawal symptoms.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Diagnosis of pressure ulcers is consistent with patient's presentation and medical notes.""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""Hypokalemia is not mentioned in the medical note, and the patient has hypervalinemia.""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""The patient has AML, not FLT3 ITD positive AML, and is not being treated for heart failure.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Diagnosis of continuous opioid and alcohol dependence with withdrawal is consistent with patient's presentation and medical notes.""
+  }<|eot_id|>",CORRECT,1,INCORRECT,13.063713073730469
+33,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""CIWA scores <DATE/> ranging 11-16 indicate opioid withdrawal symptoms.""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""Hypervalinemia is not a recognized medical condition; hypokalemia is the correct term.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Description of patient's symptoms and treatment plan for opioid withdrawal is accurate.""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""The note incorrectly states that the patient has stage 2 pressure ulcers on the coccyx and sacrum; it should state that the patient has stage 2 pressure ulcers on the coccyx and sacrum present on admission.""
+  }
+]<|eot_id|>",CORRECT,0,CORRECT,12.059736013412476
+34,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Diagnosis of pseudohyponatremia is a correct clinical entity, although it's not a standard medical term, it's a real condition.""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""Hypervalinemia is not a recognized medical condition; hypokalemia is a known condition.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient is being treated for withdrawal, which is a correct diagnosis for someone with continuous opioid and alcohol dependence.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient has stage 2 pressure ulcers, which is a correct diagnosis and treatment plan.""
+  }<|eot_id|>",CORRECT,1,INCORRECT,10.771223068237305
+35,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Diagnosis of chronic diastolic heart failure is not supported by EF 60% and diastolic dysfunction""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Diagnosis of hypervalinemia is incorrect, hypokalemia is the stated condition""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Diagnosis of systemic inflammatory response syndrome due to heart failure is not supported by the provided context""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Diagnosis of cellulitis is not supported by the provided context, patient is being treated for withdrawal""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Diagnosis of metastatic breast cancer with spinal metastasis is supported, as is the presence of pressure ulcers""
+  }
+]<|eot_id|>",CORRECT,1,INCORRECT,12.705029726028442
+36,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient's history and symptoms are consistent with opioid and alcohol dependence with withdrawal""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient's symptoms and treatment are consistent with pressure ulcer management""
+  }
+]<|eot_id|>",CORRECT,1,INCORRECT,5.067502021789551
+37,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient's history and symptoms are consistent with opioid and alcohol dependence.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient's symptoms and treatment plan accurately reflect a Stage 2 pressure ulcer.""
+  }
+]<|eot_id|>",CORRECT,1,INCORRECT,4.876628875732422
+38,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient is being treated for withdrawal, not cellulitis.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient's history and CIWA scores support the diagnosis of opioid and alcohol dependence with withdrawal.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient's condition and treatment plan accurately reflect the presence of pressure ulcers.""
+  }
+]<|eot_id|>",CORRECT,1,INCORRECT,7.022749185562134
+39,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Hypokalemia is a decrease in potassium levels, not hypervalinemia.""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""The patient's lab findings show CRP and pre-albumin values, but no potassium levels mentioned.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient's symptoms and treatment plan for opioid and alcohol withdrawal are consistent with the CIWA-14 score.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient's stage 2 pressure ulcers are accurately described with specific measurements.""
+  }
+]<|eot_id|>",CORRECT,0,CORRECT,9.778681755065918
+40,"{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""The medical note correctly identifies the patient's condition as systemic inflammatory response syndrome due to heart failure and lists the patient's relevant medical history and current treatments.""
+}
+
+{
+  ""answer"": ""INCORRECT"",
+  ""reasoning"": ""The medical note incorrectly states that the patient has hypervalinemia instead of hypokalemia.""
+}
+
+{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""The medical note accurately describes the patient's condition as chronic pain due to opioid and alcohol dependence with withdrawal, and lists the patient's relevant medical history and current treatments.""
+}
+
+{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""The medical note correctly identifies the patient's condition as stage 2 pressure ulcers on the coccyx and sacrum, and lists the patient's relevant medical history and recommended treatments.""
+}<|eot_id|>",CORRECT,0,CORRECT,11.847430229187012
+41,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Lab findings show hypokalemia, not hypervalinemia""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""Incorrect diagnosis of systemic inflammatory response syndrome due to heart failure""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Correct diagnosis of continuous opioid and alcohol dependence with withdrawal""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Accurate diagnosis of pressure ulcers, Stage 2 on Coccyx and sacrum""
+  }
+]<|eot_id|>",CORRECT,0,CORRECT,8.539381742477417
+42,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient is being managed for possible alcohol withdrawal, which is a well-documented medical condition.""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""The laboratory finding of hypervalinemia is incorrect; the correct finding is hypokalemia.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient is being managed for a condition that involves withdrawal, which is a recognized medical condition.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient is being managed for a Stage 2 pressure ulcer, which is a well-documented medical condition.""
+  }<|eot_id|>",CORRECT,0,CORRECT,9.684412240982056
+43,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient's CIWA scores indicate withdrawal symptoms, not hypervalinemia.""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""The patient's symptoms and CIWA scores indicate withdrawal, not heart failure.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient is being treated for withdrawal symptoms, not pressure ulcer care.""
+  }
+]<|eot_id|>",CORRECT,1,INCORRECT,6.8132829666137695
+44,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The medical note correctly identifies hypokalemia and its potential contribution to cardiac arrhythmia.""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""The medical note incorrectly states that the patient has hypervalinemia instead of hypokalemia.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The medical note correctly identifies the patient's condition as systemic inflammatory response syndrome due to heart failure.""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""The medical note incorrectly states that the patient has G-CLAM and sorafenib, when in fact, the patient is being treated for AML and reinduction chemotherapy.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The medical note correctly identifies the patient's condition as continuous opioid and alcohol dependence with withdrawal.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The medical note correctly identifies the patient's condition as metastatic breast cancer with spinal metastatic progression and dural compression.""
+  }<|eot_id|>",CORRECT,0,CORRECT,15.140980958938599
+45,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Diagnosis of hypokalemia is not supported by the term 'hypervalinemia', which is not a recognized medical condition.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient's symptoms and treatment plan for systemic inflammatory response syndrome due to heart failure are accurately described.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient's diagnosis and treatment plan for continuous opioid and alcohol dependence with withdrawal are accurately described.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient's diagnosis and treatment plan for pressure ulcers are accurately described.""
+  }
+]<|eot_id|>",CORRECT,1,INCORRECT,9.734952926635742
+46,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient's history of opioid and alcohol dependence is consistent with a diagnosis of withdrawal.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient's symptoms of pain, irritability, and paroxysmal sweats are consistent with opioid withdrawal.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient's stage 2 pressure ulcers on the coccyx and sacrum are consistent with a diagnosis of pressure ulcers.""
+  }
+]<|eot_id|>",CORRECT,1,INCORRECT,8.195013761520386
+47,"{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""The note correctly identifies the patient's dependence on opioids and alcohol as the primary reason for admission.""
+}
+
+{
+  ""answer"": ""INCORRECT"",
+  ""reasoning"": ""The note incorrectly states the patient has hypervalinemia instead of hypokalemia.""
+}
+
+{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""The note accurately describes the patient's condition, including the presence of pressure ulcers and the recommended treatment options.""
+}<|eot_id|>",CORRECT,0,CORRECT,7.016918182373047
+48,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Incorrect terminology, 'hypervalinemia' is not a recognized medical condition, hypokalemia is correct.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Correct diagnosis and management plan for SIRS and neutropenic fever, although the G-CLAM regimen is not standard.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Accurate diagnosis of opioid and alcohol dependence with withdrawal symptoms.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Correct diagnosis of pressure ulcers and recommended treatment plan.""
+  }
+]<|eot_id|>",CORRECT,0,CORRECT,9.17523193359375
+49,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Diagnosis is consistent with opioid and alcohol withdrawal, supported by CIWA scores and clinical presentation.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Diagnosis is consistent with pressure ulcers, supported by clinical presentation and wound assessment.""
+  }
+]<|eot_id|>",CORRECT,0,CORRECT,5.20021390914917
+50,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Diagnosis of opioid and alcohol dependence is supported by CIWA scores and history of IVDU""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Diagnosis of pressure ulcers is supported by wound care, staging, and recommendations""
+  }
+]<|eot_id|>",CORRECT,0,CORRECT,5.5263590812683105
+51,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Diagnosis of hypokalemia is incorrect; the term is actually hypocalcemia.""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""The diagnosis of neutropenic fever is not supported by the presence of GPC's in clusters from both line and peripheral.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The diagnosis of cellulitis is likely, given the patient's symptoms and history of IVDU.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The diagnosis of pressure ulcers is accurate, and the stage is correctly identified.""
+  }<|eot_id|>",CORRECT,0,CORRECT,9.80228590965271
+52,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Diagnosis of hypokalemia is incorrect; the correct diagnosis is hypervalinemia, which can contribute to cardiac arrhythmias.""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""Error in the medical note is the incorrect diagnosis of systemic inflammatory response syndrome due to heart failure; the correct diagnosis is likely neutropenic fever.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient is being treated for pressure ulcers, which is the correct diagnosis.""
+  }<|eot_id|>",CORRECT,1,INCORRECT,8.062934160232544
+53,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The medical note correctly identifies the patient's chronic opioid and alcohol dependence and lists the treatments, including morphine, oxycodone, and IV lorazepam.""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""The note incorrectly states 'hypervalinemia' instead of 'hypokalemia', which is a condition characterized by low potassium levels.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The medical note accurately describes the patient's condition, including metastatic breast cancer, spinal metastasis, and pressure ulcers, and lists recommended treatments.""
+  }<|eot_id|>",CORRECT,1,INCORRECT,9.65329623222351
+54,"[
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""Hypokalemia is a condition of low potassium levels, not hypervalinemia, which refers to high levels of valine.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient is being managed for systemic inflammatory response syndrome, which is a condition associated with heart failure, and the patient has a history of acute blood loss.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient is being treated for continuous opioid and alcohol dependence with withdrawal, which is a recognized condition.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient has stage 2 pressure ulcers on the coccyx and sacrum, which is a recognized medical condition.""
+  }
+]<|eot_id|>",INCORRECT,0,CORRECT,11.073977947235107
+55,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Diagnosis of opioid and alcohol dependence is accurately described, including CIWA scores and treatment.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Diagnosis of pressure ulcers, Stage 2 on Coccyx and sacrum, is accurately described, including wound care recommendations.""
+  }
+]<|eot_id|>",CORRECT,0,CORRECT,5.475326061248779
+56,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""CIWA scores measure alcohol withdrawal severity, not hypervalinemia.""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""Patient has hypokalemia, not hypervalinemia.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""CIWA scores measure alcohol withdrawal severity, not cardiac arrhythmia.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""CIWA scores measure alcohol withdrawal severity, not related to cardiac arrhythmia.""
+  }<|eot_id|>",CORRECT,0,CORRECT,8.170665979385376
+57,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Patient is being managed for SIRS due to infection, which is a correct diagnosis.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Patient is being managed for metastatic breast cancer, which is a correct diagnosis.""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""Hypokalemia is a condition where potassium levels are low, not hypervalinemia, which is a condition where vitamin K levels are low.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Patient is being managed for pressure ulcers, which is a correct diagnosis.""
+  }<|eot_id|>",CORRECT,0,CORRECT,9.542768001556396
+58,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient has chronic respiratory failure and is being treated with supplemental oxygen and BiPAP, which is a standard treatment for COPD.""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""The patient has hypokalemia, not hypervalinemia, as indicated by the laboratory findings.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient is being managed for withdrawal from continuous opioid and alcohol dependence, which is a correct diagnosis given the patient's history and symptoms.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient has stage 2 pressure ulcers on the coccyx and sacrum, which is a correct diagnosis given the patient's symptoms and physical examination findings.""
+  }
+]<|eot_id|>",CORRECT,1,INCORRECT,11.002676963806152
+59,"{""answer"": ""CORRECT"", ""reasoning"": ""Diagnosis of hypokalemia is accurate, but the diagnosis is based on laboratory findings, not hypervalinemia.""}
+
+{""answer"": ""CORRECT"", ""reasoning"": ""Diagnosis of hypokalemia is accurate, and potassium replacement is ordered, but the diagnosis is not clarified as hypervalinemia.""}
+
+{""answer"": ""CORRECT"", ""reasoning"": ""Diagnosis of hypokalemia is accurate, and treatment is ordered, but the diagnosis is not clarified as hypervalinemia.""}
+
+{""answer"": ""INCORRECT"", ""reasoning"": ""Diagnosis of cellulitis is not supported by the provided information, which mentions likely cellulitis but does not confirm it.""}
+
+{""answer"": ""CORRECT"", ""reasoning"": ""Diagnosis of pressure ulcers is accurate, and stage is correctly identified as Stage 2 on Coccyx/sacrum.""}<|eot_id|>",CORRECT,1,INCORRECT,11.913509845733643
+60,"[
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""Diagnosis of hypervalinemia is incorrect, hypokalemia is a condition characterized by low potassium levels, not high.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient's symptoms and treatment are consistent with sepsis, a systemic inflammatory response syndrome.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient's history and symptoms are consistent with opioid and alcohol dependence, and the presence of withdrawal symptoms.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient's diagnosis and treatment plan are consistent with pressure ulcers, and the staging is accurate.""
+  }
+]<|eot_id|>",INCORRECT,0,CORRECT,10.042801141738892
+61,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The medical note accurately describes the patient's condition and treatments""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""The note incorrectly states the patient has hypervalinemia instead of hypokalemia""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""The note inaccurately states the patient has cardiac arrhythmia as a potential consequence of hypervalinemia""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The medical note accurately describes the patient's symptoms, treatments, and condition""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The note accurately describes the patient's condition, treatments, and recommendations""
+  }<|eot_id|>",CORRECT,0,CORRECT,11.234965085983276
+62,"{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""The patient's hyperparathyroidism is of renal origin, and the management plan is appropriate for ESRD, including monitoring PTH and adjusting Sensipar therapy.""
+}
+
+{
+  ""answer"": ""INCORRECT"",
+  ""reasoning"": ""Hypervalinemia is not a recognized condition; the patient likely has hyperkalemia.""
+}
+
+{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""The patient is being managed for opioid and alcohol dependence, and the symptoms and treatment plan are consistent with withdrawal.""
+}
+
+{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""The patient has stage 2 pressure ulcers, and the recommended management plan, including wound care and offload pressure, is appropriate for her condition.""<|eot_id|>",CORRECT,1,INCORRECT,10.462356805801392
+63,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The note accurately describes the patient's condition and treatment plan.""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""The note incorrectly states 'hypervalinemia' instead of 'hypokalemia'.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The note accurately describes the patient's symptoms, diagnosis, and treatment plan.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The note accurately describes the patient's condition, diagnosis, and treatment plan.""
+  }<|eot_id|>",CORRECT,1,INCORRECT,8.748492956161499
+64,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient has chronic pain refractory to home medication, indicating opioid dependence.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient has stage 2 pressure ulcers on Coccyx and sacrum, consistent with stage 2 pressure ulcers.""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""Hypervalinemia is not a recognized medical condition, and hypokalemia is not mentioned.""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""The patient's symptoms and lab results do not support the diagnosis of systemic inflammatory response syndrome due to heart failure.""
+  }
+]<|eot_id|>",CORRECT,0,CORRECT,9.837975978851318
+65,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient is described as female, which is consistent with the statement.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient is described as having metastatic breast cancer, which is consistent with the statement.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient is described as having stage 2 pressure ulcers on the coccyx and sacrum, which is consistent with the statement.""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""The laboratory finding of hypervalinemia is incorrect, as the note states the patient has hypokalemia.""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""The statement that the patient is being treated for systemic inflammatory response syndrome due to heart failure is incorrect, as the note states the patient has heart failure.""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""The statement that the patient is being treated for continuous opioid and alcohol dependence with withdrawal is incorrect, as the note states the patient has chronic systolic heart failure.""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""The note does not contain a medical error, but rather a description of a patient's condition and treatment plan.""<|eot_id|>",CORRECT,0,CORRECT,17.66802215576172
+66,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient is indeed being managed for pressure ulcers, stage 2 on Coccyx/sacrum, which is consistent with the provided clinical scenario.""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""Hypokalemia is a condition characterized by abnormally low potassium levels in the blood, not hypervalinemia.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient is being treated for continuous opioid and alcohol dependence with withdrawal, which is consistent with the provided clinical scenario.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient is being managed for pressure ulcers, stage 2 on Coccyx/sacrum, which is consistent with the provided clinical scenario.""
+  }
+]<|eot_id|>",CORRECT,0,CORRECT,11.666635036468506
+67,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient has chronic opioid and alcohol dependence, as indicated by CIWA scores and medication use.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient has stage 2 pressure ulcers on the coccyx and sacrum, as described by the Wound RN.""
+  }
+]<|eot_id|>",CORRECT,0,CORRECT,5.777152061462402
+68,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Diagnosis of opioid and alcohol dependence is supported by CIWA scores and patient's history of multiple abscesses.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Diagnosis of pressure ulcers is supported by wound care recommendations and stage 2 measurements.""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""Hypokalemia is not a diagnosis supported by laboratory findings, and hypervalinemia is an incorrect term.""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""Systemic inflammatory response syndrome is not a diagnosis supported by the provided information, and heart failure is not a relevant condition for this patient.""
+  }<|eot_id|>",CORRECT,1,INCORRECT,12.005561828613281
+69,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient is being managed for a Stage 1 pressure ulcer, present on admission.""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""Hypokalemia is a condition characterized by low potassium levels, not hypervalinemia.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient is being managed for systemic inflammatory response syndrome due to heart failure.""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""The patient is being managed for a Stage 1 pressure ulcer, present on admission.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient is being treated for continuous opioid and alcohol dependence with withdrawal.""
+  }
+]<|eot_id|>",CORRECT,0,CORRECT,11.334312200546265
+70,"[
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""Incorrectly diagnosed as hypervalinemia instead of hypokalemia""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""Incorrectly stated as systemic inflammatory response syndrome due to heart failure""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Correctly diagnosed as continuous opioid and alcohol dependence with withdrawal""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Correctly diagnosed as pressure ulcers, Stage 2 on Coccyx/sacrum""
+  }
+]<|eot_id|>",INCORRECT,1,INCORRECT,8.691754579544067
+71,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""CIWA scores are a valid assessment tool for opioid withdrawal symptoms.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Patient's symptoms and CIWA scores are consistent with opioid withdrawal.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Patient's presentation and CIWA scores are consistent with opioid withdrawal symptoms.""
+  }
+]<|eot_id|>",CORRECT,1,INCORRECT,6.324305057525635
+72,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""CIWA scores are used to assess the severity of opioid withdrawal symptoms.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Pressure ulcers are classified into stages (1-4) based on depth and size, not just the presence of an ulcer.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Alevyn is a type of dressing used to treat pressure ulcers, not Alevyn dsng.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""FFP (Fresh Frozen Plasma) is used to correct coagulopathy, not IV carmine stain.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Hypervalinemia is not a recognized medical condition; the correct diagnosis is hypokalemia.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Coagulopathy is a recognized medical condition that can be caused by various factors, including liver disease.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient has a history of HIV and chronic Hepatitis B, which increases their risk of developing coagulopathy.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""HAART (Highly Active Antiretroviral Therapy) cessation can lead to an increase in liver enzymes and coagulopathy.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""INR (International Normalized Ratio) is a measure of blood clotting, and an INR of 3.2 is elevated.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""FFP is administered to bring the INR down prior to a procedure, as elevated INR increases the risk of bleeding.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Coagulation monitoring is recommended to ensure the INR is within a safe range.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Ceftriaxone is an antibiotic used to treat bacterial infections, and it is administered to treat a febrile patient.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Ceftriaxone is also used to treat a febrile patient with neutropenic fever.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Ceftazidime is an antibiotic used to treat bacterial infections, and it is administered to treat a febrile patient.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Ceftazidime is also used to treat a febrile patient with neutropenic fever.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Dilaudid is a medication used to treat pain, and it is administered to a patient with chronic pain.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Oxycodone is a medication used to treat pain, and it is administered to a patient with chronic pain.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""IV lorazepam is a medication used to treat anxiety and agitation, and it is administered to a patient with opioid withdrawal.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""CIWA (Clinical Institute Withdrawal Assessment for Alcohol) scores are used to assess the severity of alcohol withdrawal symptoms.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Nausea is a common symptom of opioid withdrawal, and it is treated with medication.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Pressure ulcers are classified into stages (1-4) based on depth and size, not just the presence of an ulcer.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Alevyn is a type of dressing used to treat pressure ulcers, not Alevyn dsng.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Offload pressure is a recommended treatment for pressure ulcers, as it reduces pressure on the skin.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Optimize nutrition is a recommended treatment for pressure ulcers, as it helps to heal the skin.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Wound care is a recommended treatment for pressure ulcers, as it helps to promote healing.""
+  },
+  {
+    ""answer"": ""CORRECT",CORRECT,1,INCORRECT,69.83677315711975
+73,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient is being managed for withdrawal, which is a recognized complication of opioid and alcohol dependence.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient has metastatic breast cancer with spinal metastasis and dural compression, which is a recognized complication of cancer.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient has a Stage 2 pressure ulcer, which is a recognized stage of pressure ulcer progression.""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""The diagnosis of hypervalinemia is incorrect; the patient has hypokalemia.""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""The patient has systemic inflammatory response syndrome (SIRS) due to heart failure, not due to AML or neutropenic fever.""
+  }<|eot_id|>",CORRECT,1,INCORRECT,12.701044082641602
+74,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient is being managed for opioid and alcohol dependence, which is a correct diagnosis.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient has stage 2 pressure ulcers on Coccyx and sacrum, which is a correct diagnosis.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient has metastatic breast cancer with spinal metastatic progression and dural compression, which is a correct diagnosis.""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""Hypervalinemia is not a medical error, hypokalemia is the correct term.""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""The patient has systemic inflammatory response syndrome due to heart failure, which is a correct diagnosis.""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""The patient has a history of ESRD, but the note does not contain a medical error.""
+  }<|eot_id|>",CORRECT,0,CORRECT,14.235333919525146
+75,"{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""The patient is indeed being managed for pressure ulcers, which is a common complication in patients with spinal metastasis""
+}
+
+{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""The patient is being treated for opioid and alcohol dependence, which is a common comorbidity in patients with chronic pain and multiple abscesses""
+}
+
+{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""The patient has stage 2 pressure ulcers on the coccyx and sacrum, which is a common complication in patients with spinal metastasis""
+}<|eot_id|>",CORRECT,0,CORRECT,8.335416793823242
+76,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Diagnosis of hypokalemia is incorrect; the patient has hypervalinemia, not hypokalemia.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient has systemic inflammatory response syndrome due to heart failure, not SIRS.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient is being treated for continuous opioid and alcohol dependence with withdrawal, accurately described.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient has metastatic breast cancer with spinal metastatic progression and dural compression, accurately described.""
+  }<|eot_id|>",CORRECT,1,INCORRECT,9.693567991256714
+77,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient is being treated for opioid and alcohol dependence, which is a well-established treatment approach for continuous opioid and alcohol dependence.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient has Stage 2 pressure ulcers, which is a correct classification of the patient's condition.""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""The patient has hypokalemia, not hypervalinemia, which is a clinically significant electrolyte imbalance.""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""The patient has a history of heart failure, which is a correct diagnosis, but the management approach is not clearly stated as systemic inflammatory response syndrome.""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""The patient is being treated for cellulitis, but the diagnosis is not clearly supported by the provided information.""
+  }
+]<|eot_id|>",CORRECT,0,CORRECT,13.528086185455322
+78,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The note correctly identifies the patient's chronic combined systolic and diastolic heart failure, severe aortic stenosis, and class IIIB to IV symptoms.""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""The note incorrectly states 'hypervalinemia' instead of 'hypokalemia' based on laboratory findings.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The note correctly identifies the patient's condition as withdrawal from continuous opioid and alcohol dependence, with symptoms and treatment listed.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The note correctly identifies the patient's stage 2 pressure ulcers on the coccyx and sacrum, with recommended wound care and management.""
+  }<|eot_id|>",CORRECT,0,CORRECT,11.309945821762085
+79,"[
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""Hypervalinemia is a condition of elevated valine levels in the blood, not hypokalemia.""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""The patient is being managed for systemic inflammatory response syndrome due to heart failure, not due to AML.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient is being treated for withdrawal from continuous opioid and alcohol dependence, as indicated by CIWA scores and symptoms.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient is being managed for pressure ulcers, stage 2 on coccyx and sacrum, with recommended wound care and interventions.""
+  }
+]<|eot_id|>",INCORRECT,1,INCORRECT,11.06400179862976
+80,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Documentation of protein calorie malnutrition is present on admission, indicating ongoing issue.""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""Hypervalinemia is not a recognized medical condition, and hypokalemia is not related to hypervalinemia.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Patient is being managed for pressure ulcers, a condition present on admission.""
+  }
+]<|eot_id|>",CORRECT,1,INCORRECT,7.155174970626831
+81,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient is being managed for opioid and alcohol dependence, not cellulitis.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient is being managed for pressure ulcers, not metastatic breast cancer.""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""Hypervalinemia is not a recognized medical condition, hypokalemia is the correct term.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient is being managed for systemic inflammatory response syndrome due to heart failure.""
+  }
+]<|eot_id|>",CORRECT,1,INCORRECT,9.116668939590454
+82,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient is being managed for severe protein-calorie malnutrition, as indicated by the patient's BMI of 16.6 and significant weight loss.""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""Hypervalinemia is not a recognized medical condition, and the patient's laboratory findings indicate hypokalemia.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient is being managed for withdrawal from opioids and alcohol, as evidenced by the patient's CIWA scores and treatment with morphine and lorazepam.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient has stage 2 pressure ulcers on the coccyx and sacrum, and is being managed for these wounds.""
+  }
+]<|eot_id|>",CORRECT,0,CORRECT,11.824729204177856
+83,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""CIWA scores range 11-16, indicating moderate to severe withdrawal symptoms""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Pt is being managed for Pressure Ulcers, Stage 2 on Coccyx/sacrum, present on admission""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""Hypokalemia is a condition of low potassium levels, not hypervalinemia""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""Patient has neutropenic fever, not just febrile, with GPCs in clusters from both line and peripheral""
+  }
+]<|eot_id|>",CORRECT,0,CORRECT,10.213232278823853
+84,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient has been losing weight and has a low prealbumin level, indicating protein-calorie malnutrition.""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""Hypokalemia is a condition of low potassium levels, not hypervalinemia.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient is being treated for opioid and alcohol dependence, and the CIWA scores indicate a high level of sedation and agitation.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient has stage 2 pressure ulcers on the coccyx and sacrum, and recommendations for wound care and offload pressure have been provided.""
+  }
+]<|eot_id|>",CORRECT,1,INCORRECT,10.977274894714355
+85,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Hypokalemia is not present, but hypervalinemia is stated, which is incorrect""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Incorrect lab finding, hypervalinemia should be hypokalemia""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient is being managed for opioid and alcohol dependence with withdrawal""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient's stage of pressure ulcers is correctly identified as Stage 2 on Coccyx and sacrum""
+  }<|eot_id|>",CORRECT,1,INCORRECT,10.238847970962524
+86,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Diagnosis of hypokalemia is incorrect; the patient has hypervalinemia, a condition characterized by elevated levels of valine in the blood.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Diagnosis of hypokalemia is incorrect; the patient has hypervalinemia, a condition characterized by elevated levels of valine in the blood.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Diagnosis of hypokalemia is incorrect; the patient is being treated for opioid and alcohol dependence with withdrawal, not hypokalemia.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Diagnosis of hypokalemia is incorrect; the patient has a known history of multiple abscesses and IVDU, indicating a need for treatment of opioid and alcohol dependence.""
+  }
+]<|eot_id|>",CORRECT,1,INCORRECT,12.37175989151001
+87,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Diagnosis of opioid and alcohol dependence is accurate and consistent with treatment.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Diagnosis of metastatic breast cancer with spinal metastasis and dural compression is accurate and consistent with treatment.""
+  }
+]<|eot_id|>",CORRECT,1,INCORRECT,4.9497010707855225
+88,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Diagnosis of pressure ulcers is accurate and stage 2 is correctly described.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Diagnosis of continuous opioid and alcohol dependence with withdrawal is accurate.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Diagnosis of pressure ulcers is accurate and stage 2 is correctly described.""
+  }
+]<|eot_id|>",CORRECT,1,INCORRECT,6.779140949249268
+89,"[
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""Hypokalemia is a condition of low potassium levels, not hypervalinemia.""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""Systemic inflammatory response syndrome (SIRS) is typically associated with infection or inflammation, not heart failure.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient's symptoms and CIWA scores are consistent with opioid withdrawal.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient's stage 2 pressure ulcers are accurately described and management recommendations are provided.""
+  }
+]<|eot_id|>",INCORRECT,0,CORRECT,9.42443299293518
+90,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient's nutritional status is described as'very poor', indicating malnutrition, not 'high nutritional complexity'.""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""Hypervalinemia is not a recognized medical condition; hypokalemia is a recognized condition.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient's history of opioid and alcohol dependence is accurately noted, including CIWA scores and treatment with multiple medications.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient's pressure ulcers are accurately described, including their stage, location, and recommended treatments.""
+  }<|eot_id|>",CORRECT,1,INCORRECT,10.044310092926025
+91,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Accurate description of a complex surgical procedure and its complications""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""Incorrect diagnosis of hypokalemia as hypervalinemia""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Accurate description of patient's medical history and treatment plan""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Accurate description of patient's condition and treatment plan for pressure ulcers""
+  }
+]<|eot_id|>",CORRECT,1,INCORRECT,8.310434818267822
+92,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient's symptoms of withdrawal are consistent with opioid and alcohol dependence, supported by CIWA scores and clinical presentation.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient's stage 2 pressure ulcers are accurately described and managed recommendations are provided.""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""Hypokalemia is not mentioned in the note, and the laboratory finding of 'hypervalinemia' is incorrect.""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""The patient's diagnosis of systemic inflammatory response syndrome due to heart failure is not supported by the provided information.""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""The patient's diagnosis of G-CLAM is not supported by the provided information.""
+  }
+]<|eot_id|>",CORRECT,1,INCORRECT,12.807597160339355
+93,"[
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""Hypokalemia is a condition of low potassium levels, not hypervalinemia.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Diagnosis of systemic inflammatory response syndrome due to infectious source is accurate.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Diagnosis of cellulitis is accurate in a patient with a history of intravenous drug use.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Diagnosis of pressure ulcers is accurate and stage 2 on coccyx and sacrum is correct.""
+  }
+]<|eot_id|>",INCORRECT,1,INCORRECT,9.48507809638977
+94,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Diagnosis is accurate based on clinical presentation and laboratory findings.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Diagnosis is accurate based on clinical presentation and laboratory findings.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Diagnosis is accurate based on clinical presentation and history of substance use.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Diagnosis is accurate based on clinical presentation and staging of metastatic breast cancer.""
+  }
+]<|eot_id|>",CORRECT,0,CORRECT,7.945874929428101
+95,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient is being managed for pressure ulcers, which is a correct diagnosis.""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""Hypokalemia is a condition of low potassium levels, not hypervalinemia.""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""The patient is being managed for bacterial endocarditis, which is a correct diagnosis.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient is being managed for opioid and alcohol dependence with withdrawal, which is a correct diagnosis.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient is being managed for pressure ulcers, which is a correct diagnosis.""
+  }
+]<|eot_id|>",CORRECT,0,CORRECT,11.129587888717651
+96,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient is being treated for continuous opioid and alcohol dependence with withdrawal.""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""The patient has hypokalemia, not hypervalinemia.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient is being managed for Pressure Ulcers, Stage 2 on Coccyx/sacrum, present on admission (POA).""
+  }<|eot_id|>",CORRECT,0,CORRECT,7.143418788909912
+97,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient is being managed for pressure ulcers, which is a correct diagnosis.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient's symptoms and stage 2 pressure ulcers are accurately documented.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient's diagnosis and stage 2 pressure ulcers are correctly identified.""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""Hypokalemia is not mentioned, but hypervalinemia is stated, which is incorrect.""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""The patient has systemic inflammatory response syndrome due to heart failure, not hypervalinemia.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient's diagnosis and treatment for opioid and alcohol dependence are accurately documented.""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""The patient's diagnosis and stage 2 pressure ulcers are correctly identified.""
+  }<|eot_id|>",CORRECT,1,INCORRECT,14.972463846206665
+98,"[
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Correct diagnosis of pressure ulcers on Coccyx and sacrum, Stage 2""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Correct diagnosis of pressure ulcers on Coccyx and sacrum, Stage 2""
+  },
+  {
+    ""answer"": ""INCORRECT"",
+    ""reasoning"": ""Diagnosis of cellulitis instead of likely cellulitis""
+  },
+  {
+    ""answer"": ""CORRECT"",
+    ""reasoning"": ""Correct diagnosis of pressure ulcers on Coccyx and sacrum, Stage 2""
+  }<|eot_id|>",CORRECT,1,INCORRECT,8.747903823852539
+99,"{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""The medical note accurately describes the patient's symptoms, laboratory findings, and treatment plan for hypokalemia, including the potential contribution to cardiac arrhythmia.""
+}
+
+{
+  ""answer"": ""INCORRECT"",
+  ""reasoning"": ""The note incorrectly states that the patient has hypervalinemia instead of hypokalemia, which is a condition characterized by low potassium levels.""
+}
+
+{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""The medical note accurately describes the patient's symptoms, diagnosis, and treatment plan for cellulitis, including the use of medications for withdrawal symptoms.""
+}
+
+{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""The note accurately describes the patient's diagnosis, symptoms, and treatment plan for pressure ulcers, including wound care and offload pressure.""<|eot_id|>",CORRECT,0,CORRECT,11.1264009475708

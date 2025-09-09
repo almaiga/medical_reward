@@ -1,0 +1,448 @@
+idx,response,model_label,error_flag,gt_label,inference_time
+0,"{""answer"": ""INCORRECT"", ""reasoning"": ""Age should be specified, e.g., 'Ms. <NAME/> is a 45 yo F admitted..."" to provide accurate patient demographics.""}<|eot_id|>",INCORRECT,0,CORRECT,4.046472072601318
+2,"{""answer"": ""INCORRECT"", ""reasoning"": ""Patient's sodium level is 134, which is actually hypernatremia, not hyponatremia.""}<|eot_id|>",INCORRECT,1,INCORRECT,2.831395149230957
+4,"{
+  ""answer"": ""INCORRECT"",
+  ""reasoning"": ""Blood cultures were not drawn until the patient was hypotensive, delaying sepsis diagnosis""
+}<|eot_id|>",INCORRECT,0,CORRECT,3.0095012187957764
+6,"{""answer"": ""CORRECT"", ""reasoning"": ""The patient's hemoglobin concentration (HCT) remained stable at 25% after resuscitation with PRBCs and albumin, indicating successful correction of anemia.""}<|eot_id|>",CORRECT,0,CORRECT,3.6458728313446045
+7,"{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""The patient's INR and PLT were documented on admission, not on a separate date.""
+}<|eot_id|>",CORRECT,0,CORRECT,2.6369478702545166
+9,"{""answer"": ""CORRECT"", ""reasoning"": ""Patient is being managed for hypovolemia, with volume down and poor PO intake, and receiving D5 1/2 NS.""}<|eot_id|>",CORRECT,0,CORRECT,3.099426746368408
+10,"{
+  ""answer"": ""INCORRECT"",
+  ""reasoning"": ""Albumin level is 2.1, which is considered normal, not low as stated in the context of malnutrition.""
+}<|eot_id|>",INCORRECT,0,CORRECT,3.512136220932007
+11,"{""answer"": ""INCORRECT"", ""reasoning"": ""The medical note incorrectly states the diagnosis as abscess vs hematoma, despite the thought that it is likely a hematoma.""}<|eot_id|>",INCORRECT,0,CORRECT,3.1094961166381836
+12,"{""answer"": ""INCORRECT"", ""reasoning"": ""Patient has metastatic esophageal adenocarcinoma, but no mention of gastrointestinal bleeding (GIB) symptoms.""}<|eot_id|>",INCORRECT,1,INCORRECT,2.9850878715515137
+13,"{""answer"": ""CORRECT"", ""reasoning"": ""Diagnosis of AKI is documented on admission, no error in documentation of AKI or its treatment.""}<|eot_id|>",CORRECT,1,INCORRECT,2.6600680351257324
+14,"{
+  ""answer"": ""INCORRECT"",
+  ""reasoning"": ""Hypokalemia is typically associated with hyperkalemia, not hypervalinemia.""
+}<|eot_id|>",INCORRECT,0,CORRECT,2.789799213409424
+15,"{""answer"": ""CORRECT"", ""reasoning"": ""The description of the I&D procedure is accurate, including the excision of skin and subcutaneous tissue, and the use of scalpel and Bovie.""}<|eot_id|>",CORRECT,1,INCORRECT,3.2136240005493164
+16,"{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""IVF administration is appropriate in a postop patient with duodenal GIST, hypertension, and low urine output""
+}<|eot_id|>",CORRECT,1,INCORRECT,2.9241092205047607
+17,"{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""No error found in the medical note regarding patient's history and current management of end-stage liver disease""
+}<|eot_id|>",CORRECT,1,INCORRECT,2.777811288833618
+18,"{
+  ""answer"": ""INCORRECT"",
+  ""reasoning"": ""The patient's platelet count is 68, which is not low enough to be considered thrombocytopenia.""
+}<|eot_id|>",INCORRECT,0,CORRECT,3.347482919692993
+19,"{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""The note accurately documents the patient's sepsis, treatment, and resolution, and also addresses ongoing management for SIRS and withdrawal.""
+}<|eot_id|>",CORRECT,1,INCORRECT,3.653425931930542
+20,"{
+  ""answer"": ""INCORRECT"",
+  ""reasoning"": ""Hypokalemia is mentioned, but the patient's laboratory findings show hypervalinemia, not hypokalemia.""
+}<|eot_id|>",INCORRECT,1,INCORRECT,3.291623830795288
+21,"{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""Creatinine levels are accurately documented as increasing and resolving, with no mention of AKI or liver transplant""
+}<|eot_id|>",CORRECT,0,CORRECT,2.8874258995056152
+22,"{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""The medical note correctly documents the operative report and the patient's history, including the enterotomy and serosal lacerations.""
+}<|eot_id|>",CORRECT,0,CORRECT,3.0775930881500244
+23,"{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""No clinically harmful errors found in the medical note, accurate diagnosis and treatment plan for hypoxia and pulmonary insufficiency.""
+}<|eot_id|>",CORRECT,1,INCORRECT,3.341280937194824
+24,"{
+  ""answer"": ""INCORRECT"",
+  ""reasoning"": ""Patient has cardiorenal syndrome, not radiation-induced cardiomyopathy""
+}<|eot_id|>",INCORRECT,1,INCORRECT,2.5472469329833984
+25,"{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""BNP levels are typically elevated in heart failure, not decreased, with increasing severity.""
+}<|eot_id|>",CORRECT,0,CORRECT,2.581364870071411
+26,"{""answer"": ""INCORRECT"", ""reasoning"": ""The patient's anemia is described as acute blood loss, but the transfusion and hemoglobin levels do not support this diagnosis.""}<|eot_id|>",INCORRECT,0,CORRECT,2.9703822135925293
+27,"{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""The patient's history of R pneumonectomy and acute desaturation supports the presence of pulmonary edema.""
+}<|eot_id|>",CORRECT,0,CORRECT,2.865562677383423
+28,"{""answer"": ""CORRECT"", ""reasoning"": ""Prealbumin is a more sensitive marker for acute malnutrition than albumin, as it decreases more rapidly in response to nutritional stress.""}<|eot_id|>",CORRECT,0,CORRECT,3.003607988357544
+29,"{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""Patient's vital signs and lab results are consistent with sepsis and possible small diverticular perforation""
+}<|eot_id|>",CORRECT,0,CORRECT,2.996763229370117
+30,"{""answer"": ""CORRECT"", ""reasoning"": ""No errors found in the medical note, accurately documenting patient's condition and treatment progress.""}<|eot_id|>",CORRECT,1,INCORRECT,2.4784698486328125
+31,"{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""The patient has a full thickness pressure ulcer on the right elbow, not a diabetic foot ulcer.""
+}<|eot_id|>",CORRECT,1,INCORRECT,2.892300844192505
+32,"{""answer"": ""INCORRECT"", ""reasoning"": ""Patient's PTH was 272, which is not a typical level for renal origin hyperparathyroidism, suggesting a different etiology.""}<|eot_id|>",INCORRECT,1,INCORRECT,3.227778196334839
+33,"{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""There are no obvious medical errors, and the surgical details are accurately described.""
+}<|eot_id|>",CORRECT,1,INCORRECT,2.644742965698242
+34,"{""answer"": ""CORRECT"", ""reasoning"": ""Patient's coagulopathy is mentioned, and treatment with vitamin K is appropriate for coagulopathy with low INR.""}<|eot_id|>",CORRECT,0,CORRECT,2.9542431831359863
+35,"{""answer"": ""CORRECT"", ""reasoning"": ""The plan for antibiotic continuation until 7 days after drain removal is a reasonable approach for postoperative seroma management.""}<|eot_id|>",CORRECT,0,CORRECT,2.8678641319274902
+36,"{""answer"": ""INCORRECT"", ""reasoning"": ""Hypokalemia is a condition of low potassium levels, not hypervalinemia.""}<|eot_id|>",INCORRECT,1,INCORRECT,2.6441659927368164
+37,"{""answer"": ""INCORRECT"", ""reasoning"": ""Anemia of chronic disease typically results in elevated Hct, not decreased Hct as stated in the medical note.""}<|eot_id|>",INCORRECT,0,CORRECT,2.900034189224243
+38,"{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""BNP levels are elevated in heart failure, and the patient's EF is low, consistent with systolic heart failure diagnosis.""
+}<|eot_id|>",CORRECT,0,CORRECT,3.025952100753784
+39,"```
+{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""Patient is described as female, but the age and weight are mentioned in terms of 'F' and 'lbs', respectively.""
+}
+```<|eot_id|>",CORRECT,0,CORRECT,3.4267120361328125
+40,"{""answer"": ""INCORRECT"", ""reasoning"": ""Incorrectly states patient meets 50-75% of nutritional needs, when prealbumin is only 10.8, indicating poor nutritional status.""}<|eot_id|>",INCORRECT,1,INCORRECT,3.3335061073303223
+41,"{""answer"": ""CORRECT"", ""reasoning"": ""Serum potassium levels were monitored and reported accurately, with consistent treatment for hypokalemia.""}<|eot_id|>",CORRECT,1,INCORRECT,2.581700086593628
+42,"{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""The patient's use of 2L O2 24 hours/day supports the diagnosis of chronic respiratory failure with severe hypoxemia.""
+}<|eot_id|>",CORRECT,1,INCORRECT,3.1497910022735596
+43,"{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""Patient's oxygen requirement is accurately described as increasing with physical activity and needing supplemental oxygen as needed.""
+}<|eot_id|>",CORRECT,0,CORRECT,3.029999256134033
+44,"{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""Albumin levels were done in a stressful setting and may not accurately reflect nutritional status.""
+}<|eot_id|>",CORRECT,1,INCORRECT,2.788742780685425
+45,"{""answer"": ""CORRECT"", ""reasoning"": ""The medical note accurately describes a sternal re-entry aortic vascular injury and its management during a third sternotomy.""}<|eot_id|>",CORRECT,1,INCORRECT,2.8981246948242188
+46,"{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""No medical errors found in the description of the patient's temporal lobe glioma and perioperative management.""
+}<|eot_id|>",CORRECT,1,INCORRECT,2.929992198944092
+47,"{""answer"": ""CORRECT"", ""reasoning"": ""The patient's symptoms and treatment include diabetic ketoacidosis, which can cause dry mucus membranes, accurately described in the note.""}<|eot_id|>",CORRECT,1,INCORRECT,2.940358877182007
+48,"{""answer"": ""CORRECT"", ""reasoning"": ""The patient was readmitted with a pelvic fluid collection, UTI, and new nephrourostomy T-tube placement, consistent with the provided medical note.""}<|eot_id|>",CORRECT,1,INCORRECT,3.4532361030578613
+49,"{""answer"": ""INCORRECT"", ""reasoning"": ""Hypocalcemia is treated with calcium replacement, not potassium replacement.""}<|eot_id|>",INCORRECT,1,INCORRECT,2.436142921447754
+50,"{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""The medical note accurately describes expected post-surgical changes on a CT head scan after craniotomy.""
+}<|eot_id|>",CORRECT,1,INCORRECT,2.9063398838043213
+51,"{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""The medical note accurately states thrombocytopenia was present on admission and documented on a previous Medicine note.""
+}<|eot_id|>",CORRECT,0,CORRECT,2.9126338958740234
+52,"{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""Hemodilution from aggressive IV fluids is a plausible cause of thrombocytopenia in a patient with neutropenia""
+}<|eot_id|>",CORRECT,1,INCORRECT,3.224015712738037
+53,"{
+  ""answer"": ""INCORRECT"",
+  ""reasoning"": ""Lansoprazole is a proton pump inhibitor, not a hepatotoxic medication, which should not be discontinued.""
+}<|eot_id|>",INCORRECT,0,CORRECT,3.060392141342163
+54,"{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""Hypokalemia is mentioned, but there's no mention of hyperkalemia, making the statement incorrect.""
+}<|eot_id|>",CORRECT,0,CORRECT,3.176248788833618
+55,"{""answer"": ""CORRECT"", ""reasoning"": ""Patient's age and Morvan's syndrome are not explicitly mentioned, but the documentation of stage II pressure ulcer to coccyx is accurate.""}<|eot_id|>",CORRECT,0,CORRECT,3.0710289478302
+56,"{""answer"": ""CORRECT"", ""reasoning"": ""Patient has hypokalemia, but there is no mention of replacement ordered as stated in the prompt.""}<|eot_id|>",CORRECT,1,INCORRECT,2.68756103515625
+57,"```
+{
+  ""answer"": ""INCORRECT"",
+  ""reasoning"": ""Patient's laboratory values show hypokalemia (K < 3.5 mEq/L), not hypervalinemia.""
+}
+```<|eot_id|>",INCORRECT,1,INCORRECT,3.462448835372925
+58,"{""answer"": ""CORRECT"", ""reasoning"": ""The operative record accurately describes the enterotomy, its oversewing, and the areas of bowel damage due to radiation and prior surgery.""}<|eot_id|>",CORRECT,0,CORRECT,3.1779541969299316
+59,"```
+{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""The patient's morbid underweight status and elevated blood sugars suggest uncontrolled diabetes, exacerbated by infection.""
+}
+```<|eot_id|>",CORRECT,1,INCORRECT,3.003828287124634
+60,"{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""There is no mention of hypokalemia in the medical note, making the initial statement incorrect.""
+}<|eot_id|>",CORRECT,1,INCORRECT,3.055759906768799
+61,"{""answer"": ""INCORRECT"", ""reasoning"": ""The patient is being managed for hypokalemia, but laboratory findings show hypocalcemia, not hypokalemia.""}<|eot_id|>",INCORRECT,0,CORRECT,3.0665102005004883
+62,"{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""Blood cultures from a previous date were negative, but a subsequent blood culture was positive, indicating a change in diagnosis.""
+}<|eot_id|>",CORRECT,0,CORRECT,2.933534860610962
+63,"{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""Patient's weight loss and difficulty keeping food down are consistent with hypokalemia, not hypervalinemia""
+}<|eot_id|>",CORRECT,1,INCORRECT,2.9498209953308105
+64,"{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""FFP treatment is standard for acute coagulopathy, especially with rising INR and pre-procedure management""
+}<|eot_id|>",CORRECT,1,INCORRECT,2.9033970832824707
+65,"{
+  ""answer"": ""INCORRECT"",
+  ""reasoning"": ""Patient has hypokalemia, not hypervalinemia, which would be a condition of low vitamin B12 levels""
+}<|eot_id|>",INCORRECT,1,INCORRECT,3.126124858856201
+66,"{""answer"": ""INCORRECT"", ""reasoning"": ""WBC count is 0.25, which is extremely low, indicating severe aplastic anemia, not pancytopenia.""}<|eot_id|>",INCORRECT,1,INCORRECT,3.1204988956451416
+67,"{""answer"": ""CORRECT"", ""reasoning"": ""The medical note accurately documents the patient's history, diagnosis, treatment, and plan for further care.""}<|eot_id|>",CORRECT,0,CORRECT,2.701871156692505
+68,"{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""Patient has Ischemic cardiomyopathy, not Hypokalemia or Hypervalinemia, with no mention of electrolyte imbalances.""
+}<|eot_id|>",CORRECT,0,CORRECT,3.2273311614990234
+69,"{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""The text accurately describes a patient with severe communicating hydrocephalus and brainstem edema due to a large tumor.""
+}<|eot_id|>",CORRECT,1,INCORRECT,3.0111918449401855
+70,"{""answer"": ""CORRECT"", ""reasoning"": ""The medical note accurately explains the cause of the pulmonary arteriotomy as previous aortic dissection and adhesions from a prior surgery.""}<|eot_id|>",CORRECT,0,CORRECT,3.130190134048462
+71,"{""answer"": ""INCORRECT"", ""reasoning"": ""Hypokalemia is not mentioned, but hypervolemia is stated, which is contradictory.""}<|eot_id|>",INCORRECT,1,INCORRECT,2.810549020767212
+72,"{""answer"": ""CORRECT"", ""reasoning"": ""Patient's weight gain and edema suggest hypervolemia, not hypervalinemia, which would be a potassium imbalance.""}<|eot_id|>",CORRECT,0,CORRECT,3.177868127822876
+73,"{
+  ""answer"": ""INCORRECT"",
+  ""reasoning"": ""The patient is described as having 'high nutr complexity', which should be 'high nutritional complexity'.""
+}<|eot_id|>",INCORRECT,1,INCORRECT,3.0435850620269775
+74,"{
+  ""answer"": ""INCORRECT"",
+  ""reasoning"": ""Hypokalemia is typically treated with potassium replacement, not NaCl infusion.""
+}<|eot_id|>",INCORRECT,1,INCORRECT,2.76491379737854
+75,"{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""No errors found in the medical note regarding patient's nutritional risk and protein calorie malnutrition""
+}<|eot_id|>",CORRECT,1,INCORRECT,2.7730178833007812
+76,"{""answer"": ""CORRECT"", ""reasoning"": ""CKD stage is correctly noted, and baseline Cr and GFR values are provided, indicating accurate kidney function assessment.""}<|eot_id|>",CORRECT,0,CORRECT,2.8841700553894043
+77,"{
+  ""answer"": ""INCORRECT"",
+  ""reasoning"": ""Transfusion of 2U PRBCs is unlikely to correct a hemoglobin level of 24, indicating severe anemia""
+}<|eot_id|>",INCORRECT,0,CORRECT,3.3673269748687744
+78,"{
+  ""answer"": ""INCORRECT"",
+  ""reasoning"": ""Patient's Hct trended from 32-->24, indicating hemolysis, not anemia""
+}<|eot_id|>",INCORRECT,1,INCORRECT,3.1182498931884766
+79,"{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""The patient's chronic hypoxemic respiratory failure is documented, and acute respiratory failure is ruled out, as supported by oxygen saturation of 100% on 2L.""
+}<|eot_id|>",CORRECT,1,INCORRECT,4.012226104736328
+80,"{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""The report accurately describes the patient's malignant pleural effusion and the procedure performed, including the hematopathology findings.""
+}<|eot_id|>",CORRECT,1,INCORRECT,3.2223339080810547
+81,"{
+  ""answer"": ""INCORRECT"",
+  ""reasoning"": ""Patient's CKD and shortness of breath suggest the need for diuretics, not lasix, to manage fluid overload""
+}<|eot_id|>",INCORRECT,1,INCORRECT,3.700605869293213
+82,"{""answer"": ""CORRECT"", ""reasoning"": ""The patient's history of daily drinking and symptoms of alcohol withdrawal are consistent with the documentation of CIWA protocol and IV Ativan.""}<|eot_id|>",CORRECT,0,CORRECT,3.1334028244018555
+83,"{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""The medical note accurately describes the patient's condition, treatment, and differential diagnosis for respiratory failure.""
+}<|eot_id|>",CORRECT,0,CORRECT,3.0605809688568115
+84,"{""answer"": ""INCORRECT"", ""reasoning"": ""The medical note contains a duplication of the same date for the MRI, which is likely an error.""}<|eot_id|>",INCORRECT,0,CORRECT,2.8676679134368896
+85,"```
+{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""The patient's ESLD, EtOH, and autoimmune hepatitis diagnoses are accurately described, and HCC diagnosis is correctly mentioned.""
+}
+```<|eot_id|>",CORRECT,1,INCORRECT,3.7862820625305176
+86,"{""answer"": ""INCORRECT"", ""reasoning"": ""Patient has hypokalemia, not hypervalinemia, which would indicate elevated potassium levels.""}<|eot_id|>",INCORRECT,0,CORRECT,2.884566068649292
+87,"{""answer"": ""CORRECT"", ""reasoning"": ""The patient's symptoms and diagnostic findings are consistent with postoperative ileus, a common complication after robotic cystoprostatectomy and ileal conduit surgery.""}<|eot_id|>",CORRECT,0,CORRECT,3.5825867652893066
+88,"{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""INR is 1.0 preoperatively, and the patient received platelet transfusions, which would correct coagulopathy""
+}<|eot_id|>",CORRECT,0,CORRECT,3.7902910709381104
+89,"{""answer"": ""INCORRECT"", ""reasoning"": ""The patient's age is listed as 'y/o' which is an abbreviation for 'years old', not 'years of age'.""}<|eot_id|>",INCORRECT,0,CORRECT,3.2050392627716064
+90,"{""answer"": ""INCORRECT"", ""reasoning"": ""Patient's CRP was elevated, but pre-albumin was low, indicating malnutrition, not severe protein-calorie malnutrition.""}<|eot_id|>",INCORRECT,0,CORRECT,3.267470121383667
+91,"{""answer"": ""CORRECT"", ""reasoning"": ""Patient's bradycardia and atrial fibrillation are consistent with hypokalemia, which can cause bradycardia and is a known cause of acute renal failure.""}<|eot_id|>",CORRECT,1,INCORRECT,4.015818119049072
+92,"{""answer"": ""CORRECT"", ""reasoning"": ""Age is not provided, but other details are accurate, including presentation and lab findings.""}<|eot_id|>",CORRECT,0,CORRECT,2.6416518688201904
+93,"{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""No errors found in the medical note, which accurately documents the patient's acute GI bleed and treatment.""
+}<|eot_id|>",CORRECT,0,CORRECT,3.143455982208252
+94,"{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""There is no mention of hypokalemia or hypervalinemia in the medical note, addressing the initial error.""
+}<|eot_id|>",CORRECT,1,INCORRECT,3.3952152729034424
+95,"{
+  ""answer"": ""INCORRECT"",
+  ""reasoning"": ""The patient has leukocytosis with no blasts, indicating leukemia, not cellulitis.""
+}<|eot_id|>",INCORRECT,0,CORRECT,3.056441068649292
+96,"{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""The patient's kidney function has declined from GFR >60 to 34, indicating worsening renal function.""
+}<|eot_id|>",CORRECT,1,INCORRECT,3.156475782394409
+97,"{""answer"": ""INCORRECT"", ""reasoning"": ""Potassium-40 is not a treatment for hypokalemia and is not indicated in this scenario.""}<|eot_id|>",INCORRECT,1,INCORRECT,2.8687870502471924
+98,"{""answer"": ""INCORRECT"", ""reasoning"": ""Fk506 is an immunosuppressant, not associated with renal toxicity, and its dose reduction is not indicated.""}<|eot_id|>",INCORRECT,0,CORRECT,3.109135150909424
+99,"{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""The patient is correctly noted to have a stage I coccyx pressure ulcer present on admission and discharge summaries.""
+}<|eot_id|>",CORRECT,0,CORRECT,3.0684258937835693
+100,"{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""Error is minor and not clinically harmful, as patient's hct is still within a relatively normal range after transfusion.""
+}<|eot_id|>",CORRECT,1,INCORRECT,3.421945095062256
+101,"{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""No errors found in the medical note regarding the patient's brain mass, tumor resection, and treatment for vasogenic edema and midline shift.""
+}<|eot_id|>",CORRECT,1,INCORRECT,3.6865901947021484
+102,"{
+  ""answer"": ""INCORRECT"",
+  ""reasoning"": ""Hypokalemia is a condition of low potassium levels, not hypervalinemia, which is high valine levels.""
+}<|eot_id|>",INCORRECT,1,INCORRECT,3.291055917739868
+103,"{
+  ""answer"": ""INCORRECT"",
+  ""reasoning"": ""The medical note incorrectly states 'hypoxiam' instead of 'hypovolemia'.""
+}<|eot_id|>",INCORRECT,0,CORRECT,3.131408929824829
+104,"{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""Patient's history of pulmonary fibrosis and recent PFTs support the diagnosis of acute and chronic respiratory failure.""
+}<|eot_id|>",CORRECT,0,CORRECT,3.2007718086242676
+105,"{""answer"": ""INCORRECT"", ""reasoning"": ""Anasarca is a condition characterized by widespread edema, not necessarily due to volume resuscitation or low albumin.""}<|eot_id|>",INCORRECT,0,CORRECT,3.0836150646209717
+106,"{""answer"": ""CORRECT"", ""reasoning"": ""No errors found in the provided medical note regarding patient treatment and symptoms.""}<|eot_id|>",CORRECT,1,INCORRECT,2.375187873840332
+107,"{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""The patient's SIRS criteria improved significantly after treatment with IV fluids and broad-spectrum antibiotics, consistent with a response to an infectious process.""
+}<|eot_id|>",CORRECT,1,INCORRECT,4.081509828567505
+108,"{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""Furosemide was held initially for permissive hypertension, then restarted after worsening edema and SOB, consistent with clinical practice""
+}<|eot_id|>",CORRECT,0,CORRECT,3.5872559547424316
+109,"{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""The medical note accurately documents the patient's history, lab results, and treatment plan for CLABSI and bloodstream infection.""
+}<|eot_id|>",CORRECT,1,INCORRECT,3.7139933109283447
+110,"{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""MRI description accurately notes cerebral edema and mass effect with effacement of nearby sulci""
+}<|eot_id|>",CORRECT,0,CORRECT,2.7586312294006348
+111,"{""answer"": ""INCORRECT"", ""reasoning"": ""Patient has hypokalemia, not hypervalinemia, which can contribute to cardiac arrhythmia.""}<|eot_id|>",INCORRECT,1,INCORRECT,2.9546849727630615
+112,"{""answer"": ""CORRECT"", ""reasoning"": ""The patient's brain tumor is described as a right frontoparietal mass with a leftward midline shift, consistent with the MRI findings.""}<|eot_id|>",CORRECT,0,CORRECT,3.2912771701812744
+113,"{
+  ""answer"": ""INCORRECT"",
+  ""reasoning"": ""There is no mention of leukemia in the patient's history or current diagnosis""
+}<|eot_id|>",INCORRECT,1,INCORRECT,2.705677032470703
+114,"{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""No apparent medical errors in the provided text, accurate diagnosis and treatment plan for AML and TLS.""
+}<|eot_id|>",CORRECT,0,CORRECT,3.183363914489746
+115,"```
+{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""Malnutrition diagnosis is accurate based on severe weight loss, low BMI, and protein-calorie malnutrition meeting ASPEN criteria.""
+}
+```<|eot_id|>",CORRECT,0,CORRECT,3.550837993621826
+116,"{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""There are no obvious medical errors in the note, making it entirely accurate and free of clinically harmful inaccuracies.""
+}<|eot_id|>",CORRECT,0,CORRECT,3.1352739334106445
+117,"{""answer"": ""CORRECT"", ""reasoning"": ""Protein calorie malnutrition is a condition, not hypokalemia, and hypervalinemia is not mentioned.""}<|eot_id|>",CORRECT,1,INCORRECT,2.8756861686706543
+118,"{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""Gram-positive cocci in pairs and/or chains are consistent with Staphylococcus species, commonly seen in aerobic and anaerobic broths.""
+}<|eot_id|>",CORRECT,1,INCORRECT,3.4646360874176025
+119,"{""answer"": ""INCORRECT"", ""reasoning"": ""Patient received a lung transplant, not a R Pneumocyte transplant, which is not a recognized procedure.""}<|eot_id|>",INCORRECT,1,INCORRECT,2.7835230827331543
+120,"{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""Diagnosis of acute kidney injury and Pseudomonas pyelonephritis were accurately noted on admission, consistent with patient's presentation and treatment.""
+}<|eot_id|>",CORRECT,1,INCORRECT,3.6500840187072754
+121,"{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""The patient has hypokalemia (K+ of 3.3) and is being treated with calcium gluconate, which is a common treatment for hypokalemia.""
+}<|eot_id|>",CORRECT,1,INCORRECT,3.782119035720825
+122,"{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""Chronic Epiglottitis is a known complication in SCD patients, often requiring long-term oxygen therapy and ventilatory support.""
+}<|eot_id|>",CORRECT,1,INCORRECT,3.2372779846191406
+123,"{""answer"": ""CORRECT"", ""reasoning"": ""No mention of elevated JVP, edema, or signs of heart failure despite CHF and diastolic dysfunction.""}<|eot_id|>",CORRECT,1,INCORRECT,2.9570930004119873
+124,"{""answer"": ""CORRECT"", ""reasoning"": ""The patient's pelvic masses and lymph node dissection are consistent with ovarian cancer staging, but the diagnosis is not explicitly stated as ovarian cancer.""}<|eot_id|>",CORRECT,0,CORRECT,3.188659906387329
+125,"{""answer"": ""CORRECT"", ""reasoning"": ""Patient has hypokalemia, and the treatment with PO KCl is appropriate to replace the low potassium level.""}<|eot_id|>",CORRECT,0,CORRECT,2.8092010021209717
+126,"{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""Epinephrine is not typically used to treat COPD, but may be used in acute asthma exacerbations or severe respiratory distress.""
+}<|eot_id|>",CORRECT,1,INCORRECT,3.1526148319244385
+127,"{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""Patient's age and medical history are accurately provided, but the hospitalization length is not specified.""
+}<|eot_id|>",CORRECT,1,INCORRECT,2.9292478561401367
+128,"{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""Laboratory values show hypokalemia (Na 130, Cl 90) with hypovolemia and AKI, but no mention of hypervolemia""
+}<|eot_id|>",CORRECT,0,CORRECT,3.817776918411255
+129,"{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""The patient's DLCO is consistently reported as 35% of predicted, indicating severe pulmonary disease, consistent with end-stage COPD.""
+}<|eot_id|>",CORRECT,0,CORRECT,3.273603677749634
+130,"{
+  ""answer"": ""INCORRECT"",
+  ""reasoning"": ""Patient is being treated for Pseudomonas PNA, not Aspergillus pneumonia, with cefepime and voriconazole""
+}<|eot_id|>",INCORRECT,0,CORRECT,3.421034097671509
+131,"{""answer"": ""INCORRECT"", ""reasoning"": ""The patient's preop Hct was 39, but the correct term is 'Hct' not 'hct'.""}<|eot_id|>",INCORRECT,1,INCORRECT,2.9926860332489014
+132,"{""answer"": ""CORRECT"", ""reasoning"": ""Nutrition labs show a prealbumin of 9.9, indicating malnutrition, and patient is being managed for protein calorie malnutrition.""}<|eot_id|>",CORRECT,0,CORRECT,3.1117990016937256
+133,"{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""The patient has a history of metastatic uterine leiomyosarcoma, which is a known cause of protein-losing enteropathy (PLE), leading to malnutrition and low albumin.""
+}<|eot_id|>",CORRECT,0,CORRECT,3.94370698928833
+134,"{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""The patient's EF 30% indicates severe left ventricular systolic dysfunction, consistent with HFrEF.""
+}<|eot_id|>",CORRECT,1,INCORRECT,2.8629109859466553
+135,"```
+{
+  ""answer"": ""INCORRECT"",
+  ""reasoning"": ""Patient's CBC revealed WBC 0.81, Hct 25, and ANC 0.05, indicating severe pancytopenia, not neutropenia.""
+}
+```<|eot_id|>",INCORRECT,0,CORRECT,4.160775899887085
+136,"{""answer"": ""CORRECT"", ""reasoning"": ""Patient's weight has dropped from 118.4 kg to 111.36 kg, consistent with significant weight loss over the last couple of months.""}<|eot_id|>",CORRECT,0,CORRECT,3.1700620651245117
+137,"{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""The patient's history of complex III mitochondrial disease and recurrent osmotic diarrhea is a plausible cause of malnutrition.""
+}<|eot_id|>",CORRECT,1,INCORRECT,3.000438928604126
+138,"{""answer"": ""CORRECT"", ""reasoning"": ""The patient's symptoms and lab results are consistent with sepsis, which is a recognized cause of SIRS in this patient with a history of cancer.""}<|eot_id|>",CORRECT,0,CORRECT,3.331818103790283
+139,"{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""The patient's SIRS criteria are correctly identified, and vital signs and lab results are accurately documented.""
+}<|eot_id|>",CORRECT,0,CORRECT,2.814194917678833
+140,"{""answer"": ""CORRECT"", ""reasoning"": ""Patient's age is listed as '<AGE>' which should be replaced with a specific age.""}<|eot_id|>",CORRECT,1,INCORRECT,2.559972047805786
+141,"{
+  ""answer"": ""INCORRECT"",
+  ""reasoning"": ""Patient's creatinine (Cr) level is 1.7, but GFR is 38, which is likely a mistake, as GFR should be <30 for Cr 1.7""
+}<|eot_id|>",INCORRECT,0,CORRECT,3.9540212154388428
+142,"{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""Patient's WBC count is 0, indicating severe neutropenia, consistent with Neutropenic Fever diagnosis.""
+}<|eot_id|>",CORRECT,1,INCORRECT,3.060826301574707
+143,"{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""Laboratory findings support pancytopenia diagnosis with low WBC, Hct, and Plt counts, consistent with chemotherapy-induced side effect.""
+}<|eot_id|>",CORRECT,0,CORRECT,3.374176025390625
+144,"{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""The patient's history of chronic IVDU and meth use is correctly noted, including the recent illicit drug use leading to acute renal and liver failure.""
+}<|eot_id|>",CORRECT,0,CORRECT,3.326464891433716
+145,"{""answer"": ""INCORRECT"", ""reasoning"": ""The note incorrectly states the patient has superior mesenteric vein thrombus, when the correct diagnosis is portal vein thrombus.""}<|eot_id|>",INCORRECT,1,INCORRECT,2.9258439540863037
+146,"{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""Hypokalemia is mentioned twice, but the first mention is accurate, and the second correction is not necessary""
+}<|eot_id|>",CORRECT,0,CORRECT,2.9633731842041016
+147,"{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""The patient's INR increased from 2.1 to 1.6 after receiving factor VII and vitamin K, consistent with coagulopathy management.""
+}<|eot_id|>",CORRECT,0,CORRECT,3.4985151290893555
+148,"{""answer"": ""INCORRECT"", ""reasoning"": ""The patient's UTI treatment with cabergoline is inappropriate and not indicated for UTI treatment.""}<|eot_id|>",INCORRECT,1,INCORRECT,2.6993751525878906
+149,"{""answer"": ""INCORRECT"", ""reasoning"": ""Patient's renal function is not adequately addressed with Nipride, which may worsen AKI.""}<|eot_id|>",INCORRECT,0,CORRECT,2.6237998008728027
+150,"{""answer"": ""CORRECT"", ""reasoning"": ""EF noted at 29% is consistent with NYHA class IV heart failure, despite being treated with LVAD.""}<|eot_id|>",CORRECT,0,CORRECT,2.738420009613037
+151,"{""answer"": ""CORRECT"", ""reasoning"": ""Standard transfusion threshold for anemia is typically set at Hct 25, not 27, for adult patients.""}<|eot_id|>",CORRECT,1,INCORRECT,2.779461145401001
+152,"{""answer"": ""CORRECT"", ""reasoning"": ""Sepsis management should include broad-spectrum antibiotics, not just Tylenol and IV fluids.""}<|eot_id|>",CORRECT,1,INCORRECT,2.7151920795440674
+153,"{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""The medical note correctly identifies the patient's past medical history and current symptoms of DVT""
+}<|eot_id|>",CORRECT,1,INCORRECT,2.7040178775787354
+154,"{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""The patient's lab results show an increase in anion gap (AG) from 13 to 15, indicating metabolic acidosis""
+}<|eot_id|>",CORRECT,1,INCORRECT,3.177009105682373
+155,"{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""The patient's lab values and clinical presentation are consistent with acute decompensation of cirrhosis, not hypokalemia or hypervalinemia.""
+}<|eot_id|>",CORRECT,1,INCORRECT,4.287555694580078
+156,"{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""The patient's prealbumin levels and weight loss indicate protein-calorie malnutrition, supporting the recommendation for nutritional support via a feeding tube.""
+}<|eot_id|>",CORRECT,1,INCORRECT,3.433272123336792
+157,"{
+  ""answer"": ""INCORRECT"",
+  ""reasoning"": ""Hypokalemia is mentioned, but the patient's lab results show hyperkalemia, not hypokalemia.""
+}<|eot_id|>",INCORRECT,0,CORRECT,3.3176839351654053
+158,"{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""The note accurately reports the patient's stage I sacrum pressure ulcer and management strategy.""
+}<|eot_id|>",CORRECT,0,CORRECT,2.5852832794189453
+159,"{""answer"": ""INCORRECT"", ""reasoning"": ""The patient's sacral pressure ulcer is described as Stage 111, but it should be Stage III.""}<|eot_id|>",INCORRECT,0,CORRECT,2.7879629135131836

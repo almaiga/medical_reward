@@ -7,12 +7,12 @@ import os
 from datetime import datetime
 
 # Set parameters
-model_name = "meta-llama/Llama-3.2-3B-Instruct"
+model_name = "Qwen/Qwen3-4B"
 num_test_samples = 100         # Number of samples to test
 num_pos_examples = 2           # Number of positive in-context examples
 num_neg_examples = 2           # Number of negative in-context examples
 useful_columns = ['Text ID', 'Text', 'Sentences', 'Error Flag']
-ds = pd.read_csv("data/MEDEC/MEDEC-UW/MEDEC-UW-ValidationSet-with-GroundTruth-and-ErrorType.csv")[useful_columns]
+ds = pd.read_csv("data_copy/MEDEC/MEDEC-UW/MEDEC-UW-ValidationSet-with-GroundTruth-and-ErrorType.csv")[useful_columns]
 print(ds.head())
 print(ds.columns)
 
@@ -120,10 +120,13 @@ for idx, row in tqdm(list(eval_ds.iterrows()), desc="Inference"):
         "inference_time": end_time - start_time
     })
 
+    # Efficient GPU memory management for CUDA and MPS
     if device.type == "cuda":
         torch.cuda.empty_cache()
+    elif device.type == "mps":
+        # For MPS, recommend deleting tensors and running gc.collect()
+        pass  # torch.mps.empty_cache() is not available, but gc.collect() helps
     del inputs, outputs
-    import gc
     gc.collect()
 
 # Save results to CSV with timestamp, model, and sample count in filename

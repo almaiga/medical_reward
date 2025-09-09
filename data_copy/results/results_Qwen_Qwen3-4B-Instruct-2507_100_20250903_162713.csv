@@ -1,0 +1,204 @@
+idx,response,model_label,error_flag,gt_label,inference_time
+0,"{""answer"": ""CORRECT"", ""reasoning"": ""Stage I pressure ulcer is clinically valid and not harmful; open to air is accurately described.""}<|im_end|>",CORRECT,0,CORRECT,4.240236043930054
+2,"{""answer"": ""CORRECT"", ""reasoning"": ""Pseudohyponatremia is correctly noted; Na of 134 is normal, and management is appropriate.""}<|im_end|>",CORRECT,1,INCORRECT,4.073266983032227
+4,"{""answer"": ""INCORRECT"", ""reasoning"": ""Sepsis was not present on admission (POA) due to delayed recognition; blood cultures drawn after hypotension, not prior.""}<|im_end|>",INCORRECT,0,CORRECT,4.614652872085571
+6,"{""answer"": ""CORRECT"", ""reasoning"": ""Anemia due to acute blood loss is clinically appropriate given significant blood loss and resuscitation.""}<|im_end|>",CORRECT,0,CORRECT,3.7237601280212402
+7,"{""answer"": ""INCORRECT"", ""reasoning"": ""PLT of 64 is not diagnostic of coagulopathy; INR of 1.4 is normal, making the diagnosis clinically inaccurate.""}<|im_end|>",INCORRECT,0,CORRECT,4.393679141998291
+9,"{""answer"": ""INCORRECT"", ""reasoning"": ""Hypovolemia is incorrectly linked to chronic constipation and hemicolectomy; no clinical evidence supports this etiology.""}<|im_end|>",INCORRECT,0,CORRECT,4.236976146697998
+10,"{""answer"": ""INCORRECT"", ""reasoning"": ""Albumin of 2.1 g/dL is critically low; normal is >3.5, indicating severe malnutrition and potential organ dysfunction.""}<|im_end|>",INCORRECT,0,CORRECT,4.906753063201904
+11,"{""answer"": ""INCORRECT"", ""reasoning"": ""The note states 'thought to be a hematoma' but describes findings consistent with an abscess, creating a clinically harmful misdiagnosis.""}<|im_end|>",INCORRECT,0,CORRECT,4.432103157043457
+12,"{""answer"": ""INCORRECT"", ""reasoning"": ""Pleural fluid pathology revealing verrucous papilloma is not consistent with malignant pleural effusion etiology.""}<|im_end|>",INCORRECT,1,INCORRECT,4.032858848571777
+13,"{
+  ""answer"": ""INCORRECT"",
+  ""reasoning"": ""AKI cannot be documented as POA when it is a new onset condition following transplant and rising creatinine.""
+}<|im_end|>",INCORRECT,1,INCORRECT,4.034116983413696
+14,"{""answer"": ""CORRECT"", ""reasoning"": ""No clinically harmful errors; anemia management post-blood loss is appropriately documented.""}<|im_end|>",CORRECT,0,CORRECT,3.131924867630005
+15,"{""answer"": ""INCORRECT"", ""reasoning"": ""Excisional debridement does not involve bandaging necrotic tissue with scalpel and bovie.""}<|im_end|>",INCORRECT,1,INCORRECT,3.7255311012268066
+16,"{""answer"": ""INCORRECT"", ""reasoning"": ""Positive I&O of >13000cc is impossible; likely a clerical error in volume measurement.""}<|im_end|>",INCORRECT,1,INCORRECT,3.9388978481292725
+17,"{""answer"": ""INCORRECT"", ""reasoning"": ""Hypokalemia is incorrectly stated; patient has chronic anemia, not hypokalemia, which is a clinical error.""}<|im_end|>",INCORRECT,1,INCORRECT,4.170493841171265
+18,"{""answer"": ""CORRECT"", ""reasoning"": ""No clinically harmful errors; platelet transfusion and GI findings are appropriately documented and consistent with thrombocytopenia and mucosal injury.""}<|im_end|>",CORRECT,0,CORRECT,4.627577781677246
+19,"{""answer"": ""INCORRECT"", ""reasoning"": ""Patient has sepsis initially but is described as stable without organ dysfunction, incorrectly labeled as having SIRS without progression to sepsis.""}<|im_end|>",INCORRECT,1,INCORRECT,5.0028769969940186
+20,"{""answer"": ""INCORRECT"", ""reasoning"": ""Patient is on nasal cannula with CO2 at rest, which is incorrect as nasal cannula does not deliver CO2; it delivers oxygen.""}<|im_end|>",INCORRECT,1,INCORRECT,4.458017110824585
+21,"{""answer"": ""INCORRECT"", ""reasoning"": ""Patient has creatinine elevation without AKI, but note incorrectly states 'AKI resolved' when no AKI was present.""}<|im_end|>",INCORRECT,0,CORRECT,4.09696888923645
+22,"{""answer"": ""INCORRECT"", ""reasoning"": ""Patient has enterotomy and serosal lacerations as unavoidable surgical findings, not incidental or inherent complications.""}<|im_end|>",INCORRECT,0,CORRECT,3.928863286972046
+23,"{
+  ""answer"": ""INCORRECT"",
+  ""reasoning"": ""Patient has postoperative pulmonary edema and thick secretions, not pre-existing COPD; misattribution of COPD as pre-op condition is a clinical error.""
+}<|im_end|>",INCORRECT,1,INCORRECT,5.3728718757629395
+24,"{""answer"": ""INCORRECT"", ""reasoning"": ""Hypovolemic shock is incompatible with post-heart transplant hypotension due to cardiorenal syndrome and inotropic support.""}<|im_end|>",INCORRECT,1,INCORRECT,4.220092058181763
+25,"{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""No clinically harmful medical errors present; findings and management align with known pathology and treatment for severe aortic stenosis and heart failure.""
+}<|im_end|>",CORRECT,0,CORRECT,4.422906875610352
+26,"{""answer"": ""CORRECT"", ""reasoning"": ""Hct drop from 31 to 23 with 2 units PRBCs is clinically appropriate for acute blood loss anemia.""}<|im_end|>",CORRECT,0,CORRECT,4.2780070304870605
+27,"{""answer"": ""INCORRECT"", ""reasoning"": ""ABG pH of 7.17 indicates severe acidosis, inconsistent with pulmonary edema management; likely a documentation error.""}<|im_end|>",INCORRECT,0,CORRECT,4.210058927536011
+28,"{""answer"": ""INCORRECT"", ""reasoning"": ""Albumin of 1.4 is critically low; normal is >3.5, indicating severe malnutrition, not just protein-calorie malnutrition.""}<|im_end|>",INCORRECT,0,CORRECT,4.933678865432739
+29,"{
+  ""answer"": ""INCORRECT"",
+  ""reasoning"": ""Hypotension with tachycardia and dehydration in an immunocompromised patient with diverticulitis may indicate sepsis, but 'sepsis in an immunocompromised patient' is not clinically supported by the note's findings.""
+}<|im_end|>",INCORRECT,0,CORRECT,7.176409006118774
+30,"{""answer"": ""INCORRECT"", ""reasoning"": ""WBC 0 is impossible; absolute WBC count cannot be zero, indicating a critical laboratory error.""}<|im_end|>",INCORRECT,1,INCORRECT,3.9346671104431152
+31,"{""answer"": ""INCORRECT"", ""reasoning"": ""Diabetic foot ulcer cannot occur on the right elbow; location is medically inaccurate and clinically harmful.""}<|im_end|>",INCORRECT,1,INCORRECT,3.7951700687408447
+32,"{""answer"": ""INCORRECT"", ""reasoning"": ""Hyperparathyroidism of renal origin does not require liver transplant; error in treatment indication.""}<|im_end|>",INCORRECT,1,INCORRECT,3.67466402053833
+33,"{""answer"": ""INCORRECT"", ""reasoning"": ""Homograft with calcification and aortic stenosis is incorrectly described as 'recurrent calcified homograft' without clinical justification.""}<|im_end|>",INCORRECT,1,INCORRECT,4.692564249038696
+34,"{""answer"": ""INCORRECT"", ""reasoning"": ""Hypovolemic shock with AKI and pericardial tamponade requires fluid resuscitation, not just vitamin K for coagulopathy.""}<|im_end|>",INCORRECT,0,CORRECT,4.76646089553833
+35,"{""answer"": ""CORRECT"", ""reasoning"": ""No clinically harmful errors; management aligns with seroma infection guidelines.""}<|im_end|>",CORRECT,0,CORRECT,3.2630112171173096
+36,"{""answer"": ""INCORRECT"", ""reasoning"": ""Leptin is not used to treat hypokalemia; correct treatment should involve potassium supplements.""}<|im_end|>",INCORRECT,1,INCORRECT,3.734879970550537
+37,"{""answer"": ""INCORRECT"", ""reasoning"": ""Anemia of chronic disease is not typically the etiology of low Hb/Hct in heart failure; likely misattribution of cause.""}<|im_end|>",INCORRECT,0,CORRECT,4.3511998653411865
+38,"{""answer"": ""INCORRECT"", ""reasoning"": ""Systolic heart failure is not 'acute-on-chronic'; this is a misstatement of etiology and pathophysiology.""}<|im_end|>",INCORRECT,0,CORRECT,4.257601976394653
+39,"{""answer"": ""INCORRECT"", ""reasoning"": ""Patient has severe malnutrition with BMI 16.6 and weight loss; recommending PEG/tube feeding without prior assessment is premature and potentially harmful.""}<|im_end|>",INCORRECT,0,CORRECT,4.844714879989624
+40,"{""answer"": ""INCORRECT"", ""reasoning"": ""Prealbumin of 10.8 is critically low; cachexia management is inappropriate without addressing severe malnutrition.""}<|im_end|>",INCORRECT,1,INCORRECT,4.245661020278931
+41,"{
+  ""answer"": ""INCORRECT"",
+  ""reasoning"": ""Hypokalemia is defined as serum potassium <3.5 mEq/L; value of 3.9 mEq/L is normal, not hypokalemic.""
+}<|im_end|>",INCORRECT,1,INCORRECT,5.248090744018555
+42,"{""answer"": ""INCORRECT"", ""reasoning"": ""LVRS is not indicated for end-stage COPD with microfracture; incorrect procedure for chronic respiratory failure.""}<|im_end|>",INCORRECT,1,INCORRECT,3.8972651958465576
+43,"{""answer"": ""INCORRECT"", ""reasoning"": ""FEV1:FVC of 29% is inconsistent with emphysema; should be <70% but 29% suggests obstructive pattern, yet values are implausible for COPD severity.""}<|im_end|>",INCORRECT,0,CORRECT,6.377321004867554
+44,"{""answer"": ""INCORRECT"", ""reasoning"": ""Misattributing low albumin and pre-albumin to severe protein-calorie malnutrition ignores acute surgical stress and anemia.""}<|im_end|>",INCORRECT,1,INCORRECT,4.764572858810425
+45,"{""answer"": ""INCORRECT"", ""reasoning"": ""Aortic vascular injury is not incidental; it is a significant surgical complication requiring proper documentation and intervention.""}<|im_end|>",INCORRECT,1,INCORRECT,4.016165018081665
+46,"{""answer"": ""CORRECT"", ""reasoning"": ""No clinically harmful errors; MRI findings and management align with left temporal lobe glioma and cerebral edema.""}<|im_end|>",CORRECT,1,INCORRECT,3.8469550609588623
+47,"{""answer"": ""INCORRECT"", ""reasoning"": ""Diabetic ketoacidosis (DKA) is not consistent with acute kidney injury, fever, and lower back pain; these findings suggest a different diagnosis.""}<|im_end|>",INCORRECT,1,INCORRECT,4.553991079330444
+48,"{""answer"": ""INCORRECT"", ""reasoning"": ""Urosepsis is not supported by obstructed stent; pelvic fluid collection and UTI are cited, not urosepsis.""}<|im_end|>",INCORRECT,1,INCORRECT,4.572443723678589
+49,"{""answer"": ""INCORRECT"", ""reasoning"": ""Hypocalcemia is misstated; lab value Admit K 3.3 indicates hypokalemia, not hypocalcemia.""}<|im_end|>",INCORRECT,1,INCORRECT,4.695181131362915
+50,"{""answer"": ""INCORRECT"", ""reasoning"": ""Cerebral edema is not a standard management diagnosis for postoperative imaging findings without clinical symptoms or progression.""}<|im_end|>",INCORRECT,1,INCORRECT,4.060614109039307
+51,"{""answer"": ""INCORRECT"", ""reasoning"": ""Platelet count of 101 is normal; thrombocytopenia requires count <150,000; mislabeling normal value as thrombocytopenia is a clinically harmful error.""}<|im_end|>",INCORRECT,0,CORRECT,5.81164813041687
+52,"{""answer"": ""INCORRECT"", ""reasoning"": ""Thrombocytopenia is misstated as neutropenia; platelet and white blood cell counts are distinct and incorrectly conflated.""}<|im_end|>",INCORRECT,1,INCORRECT,4.51161003112793
+53,"{""answer"": ""INCORRECT"", ""reasoning"": ""Hypotension is not a cause of elevated LFTs; shock liver results from hypoperfusion, not hypotension directly.""}<|im_end|>",INCORRECT,0,CORRECT,4.424032926559448
+54,"{""answer"": ""INCORRECT"", ""reasoning"": ""Confuses peritonitis with PD-line infection; hypokalemia not linked to peritonitis; leukocytosis and WBC 799 suggest infection, not just emesis.""}<|im_end|>",INCORRECT,0,CORRECT,6.285385847091675
+55,"{""answer"": ""INCORRECT"", ""reasoning"": ""Morvan's syndrome does not present with pressure ulcers; this is a clinically incorrect association.""}<|im_end|>",INCORRECT,0,CORRECT,3.9442570209503174
+56,"{""answer"": ""INCORRECT"", ""reasoning"": ""IV potassium 400 mEq is excessive and potentially dangerous; typical dose is 20-40 mEq; high risk of hyperkalemia and cardiac arrhythmias.""}<|im_end|>",INCORRECT,1,INCORRECT,5.655512809753418
+57,"{""answer"": ""INCORRECT"", ""reasoning"": ""Biotin deficiency does not cause dehydration or acute kidney injury; incorrect pathophysiology.""}<|im_end|>",INCORRECT,1,INCORRECT,4.021539926528931
+58,"{""answer"": ""INCORRECT"", ""reasoning"": ""Enterotomy described as 'inherent and incidental' due to adhesions is incorrect; it is a surgical complication, not incidental.""}<|im_end|>",INCORRECT,0,CORRECT,4.958373308181763
+59,"{""answer"": ""CORRECT"", ""reasoning"": ""Patient has known T2D with elevated A1c and infection; management aligns with expected clinical approach.""}<|im_end|>",CORRECT,1,INCORRECT,4.095945835113525
+60,"{
+  ""answer"": ""INCORRECT"",
+  ""reasoning"": ""IV Amphotericin is inappropriate for COPD exacerbation; indicates fungal infection not supported by clinical context.""
+}<|im_end|>",INCORRECT,1,INCORRECT,4.591523885726929
+61,"{""answer"": ""INCORRECT"", ""reasoning"": ""Hypokalemia is incorrectly noted as K 3.5→3.3; 3.3 is still within normal range, not hypokalemia.""}<|im_end|>",INCORRECT,0,CORRECT,5.094594955444336
+62,"{""answer"": ""INCORRECT"", ""reasoning"": ""Blood cultures from initial admission were negative, but later grew coag-negative staph, making endocarditis diagnosis clinically inaccurate based on first culture.""}<|im_end|>",INCORRECT,0,CORRECT,4.521115064620972
+63,"{""answer"": ""CORRECT"", ""reasoning"": ""K+ of 3.3 and 3.0 is consistent with hypokalemia; replacement is appropriate and clinically accurate.""}<|im_end|>",CORRECT,1,INCORRECT,4.3134520053863525
+64,"{""answer"": ""INCORRECT"", ""reasoning"": ""IV carmine stain is not a treatment for coagulopathy; correct therapy involves fresh frozen plasma or factor concentrates.""}<|im_end|>",INCORRECT,1,INCORRECT,4.075430154800415
+65,"{""answer"": ""INCORRECT"", ""reasoning"": ""Hypokalemia is defined as serum potassium <3.5; value of 3.5 is normal, not hypokalemic.""}<|im_end|>",INCORRECT,1,INCORRECT,4.28310227394104
+66,"{""answer"": ""INCORRECT"", ""reasoning"": ""Pancytopenia with WBC 0.25 is inconsistent with chemotherapy-induced pancytopenia in ALL; likely misattribution of cause.""}<|im_end|>",INCORRECT,1,INCORRECT,4.823031902313232
+67,"{""answer"": ""CORRECT"", ""reasoning"": ""No clinically harmful errors; accurate description of post-bladder rupture complications and management.""}<|im_end|>",CORRECT,0,CORRECT,3.4181039333343506
+68,"{""answer"": ""INCORRECT"", ""reasoning"": ""LVAD patients with ischemic cardiomyopathy do not typically have elevated BNP baseline; BNP of 1200 is unusually high and clinically implausible.""}<|im_end|>",INCORRECT,0,CORRECT,4.680443048477173
+69,"{""answer"": ""INCORRECT"", ""reasoning"": ""Patient has brainstem edema due to tumor, not ventricle compression; ventricle compression is incorrectly attributed to edema.""}<|im_end|>",INCORRECT,1,INCORRECT,4.1811439990997314
+70,"{""answer"": ""INCORRECT"", ""reasoning"": ""Pulmonary arteriotomy from aortic dissection is a surgical error, not a benign result of adhesions.""}<|im_end|>",INCORRECT,0,CORRECT,3.9949800968170166
+71,"{""answer"": ""INCORRECT"", ""reasoning"": ""Hypovolemia from blood loss is inconsistent with leukopenia trending downward; leukopenia not expected in acute blood loss anemia.""}<|im_end|>",INCORRECT,1,INCORRECT,4.322304010391235
+72,"{""answer"": ""INCORRECT"", ""reasoning"": ""Hypervolemia is incorrect; pulmonary hypertension with cor pulmonale is typically associated with hypovolemia or volume depletion, not hypervolemia.""}<|im_end|>",INCORRECT,0,CORRECT,4.739166975021362
+73,"{""answer"": ""INCORRECT"", ""reasoning"": ""Incorrectly states 'high nutr complexity' in severely malnourished patient; contradicts clinical reality of severe protein-calorie malnutrition.""}<|im_end|>",INCORRECT,1,INCORRECT,4.197872877120972
+74,"{""answer"": ""INCORRECT"", ""reasoning"": ""NaCl infusion causes hyperkalemia, not hypokalemia; incorrect management of hypokalemia.""}<|im_end|>",INCORRECT,1,INCORRECT,3.725522994995117
+75,"{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""Elevated gastrin with bleeding ulcers post-bypass is expected; protein malnutrition is clinically appropriate given low albumin and poor intake.""
+}<|im_end|>",CORRECT,1,INCORRECT,4.385364055633545
+76,"{""answer"": ""INCORRECT"", ""reasoning"": ""Mucomyst (acetylcysteine) is not indicated to decrease nephrotoxicity of CT scans; hydration and non-contrast imaging are preferred.""}<|im_end|>",INCORRECT,0,CORRECT,4.563889026641846
+77,"{""answer"": ""INCORRECT"", ""reasoning"": ""Patient had acute blood loss anemia and was transfused, but HCT of 24 is not consistent with significant bleeding requiring transfusion.""}<|im_end|>",INCORRECT,0,CORRECT,4.287231922149658
+78,"{""answer"": ""INCORRECT"", ""reasoning"": ""Salipingographic is a fabricated term; correct term is 'catheter' or 'pleural' drainage, not 'salipingographic'.""}<|im_end|>",INCORRECT,1,INCORRECT,4.793844938278198
+79,"{""answer"": ""INCORRECT"", ""reasoning"": ""Mislabels chronic respiratory failure as acute on chronic, falsely implying acute respiratory failure present.""}<|im_end|>",INCORRECT,1,INCORRECT,3.8601059913635254
+80,"{""answer"": ""INCORRECT"", ""reasoning"": ""Letrazole is for estrogen receptor-positive breast cancer, not myeloid sarcoma or AML.""}<|im_end|>",INCORRECT,1,INCORRECT,3.587352991104126
+81,"{""answer"": ""INCORRECT"", ""reasoning"": ""Low-dose epinephrine for hypotension in aortic stenosis is contraindicated and clinically harmful.""}<|im_end|>",INCORRECT,1,INCORRECT,4.344497919082642
+82,"{""answer"": ""INCORRECT"", ""reasoning"": ""Alcohol withdrawal is not diagnosed without clinical criteria; hallucinations and delirium suggest Wernicke encephalopathy, not alcohol withdrawal.""}<|im_end|>",INCORRECT,0,CORRECT,4.2490150928497314
+83,"{""answer"": ""INCORRECT"", ""reasoning"": ""Cardiogenic shock is not appropriate diagnosis in a patient with hypoxemic respiratory failure and SIRS due to suspected PNA or lymphomatoid granuloma.""}<|im_end|>",INCORRECT,0,CORRECT,4.831820011138916
+84,"{""answer"": ""INCORRECT"", ""reasoning"": ""Spinal cord herniation is a misstatement; herniation involves disc, not spinal cord, and cord injury is not accurately described.""}<|im_end|>",INCORRECT,0,CORRECT,4.021491765975952
+85,"{""answer"": ""INCORRECT"", ""reasoning"": ""Incorrectly lists 'Acute on chronic Chronic Obstructive Pulmonary Disease' as a diagnosis; should be 'Acute on chronic liver disease' or similar.""}<|im_end|>",INCORRECT,1,INCORRECT,4.94122576713562
+86,"{""answer"": ""CORRECT"", ""reasoning"": ""Anemia of CKD is correctly noted with appropriate lab values and management; no clinically harmful error present.""}<|im_end|>",CORRECT,0,CORRECT,3.5675108432769775
+87,"{""answer"": ""CORRECT"", ""reasoning"": ""No clinically harmful errors; postoperative ileus and NGT use are appropriate and consistent with surgical recovery.""}<|im_end|>",CORRECT,0,CORRECT,3.656726121902466
+88,"{""answer"": ""INCORRECT"", ""reasoning"": ""Patient has coagulopathy from warfarin, not retained hemothorax due to VATS lobectomy; error in attributing cause of bleeding.""}<|im_end|>",INCORRECT,0,CORRECT,4.808562994003296
+89,"{""answer"": ""INCORRECT"", ""reasoning"": ""Cerebral edema is not present on admit (POA) as per CTH report; error in documentation of POA status.""}<|im_end|>",INCORRECT,0,CORRECT,4.094382047653198
+90,"{""answer"": ""INCORRECT"", ""reasoning"": ""Pre-albumin of 7.6 mg/dL is abnormally low and indicates severe malnutrition, not just protein-calorie malnutrition.""}<|im_end|>",INCORRECT,0,CORRECT,4.327217102050781
+91,"{""answer"": ""INCORRECT"", ""reasoning"": ""Urate level of 3.4 is abnormal; it should be uric acid, not urate, in laboratory context.""}<|im_end|>",INCORRECT,1,INCORRECT,4.191967725753784
+92,"{
+  ""answer"": ""INCORRECT"",
+  ""reasoning"": ""Pancreatitis causes hypertriglyceridemia, not hypokalemia; note incorrectly states hypokalemia when no lab findings are provided.""
+}<|im_end|>",INCORRECT,0,CORRECT,4.646562099456787
+93,"{""answer"": ""INCORRECT"", ""reasoning"": ""Patient has acute blood loss anemia from GI bleed, not hypokalemia; incorrect condition listed.""}<|im_end|>",INCORRECT,0,CORRECT,3.8066048622131348
+94,"{""answer"": ""INCORRECT"", ""reasoning"": ""Pulmonary edema is not likely due to MM; confusion and edema suggest volume overload, not metastatic disease progression.""}<|im_end|>",INCORRECT,1,INCORRECT,4.271792888641357
+95,"{""answer"": ""INCORRECT"", ""reasoning"": ""AML patient with leukocytosis and no blasts cannot have cellulitis as a cause of SIRS; misattribution of etiology.""}<|im_end|>",INCORRECT,0,CORRECT,4.5144689083099365
+96,"{""answer"": ""INCORRECT"", ""reasoning"": ""Akute kidney injury is incorrectly spelled; should be acute kidney injury.""}<|im_end|>",INCORRECT,1,INCORRECT,3.287006139755249
+97,"{""answer"": ""INCORRECT"", ""reasoning"": ""Potassium-40 is not a valid potassium supplement; correct formulation should be potassium chloride.""}<|im_end|>",INCORRECT,1,INCORRECT,3.503525733947754
+98,"{""answer"": ""CORRECT"", ""reasoning"": ""No clinically harmful errors; management of AKI with appropriate interventions is accurate and justified.""}<|im_end|>",CORRECT,0,CORRECT,3.284158945083618
+99,"{
+  ""answer"": ""INCORRECT"",
+  ""reasoning"": ""Stage I pressure ulcer is not typically described as 'present on admission (POA)' in standard medical documentation.""
+}<|im_end|>",INCORRECT,0,CORRECT,3.9497311115264893
+100,"{""answer"": ""INCORRECT"", ""reasoning"": ""Hemothorax after liver biopsy is not caused by anticonvulsants; this is a clinically incorrect etiology.""}<|im_end|>",INCORRECT,1,INCORRECT,4.216189861297607
+101,"{""answer"": ""INCORRECT"", ""reasoning"": ""Midline shift of 10 mm is not consistent with subfalcine herniation; clinically inaccurate and potentially harmful.""}<|im_end|>",INCORRECT,1,INCORRECT,4.228841066360474
+102,"{""answer"": ""INCORRECT"", ""reasoning"": ""Bulbar Sjögren's syndrome does not cause hypokalemia; potassium 3.3 is mild hypokalemia, but the diagnosis is medically inaccurate.""}<|im_end|>",INCORRECT,1,INCORRECT,4.790519952774048
+103,"{
+  ""answer"": ""INCORRECT"",
+  ""reasoning"": ""Pulmonary edema from aggressive fluid resuscitation in sepsis with hypovolemia is a medical error; fluid overload contradicts initial hypovolemia.""
+}<|im_end|>",INCORRECT,0,CORRECT,5.31841516494751
+104,"{""answer"": ""INCORRECT"", ""reasoning"": ""FVC and DLCO values reported as percentages of predicted but missing units or context; clinical inconsistency in interpretation.""}<|im_end|>",INCORRECT,0,CORRECT,3.908751964569092
+105,"{""answer"": ""CORRECT"", ""reasoning"": ""Ileus and anasarca with low albumin are consistent with protein-calorie malnutrition; no clinically harmful error.""}<|im_end|>",CORRECT,0,CORRECT,3.7947142124176025
+106,"{""answer"": ""INCORRECT"", ""reasoning"": ""Acyclovir is inappropriate for pancytopenia; it is antiviral, not indicated for cytopenias or their management.""}<|im_end|>",INCORRECT,1,INCORRECT,4.224134922027588
+107,"{
+  ""answer"": ""INCORRECT"",
+  ""reasoning"": ""Patient has SIRS due to UTI, but blood culture shows G+ cocci in clusters, not consistent with UTI etiology; misattribution of infection source.""
+}<|im_end|>",INCORRECT,1,INCORRECT,5.7526750564575195
+108,"{""answer"": ""INCORRECT"", ""reasoning"": ""Heart failure with reduced ejection fraction is described as acute on chronic, but it was present on initial admission, which is a clinical error.""}<|im_end|>",INCORRECT,0,CORRECT,4.453130006790161
+109,"{
+  ""answer"": ""INCORRECT"",
+  ""reasoning"": ""Patient has PICC-related bacteremia, but documented as CLABSI when it should be line-associated infection, not CLABSI due to incorrect terminology.""
+}<|im_end|>",INCORRECT,1,INCORRECT,5.219996213912964
+110,"{""answer"": ""INCORRECT"", ""reasoning"": ""Cerebral edema is not typically managed with dexamethasone alone; it requires comprehensive management including monitoring and possible other therapies.""}<|im_end|>",INCORRECT,0,CORRECT,4.075026750564575
+111,"{""answer"": ""INCORRECT"", ""reasoning"": ""Hypokalemia is incorrectly stated; patient has low albumin and pre-albumin, not hypokalemia, which is not supported by lab findings.""}<|im_end|>",INCORRECT,1,INCORRECT,4.730650901794434
+112,"{""answer"": ""CORRECT"", ""reasoning"": ""Dexamethasone use for cerebral edema is appropriate; no clinically harmful error present.""}<|im_end|>",CORRECT,0,CORRECT,3.49534010887146
+113,"{""answer"": ""INCORRECT"", ""reasoning"": ""Patient has glioblastoma, not leukemia; cerebral edema is correctly noted, but leukemia is a clinical error.""}<|im_end|>",INCORRECT,1,INCORRECT,3.936523199081421
+114,"{""answer"": ""CORRECT"", ""reasoning"": ""No clinically harmful errors; TLS management and lab trends are appropriately documented.""}<|im_end|>",CORRECT,0,CORRECT,3.4555718898773193
+115,"{
+  ""answer"": ""INCORRECT"",
+  ""reasoning"": ""Patient meets ASPEN criteria for severe malnutrition, but 'severe' is incorrectly stated as 'severe' on admission when it should be consistent with criteria.""
+}<|im_end|>",INCORRECT,0,CORRECT,5.01374888420105
+116,"{""answer"": ""INCORRECT"", ""reasoning"": ""IPF presents with restrictive physiology, not obstructive; FEV1/FVC of 0.48 indicates obstruction, which is inconsistent with IPF.""}<|im_end|>",INCORRECT,0,CORRECT,4.687276124954224
+117,"{""answer"": ""INCORRECT"", ""reasoning"": ""Protein-calorie malnutrition cannot be 'present on admission (POA)' if documented only in ICU progress note post-admission.""}<|im_end|>",INCORRECT,1,INCORRECT,4.043003082275391
+118,"{""answer"": ""INCORRECT"", ""reasoning"": ""Gram positive cocci in pairs and chains suggest streptococci, not consistent with neutropenic fever etiology without further context.""}<|im_end|>",INCORRECT,1,INCORRECT,4.238078832626343
+119,"{""answer"": ""INCORRECT"", ""reasoning"": ""R pneumocyte transplant does not exist; it is a fictional procedure.""}<|im_end|>",INCORRECT,1,INCORRECT,3.0623841285705566
+120,"{""answer"": ""INCORRECT"", ""reasoning"": ""Pseudomonas pyelonephritis is not present on admission; it developed after admission, making the POA statement inaccurate.""}<|im_end|>",INCORRECT,1,INCORRECT,4.382473945617676
+121,"{""answer"": ""INCORRECT"", ""reasoning"": ""Hypokalemia is not treated with calcium gluconate; potassium replacement is indicated, not calcium.""}<|im_end|>",INCORRECT,1,INCORRECT,3.8242650032043457
+122,"{""answer"": ""INCORRECT"", ""reasoning"": ""Chronic epiglottitis is not a known complication of sickle cell disease or respiratory failure.""}<|im_end|>",INCORRECT,1,INCORRECT,3.584825038909912
+123,"{""answer"": ""INCORRECT"", ""reasoning"": ""Diastolic dysfunction with preserved EF does not support 'underfilled LV' without evidence of volume overload or elevated filling pressures.""}<|im_end|>",INCORRECT,1,INCORRECT,3.9035818576812744
+124,"{""answer"": ""INCORRECT"", ""reasoning"": ""Lymph node metastasis is not suspected; diagnosis is based on pathology, not clinical suspicion.""}<|im_end|>",INCORRECT,0,CORRECT,3.4723918437957764
+125,"{""answer"": ""INCORRECT"", ""reasoning"": ""Hypokalemia is defined as potassium <3.5 mEq/L; K 3.4 is not hypokalemia, making the diagnosis incorrect.""}<|im_end|>",INCORRECT,0,CORRECT,4.623593091964722
+126,"{""answer"": ""INCORRECT"", ""reasoning"": ""Epinephrine is not a standard treatment for chronic respiratory failure in COPD; typically, bronchodilators like albuterol or tiotropium are used.""}<|im_end|>",INCORRECT,1,INCORRECT,4.737931966781616
+127,"{""answer"": ""INCORRECT"", ""reasoning"": ""Patient has acute respiratory failure and PNA, but immunosuppression with anabolic steroids is inappropriate and potentially harmful.""}<|im_end|>",INCORRECT,1,INCORRECT,4.1164069175720215
+128,"{""answer"": ""INCORRECT"", ""reasoning"": ""Hypovolemia is not supported by lab findings; hypokalemia and hyponatremia suggest fluid imbalance, not hypovolemia POA.""}<|im_end|>",INCORRECT,0,CORRECT,4.929840087890625
+129,"{""answer"": ""INCORRECT"", ""reasoning"": ""End-stage COPD is not clinically appropriate based on FEV1 42% and FVC 56%, which reflect severe but not end-stage disease.""}<|im_end|>",INCORRECT,0,CORRECT,4.731079816818237
+130,"{""answer"": ""INCORRECT"", ""reasoning"": ""Aspergillus pneumonia cannot be 'managed' as a POA condition if not present on admission; misclassification of timing is a clinical error.""}<|im_end|>",INCORRECT,0,CORRECT,4.374002933502197
+131,"{""answer"": ""INCORRECT"", ""reasoning"": ""Post-op A1C is inappropriate for monitoring acute blood loss anemia; should use hemoglobin.""}<|im_end|>",INCORRECT,1,INCORRECT,3.484308958053589
+132,"{""answer"": ""INCORRECT"", ""reasoning"": ""Prealbumin of 9.9 is low, supporting protein-calorie malnutrition, but TPN is not indicated without evidence of malabsorption or specific deficiency.""}<|im_end|>",INCORRECT,0,CORRECT,4.652030944824219
+133,"{""answer"": ""INCORRECT"", ""reasoning"": ""Protein-calorie malnutrition cannot be diagnosed solely due to SBO; it is a secondary consequence, not a concomitant diagnosis.""}<|im_end|>",INCORRECT,0,CORRECT,4.288675785064697
+134,"{""answer"": ""INCORRECT"", ""reasoning"": ""Anaphylactic shock is incompatible with acute decompensated heart failure due to conflicting pathophysiology.""}<|im_end|>",INCORRECT,1,INCORRECT,3.7000491619110107
+135,"{""answer"": ""INCORRECT"", ""reasoning"": ""Pancytopenia is incorrectly attributed to AML when lab values show neutropenia, not pancytopenia, and ANC is 0.05, indicating severe neutropenia, not pancytopenia.""}<|im_end|>",INCORRECT,0,CORRECT,6.285940885543823
+136,"{""answer"": ""CORRECT"", ""reasoning"": ""Weight loss and low prealbumin indicate protein-calorie malnutrition; TPN initiation is appropriate and clinically sound.""}<|im_end|>",CORRECT,0,CORRECT,3.952543258666992
+137,"{""answer"": ""INCORRECT"", ""reasoning"": ""Hypokalemia is incorrectly stated; patient has hypovolemia and malnutrition, not hypokalemia, based on clinical context.""}<|im_end|>",INCORRECT,1,INCORRECT,4.610716819763184
+138,"{""answer"": ""INCORRECT"", ""reasoning"": ""Confuses SIRS with sepsis; SIRS alone does not constitute sepsis without confirmed infection.""}<|im_end|>",INCORRECT,0,CORRECT,3.785616159439087
+139,"{""answer"": ""INCORRECT"", ""reasoning"": ""SIRS is diagnosed by criteria, not by meeting them in ER; BP drop to 80/40 does not support SIRS diagnosis.""}<|im_end|>",INCORRECT,0,CORRECT,4.383514881134033
+140,"{""answer"": ""INCORRECT"", ""reasoning"": ""Platelet threshold of 10,000 is too low; clinical threshold is typically 20,000–30,000, risking bleeding.""}<|im_end|>",INCORRECT,1,INCORRECT,4.935410022735596
+141,"{""answer"": ""INCORRECT"", ""reasoning"": ""Stage III CKD is defined by GFR 30-44, but Cr 1.7 with GFR 38 is consistent; error lies in labeling it as 'stage III' when GFR is within range, which is accurate—no error detected. Wait: actually, GFR 38 is within Stage III (30-44), so labeling is correct. Thus, no error. Therefore, answer should be CORRECT.""}
+
+Wait—re-evaluate:
+
+GFR 38 falls within Stage III CKD (30–44 mL/min/1.73m²). Cr 1.7 with GFR 38 is consistent. Baseline range 1.5–2.0 is typical for Stage III. No clinically harmful error.
+
+Final decision:
+
+{""answer"": ""CORRECT"", ""reasoning"": ""GFR 38 is within Stage III CKD range; labeling is accurate and clinically appropriate.""}<|im_end|>",INCORRECT,0,CORRECT,17.801605939865112
+142,"{""answer"": ""INCORRECT"", ""reasoning"": ""Amphotericin B is not indicated for prophylaxis in neutropenic patients; correct choice should be fluconazole or similar for fungal prophylaxis.""}<|im_end|>",INCORRECT,1,INCORRECT,4.761350870132446
+143,"{""answer"": ""INCORRECT"", ""reasoning"": ""Voriconazole is not indicated for neutropenic fever; it is an antifungal, not a prophylactic for bacterial infections.""}<|im_end|>",INCORRECT,0,CORRECT,4.542284965515137
+144,"{""answer"": ""INCORRECT"", ""reasoning"": ""Acute fulminant liver failure from methamphetamine use is not a recognized or typical clinical presentation.""}<|im_end|>",INCORRECT,0,CORRECT,3.7548232078552246
+145,"{""answer"": ""INCORRECT"", ""reasoning"": ""Framycetin is not a valid treatment for hepatic encephalopathy; lactulose is correct, Framycetin is an incorrect and potentially harmful medication.""}<|im_end|>",INCORRECT,1,INCORRECT,4.929482936859131
+146,"{""answer"": ""INCORRECT"", ""reasoning"": ""Hypokalemia is not present on admission (POA) if lab value was obtained on admission; it was noted later, making POA incorrect.""}<|im_end|>",INCORRECT,0,CORRECT,4.553813934326172
+147,"{""answer"": ""INCORRECT"", ""reasoning"": ""INR decreased from 2.1 to 1.6 after vitamin K and transfusions, contradicting the stated worsening coagulopathy.""}<|im_end|>",INCORRECT,0,CORRECT,4.480897903442383
+148,"{""answer"": ""INCORRECT"", ""reasoning"": ""Cabergoline is not indicated for UTI treatment; it is used for prolactin disorders, not urinary infections.""}<|im_end|>",INCORRECT,1,INCORRECT,4.099385023117065
+149,"{""answer"": ""INCORRECT"", ""reasoning"": ""CI values from RHC are inconsistent (1.17 vs 1.5); one is likely misreported or misinterpreted, indicating a clinical error.""}<|im_end|>",INCORRECT,0,CORRECT,4.599174737930298
+150,"{""answer"": ""INCORRECT"", ""reasoning"": ""A patient with a LVAD cannot simultaneously be admitted for orthotopic heart transplant; it is mutually exclusive.""}<|im_end|>",INCORRECT,0,CORRECT,3.789191246032715
+151,"{""answer"": ""INCORRECT"", ""reasoning"": ""Anemia transfusion threshold is 25%, but patient has Hct 27%, which is above standard threshold; error in clinical decision.""}<|im_end|>",INCORRECT,1,INCORRECT,4.456708908081055
+152,"{""answer"": ""INCORRECT"", ""reasoning"": ""Patient has pancytopenia but WBC 6 is described as leukocytosis; this is inconsistent with known pancytopenia and may indicate misclassification or error.""}<|im_end|>",INCORRECT,1,INCORRECT,5.558574199676514
+153,"{""answer"": ""INCORRECT"", ""reasoning"": ""Thrombocytopenia contraindicates heparin use; increasing Loovenox in this setting is clinically harmful.""}<|im_end|>",INCORRECT,1,INCORRECT,4.451689004898071
+154,"{""answer"": ""INCORRECT"", ""reasoning"": ""Hypokalemia is incorrectly stated when anion gap acidosis and renal failure are present; no hypokalemia is indicated.""}<|im_end|>",INCORRECT,1,INCORRECT,4.339390993118286
+155,"{""answer"": ""INCORRECT"", ""reasoning"": ""Patient has acute on chronic liver failure (ACLF), not acute decompensated cirrhosis; incorrect diagnosis in medical note.""}<|im_end|>",INCORRECT,1,INCORRECT,5.582096099853516
+156,"{""answer"": ""INCORRECT"", ""reasoning"": ""Anal fistula through cheek is not a known complication of oral cavity squamous cell carcinoma.""}<|im_end|>",INCORRECT,1,INCORRECT,3.6772778034210205
+157,"{""answer"": ""INCORRECT"", ""reasoning"": ""Pancytopenia is incorrectly listed as a treatment, not a condition; it is a clinical finding, not a therapy.""}<|im_end|>",INCORRECT,0,CORRECT,4.436758995056152
+158,"{""answer"": ""CORRECT"", ""reasoning"": ""Stage I pressure ulcer is correctly documented and management is appropriate with no clinically harmful errors.""}<|im_end|>",CORRECT,0,CORRECT,3.3348989486694336
+159,"{""answer"": ""INCORRECT"", ""reasoning"": ""Pressure ulcer stage is incorrectly written as 'Stage111' and 'Stage 11', which are not valid staging terms.""}<|im_end|>",INCORRECT,0,CORRECT,4.322077989578247
