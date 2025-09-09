@@ -5,6 +5,7 @@ import torch
 from tqdm import tqdm
 import os
 from datetime import datetime
+import gc
 
 # Set parameters
 model_name = "Qwen/Qwen3-4B"
