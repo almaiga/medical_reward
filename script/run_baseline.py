@@ -119,7 +119,7 @@ def run_inference(model, tokenizer, dataset, few_shot_examples):
         # Generate the output
         outputs = model.generate(
             **inputs, 
-            max_new_tokens=256, # Increased token count for reasoning
+            max_new_tokens=512, # Increased token count for reasoning
             temperature=0.1, 
             do_sample=False, # Disabled sampling for more deterministic output
             pad_token_id=tokenizer.eos_token_id
