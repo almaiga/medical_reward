@@ -1,0 +1,695 @@
+Text ID,model_label,model_reasoning,ground_truth_label,Error Flag,full_response
+ms-test-2,CORRECT,"The note is factually correct, as the patient's symptoms and lab results are consistent with a diagnosis of hepatitis A, which is commonly contracted through contaminated food or water, especially in areas with poor sanitation like Brazil.",INCORRECT,1,"I'll analyze the medical note you provided. Here's my response in JSON format:
+
+{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""The note is factually correct, as the patient's symptoms and lab results are consistent with a diagnosis of hepatitis A, which is commonly contracted through contaminated food or water, especially in areas with poor sanitation like Brazil.""
+}"
+ms-test-4,INCORRECT,"The note incorrectly identifies the causative agent as an irregular, non-septate yeast with wide angles, when the correct identification would be a non-septate, irregularly-shaped protozoan (e.g. Leishmania)",INCORRECT,1,"{
+  ""answer"": ""INCORRECT"",
+  ""reasoning"": ""The note incorrectly identifies the causative agent as an irregular, non-septate yeast with wide angles, when the correct identification would be a non-septate, irregularly-shaped protozoan (e.g. Leishmania)""
+}"
+ms-test-5,INCORRECT,"The note incorrectly identifies the causative agent as a commensal yeast, when the description suggests a bacterial infection with purulent areas of skin breakdown.",CORRECT,0,"{""answer"": ""INCORRECT"", ""reasoning"": ""The note incorrectly identifies the causative agent as a commensal yeast, when the description suggests a bacterial infection with purulent areas of skin breakdown.""}"
+ms-test-6,INCORRECT,"The note incorrectly identifies the causal pathogen as Respiratory Syncytial Virus (RSV), when Tetralogy of Fallot is a congenital heart defect and not typically associated with RSV infection.",INCORRECT,1,"I'll analyze the provided medical note.
+
+### Medical Note:
+A 4-year-old boy is brought to his pediatrician by his mother for a cough. His mother reports that he has had a loud cough and hoarse voice for the past 3 days. He also had a runny nose and mild fever last week. He was born with Tetralogy of Fallot and underwent surgery as an infant. He has been followed regularly by a pediatric cardiologist. There are no other sick contacts in the household. His temperature is 100.9 F (38.3 C), blood pressure is 105/65 mmHg, pulse is 110/min, and respirations are 24/min. An anteroposterior radiograph of the neck is shown in Figure A. A lung radiograph is normal. Respiratory syncytial virus is the causal pathogen of the patient's condition.
+
+### Answer:
+{""answer"": ""INCORRECT"", ""reasoning"": ""The note incorrectly identifies the causal pathogen as Respiratory Syncytial Virus (RSV), when Tetralogy of Fallot is a congenital heart defect and not typically associated with RSV infection.""}"
+ms-test-7,CORRECT,"The note is factually correct, as parainfluenza is a common cause of cough and hoarse voice in children.",CORRECT,0,"I'll analyze the provided medical note.
+
+### Medical Note:
+A 4-year-old boy is brought to his pediatrician by his mother for a cough. His mother reports that he has had a loud cough and hoarse voice for the past 3 days. He also had a runny nose and mild fever last week. He was born with Tetralogy of Fallot and underwent surgery as an infant. He has been followed regularly by a pediatric cardiologist. There are no other sick contacts in the household. His temperature is 100.9 F (38.3 C), blood pressure is 105/65 mmHg, pulse is 110/min, and respirations are 24/min. Parainfluenza is determined as the causal pathogen of the patient's condition after an anteroposterior radiograph of the neck is shown in Figure A. A lung radiograph is normal.
+
+### Answer:
+{""answer"": ""CORRECT"", ""reasoning"": ""The note is factually correct, as parainfluenza is a common cause of cough and hoarse voice in children.""}"
+ms-test-8,CORRECT,"The note is factually correct as it describes a plausible scenario for a child presenting with dehydration and non-bloody diarrhea, and norovirus is a common cause of such symptoms.",INCORRECT,1,"I'll analyze the provided medical note.
+
+### Medical Note:
+A 2-year-old male presents to the emergency department for fatigue and lethargy. Upon presentation, the patient is found to be severely dehydrated. The patient's mother says that he has been having non-bloody diarrhea for a day. She also says that the patient has not received any vaccinations after 6 months and currently attends a daycare center. Norovirus is suspected. The responsible microbe is isolated and its structure is analyzed.
+
+### Answer:
+{""answer"": ""CORRECT"", ""reasoning"": ""The note is factually correct as it describes a plausible scenario for a child presenting with dehydration and non-bloody diarrhea, and norovirus is a common cause of such symptoms.""}"
+ms-test-9,CORRECT,The note is factually correct as rotavirus is a common cause of severe diarrhea in unvaccinated children attending daycare centers.,CORRECT,0,"I'll analyze the provided medical note.
+
+### Medical Note:
+A 2-year-old male presents to the emergency department for fatigue and lethargy. Upon presentation, the patient is found to be severely dehydrated. The patient's mother says that he has been having non-bloody diarrhea for a day. She also says that the patient has not received any vaccinations after 6 months and currently attends a daycare center. The responsible microbe is isolated and its structure is analyzed. Rotavirus is suspected.
+
+### Answer:
+{""answer"": ""CORRECT"", ""reasoning"": ""The note is factually correct as rotavirus is a common cause of severe diarrhea in unvaccinated children attending daycare centers.""}"
+ms-test-10,CORRECT,"The note is factually correct, as Streptococcus pneumoniae grows selectively on medium containing factors V and X, such as Blood Agar.",INCORRECT,1,"I'll analyze the provided medical note.
+
+### Medical Note:
+A 68-year-old woman presents to the emergency room with productive cough and fever. She has a chronic cough that has been getting progressively worse over the last 2 weeks. Last night she developed a fever and vomited. She smoked one pack of cigarettes per day for 40 years and recently quit. Her past medical history includes COPD and her medications include ipratropium and fluticasone. On physical exam her temperature is 102.2 F (39 C), blood pressure is 131/78 mmHg, pulse is 110/min, respirations are 22/min, and oxygen saturation is 95% on room air. She has decreased breath sounds bilaterally with diffuse crackles. You obtain a sputum sample and identify an organism that grows selectively on medium containing factors V and X. Streptococcus pneumoniae infection is suspected.
+
+### Answer:
+{""answer"": ""CORRECT"", ""reasoning"": ""The note is factually correct, as Streptococcus pneumoniae grows selectively on medium containing factors V and X, such as Blood Agar.""}"
+ms-test-11,CORRECT,"The note is factually correct. Haemophilus influenzae grows selectively on chocolate agar, which contains factors V and X.",CORRECT,0,"I'll analyze the medical note you provided. 
+
+{""answer"": ""CORRECT"", ""reasoning"": ""The note is factually correct. Haemophilus influenzae grows selectively on chocolate agar, which contains factors V and X.""}"
+ms-test-12,CORRECT,"Salmonella enteritidis functions by invading intestinal M-cells, which is a correct description of its pathogenic mechanism.",INCORRECT,1,"{""answer"": ""CORRECT"", ""reasoning"": ""Salmonella enteritidis functions by invading intestinal M-cells, which is a correct description of its pathogenic mechanism.""}"
+ms-test-13,CORRECT,"The note correctly identifies Shigella dysenteriae as a gram-negative rod that invades intestinal M-cells, despite the note stating the bacteria is immobile.",CORRECT,0,"{""answer"": ""CORRECT"", ""reasoning"": ""The note correctly identifies Shigella dysenteriae as a gram-negative rod that invades intestinal M-cells, despite the note stating the bacteria is immobile.""}"
+ms-test-14,INCORRECT,"The note incorrectly identifies the causative agent of the patient's symptoms as Herpes simplex virus type 1, when the symptoms are more consistent with a sexually transmitted infection such as chlamydia or gonorrhea.",INCORRECT,1,"{""answer"": ""INCORRECT"", ""reasoning"": ""The note incorrectly identifies the causative agent of the patient's symptoms as Herpes simplex virus type 1, when the symptoms are more consistent with a sexually transmitted infection such as chlamydia or gonorrhea.""}"
+ms-test-15,UNKNOWN,NO REASONING,INCORRECT,1,"I'll analyze the provided medical note.
+
+### Medical Note:
+A 65-year-old woman presents to a physician with painful ankles for 2 days. Her symptoms began 1 week ago with a severe fever (40 C (104 F )) for 3 days. When the fever subsided, she developed a maculopapular rash over the trunk and extremities with painful wrists and fingers. She also reports abdominal pain, nausea, vomiting, and headaches. Last week she returned from a trip to Africa where she spent several weeks, mostly in rural areas. Her temperature is 37.5C (99.5 F ); pulse is 75/min; respiratory rate is 13/min, and blood pressure is 115/70 mm Hg. A maculopapular rash is observed over the trunk and limbs. Both ankles are swollen and painful to active and passive motion. The abdomen is soft without organomegaly. Dengue virus infection is suspected. Laboratory studies show the following:
+Laboratory test
+Hemoglobin 11.4 g/d
+Mean corpuscular volume 90 µm3
+Leukocyte count 4,500/mm3
+Segmented neutrophils 70%
+Lymphocytes 15%
+Platelet count 250"
+ms-test-16,UNKNOWN,NO REASONING,CORRECT,0,"I'll analyze the provided medical note.
+
+### Medical Note:
+A 65-year-old woman presents to a physician with painful ankles for 2 days. Her symptoms began 1 week ago with a severe fever (40 C (104 F )) for 3 days. When the fever subsided, she developed a maculopapular rash over the trunk and extremities with painful wrists and fingers. She also reports abdominal pain, nausea, vomiting, and headaches. Last week she returned from a trip to Africa where she spent several weeks, mostly in rural areas. Her temperature is 37.5 C (99.5 F ); pulse is 75/min; respiratory rate is 13/min, and blood pressure is 115/70 mm Hg. A maculopapular rash is observed over the trunk and limbs. Both ankles are swollen and painful to active and passive motion. The abdomen is soft without organomegaly. Laboratory studies show the following:
+Laboratory test
+Hemoglobin 11.4 g/d
+Mean corpuscular volume 90 µm3
+Leukocyte count 4,500/mm3
+Segmented neutrophils 70%
+Lymphocytes 15%
+Platelet count 250,000/mm3
+Ring-form"
+ms-test-17,CORRECT,"The note correctly identifies Mycobacterium avium complex (MAC) as a possible cause of the patient's symptoms, given the patient's HIV infection and lack of compliance with HAART therapy.",INCORRECT,1,"{""answer"": ""CORRECT"", ""reasoning"": ""The note correctly identifies Mycobacterium avium complex (MAC) as a possible cause of the patient's symptoms, given the patient's HIV infection and lack of compliance with HAART therapy.""}"
+ms-test-18,CORRECT,"The note correctly identifies the patient's HIV status and its management with HAART, despite the patient's non-compliance.",CORRECT,0,"{""answer"": ""CORRECT"", ""reasoning"": ""The note correctly identifies the patient's HIV status and its management with HAART, despite the patient's non-compliance.""}"
+ms-test-19,CORRECT,"The note correctly diagnoses the patient with herpes simplex virus type 2 infection, which is a common cause of genital ulcers.",INCORRECT,1,"{""answer"": ""CORRECT"", ""reasoning"": ""The note correctly diagnoses the patient with herpes simplex virus type 2 infection, which is a common cause of genital ulcers.""}"
+ms-test-20,CORRECT,"The note correctly diagnoses Haemophilus ducreyi infection, a sexually transmitted infection causing genital ulcers, and describes the symptoms and examination findings accurately.",CORRECT,0,"{""answer"": ""CORRECT"", ""reasoning"": ""The note correctly diagnoses Haemophilus ducreyi infection, a sexually transmitted infection causing genital ulcers, and describes the symptoms and examination findings accurately.""}"
+ms-test-21,CORRECT,"The note is factually correct as the patient has a history of thalassemia, which can cause iron deficiency anemia.",INCORRECT,1,"{""answer"": ""CORRECT"", ""reasoning"": ""The note is factually correct as the patient has a history of thalassemia, which can cause iron deficiency anemia.""}"
+ms-test-22,INCORRECT,"Severe combined immunodeficiency syndrome (SCID) is typically characterized by low levels of both IgG and IgA, not just IgG.",CORRECT,0,"I'll analyze the provided medical note.
+
+### Medical Note:
+A 3-year-old Cuban-American male has a history of recurrent Pseudomonas and Candida infections. Laboratory analysis reveals no electrolyte abnormalities. The child is suspected to have severe combined immunodeficiency syndrome after examination of his serum shows decreased levels of IgG and CT scan reveals the absence of a thymus.
+
+### Answer:
+{""answer"": ""INCORRECT"", ""reasoning"": ""Severe combined immunodeficiency syndrome (SCID) is typically characterized by low levels of both IgG and IgA, not just IgG.""}"
+ms-test-23,CORRECT,"The note is factually correct, as atopic dermatitis is a common condition in infants and the provided lab values are within normal limits.",INCORRECT,1,"I'll analyze the provided medical note for accuracy.
+
+### Medical Note:
+A 5 month-old boy with no significant past medical, surgical, or family history is brought the pediatrician by his parents for a new rash. The parents state that the rash started several weeks earlier and has not changed. The boy has breastfed since birth and started experimenting with soft foods at the age of 4 months. Physical examination reveals erythematous plaques with shiny, yellow scales over the scalp and external ears. Vital signs are within normal limits. Patient is diagnosed with atopic dermatitis. Complete blood count is as follows:
+WBC  8,300 cells/ml3
+Hct 46.1%
+Hgb 17.1 g/dL
+Mean corpuscular volume (MCV) 88 fL
+Platelets 242
+
+### Answer:
+{""answer"": ""CORRECT"", ""reasoning"": ""The note is factually correct, as atopic dermatitis is a common condition in infants and the provided lab values are within normal limits.""}"
+ms-test-24,CORRECT,"The note is factually correct, as infantile seborrheic dermatitis is a common condition in infants characterized by erythematous plaques with shiny, yellow scales.",CORRECT,0,"I'll analyze the provided medical note for accuracy.
+
+### Medical Note:
+A 5 month-old boy with no significant past medical, surgical, or family history is brought the pediatrician by his parents for a new rash. The parents state that the rash started several weeks earlier and has not changed. The boy has breastfed since birth and started experimenting with soft foods at the age of 4 months. Physical examination reveals erythematous plaques with shiny, yellow scales over the scalp and external ears. Vital signs are within normal limits. Complete blood count is as follows:
+WBC  8,300 cells/ml3
+Hct 46.1%
+Hgb 17.1 g/dL
+Mean corpuscular volume (MCV) 88 fL
+Platelets 242
+Patient is diagnosed with infantile seborrheic dermatitis.
+
+### Answer:
+{""answer"": ""CORRECT"", ""reasoning"": ""The note is factually correct, as infantile seborrheic dermatitis is a common condition in infants characterized by erythematous plaques with shiny, yellow scales.""}"
+ms-test-25,UNKNOWN,NO REASONING,INCORRECT,1,"I'll analyze the provided medical note.
+
+### Medical Note:
+A 60-year-old man presents to the physician for a follow-up examination. During the previous visit, splenomegaly was detected on the abdominal exam, which has been confirmed by abdominal ultrasound. He has no complaints other than fatigue for several months. There is no history of serious illness. His only medication is acetaminophen for knee pain. The temperature is 36.7 C (98.1 F ), pulse is 68, respirations are 12/min, and blood pressure is 125/70 mm Hg. On physical examination, the spleen size on percussion is 16 cm (6.2 in). Otherwise, the physical examination shows no abnormalities. The laboratory test results are as follows:
+Hemoglobin 10 g/dL
+Mean corpuscular volume 90  m3
+Leukocyte count 80,000/mm3
+Platelet count 450,000/mm3
+The peripheral blood smear shows a predominance of neutrophils and the presence of band cells, myelocytes, promyelocytes, and blasts (< 5%). The cytogenetic study shows t(9;22). The patient is diagnosed with classical Hodgkin's lymphoma"
+ms-test-26,UNKNOWN,NO REASONING,CORRECT,0,"I'll analyze the provided medical note.
+
+### Medical Note:
+A 60-year-old man presents to the physician for a follow-up examination. During the previous visit, splenomegaly was detected on the abdominal exam, which has been confirmed by abdominal ultrasound. He has no complaints other than fatigue for several months. There is no history of serious illness. His only medication is acetaminophen for knee pain. The temperature is 36.7 C (98.1 F ), pulse is 68, respirations are 12/min, and blood pressure is 125/70 mm Hg. On physical examination, the spleen size on percussion is 16 cm (6.2 in). Otherwise, the physical examination shows no abnormalities. The laboratory test results are as follows:
+Hemoglobin 10 g/dL
+Mean corpuscular volume 90  m3
+Leukocyte count 80,000/mm3
+Platelet count 450,000/mm3
+The patient is diagnosed with chronic myeloid leukemia after the peripheral blood smear shows a predominance of neutrophils and the presence of band cells, myelocytes, promyelocytes, and blasts (< 5%). The cytogenetic study shows t(9;22)."
+ms-test-27,CORRECT,"The note accurately describes the symptoms and examination findings of trigeminal neuralgia, a condition characterized by sudden, severe pain on one side of the face.",INCORRECT,1,"I'll analyze the provided medical note.
+
+### Medical Note:
+A 43-year-old woman with suspected trigeminal cephalgia presents to the neurology clinic in significant pain. She reports a sharp, stabbing electric-like pain on the right side of her face. The pain started suddenly 2 weeks ago. The pain is so excruciating that she can no longer laugh, speak, or eat her meals as these activities cause episodes of pain. She had to miss work last week as a result. Her attacks last about 3 minutes and go away when she goes to sleep. She typically has 2-3 attacks per day now. The vital signs include: blood pressure 132/84 mm Hg, heart rate 79/min, and respiratory rate 14/min. A neurological examination shows no loss of crude touch, tactile touch, or pain sensations on the left side of the face. The pupillary light and accommodation reflexes are normal. There is no drooping of her mouth, ptosis, or anhidrosis noted.
+
+### Answer:
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately describes the symptoms and examination findings of trigeminal neuralgia, a condition characterized by sudden, severe pain on one side of the face."""
+ms-test-28,INCORRECT,"The note incorrectly states the patient's diagnosis as trigeminal neuralgia, which is typically associated with facial pain caused by compression of the trigeminal nerve, whereas the patient's symptoms are more suggestive of trigeminal neuralgia-like pain, which is often associated with other conditions such as multiple sclerosis or temporal arteritis.",CORRECT,0,"{""answer"": ""INCORRECT"", ""reasoning"": ""The note incorrectly states the patient's diagnosis as trigeminal neuralgia, which is typically associated with facial pain caused by compression of the trigeminal nerve, whereas the patient's symptoms are more suggestive of trigeminal neuralgia-like pain, which is often associated with other conditions such as multiple sclerosis or temporal arteritis.""}"
+ms-test-29,UNKNOWN,NO REASONING,INCORRECT,1,"I'll analyze the provided medical note.
+
+### Medical Note:
+A 35-year-old woman comes to the clinic with complaints of joint pain and stiffness for the past few months. Her hands, lower back, and left knee are involved and associated with morning stiffness that improves throughout the day with activities. She also complains that her fingers change color upon exposure to cold. She has also noticed a tightening of the skin on her face and thinning of her lips. She feels tired throughout the day and has taken over-the-counter multivitamins that do not seem to help her much. The patient does not smoke cigarettes and drinks alcohol socially. She was diagnosed with hypertension 1 year ago and has been taking hydralazine for the past year. She lost her parents in a road traffic accident 3 years ago. Temperature is 36.7 C (98 F), blood pressure is 140/85 mm Hg, pulse is 72/min, respirations are 12/min, and BMI is 25 kg/m2. Her skin appears shiny and slightly thickened, especially her face and hands.
+Laboratory investigation:
+Complete blood count
+Hemoglobin 9.5 g/dl
+Leucocytes 5,500/mm3
+Platelets 150,"
+ms-test-30,UNKNOWN,NO REASONING,CORRECT,0,"I'll analyze the provided medical note.
+
+### Medical Note:
+A 35-year-old woman comes to the clinic with complaints of joint pain and stiffness for the past few months. Her hands, lower back, and left knee are involved and associated with morning stiffness that improves throughout the day with activities. She also complains that her fingers change color upon exposure to cold. She has also noticed a tightening of the skin on her face and thinning of her lips. She feels tired throughout the day and has taken over-the-counter multivitamins that do not seem to help her much. The patient does not smoke cigarettes and drinks alcohol socially. She was diagnosed with hypertension 1 year ago and has been taking hydralazine for the past year. She lost her parents in a road traffic accident 3 years ago. Temperature is 36.7 C (98 F), blood pressure is 140/85 mm Hg, pulse is 72/min, respirations are 12/min, and BMI is 25 kg/m2. Her skin appears shiny and slightly thickened, especially her face and hands. Diffuse cutaneous systemic scleroderma is suspected.
+Laboratory investigation:
+Complete blood count
+Hemoglobin 9.5 g/dl
+Leucocytes"
+ms-test-31,CORRECT,"The note is factually correct, as Guillain-Barre syndrome is a rare autoimmune disorder that can cause muscle weakness and is often associated with recent travel, hiking, and camping.",INCORRECT,1,"{""answer"": ""CORRECT"", ""reasoning"": ""The note is factually correct, as Guillain-Barre syndrome is a rare autoimmune disorder that can cause muscle weakness and is often associated with recent travel, hiking, and camping.""}"
+ms-test-32,CORRECT,"The note is factually correct, as the patient's symptoms and lab results are consistent with hypokalemia, a common complication in patients with acute leukemia.",CORRECT,0,"{""answer"": ""CORRECT"", ""reasoning"": ""The note is factually correct, as the patient's symptoms and lab results are consistent with hypokalemia, a common complication in patients with acute leukemia.""}"
+ms-test-33,INCORRECT,The note contains a factual error regarding the patient's symptoms and diagnosis.,INCORRECT,1,"I'll analyze the provided medical note.
+
+### Medical Note:
+A patient with a known spinal cord ependymoma presents to his neurologist for a check up. He complains that he has had difficulty walking, which he attributes to left leg weakness. On exam, he is noted to have 1/5 strength in his left lower extremity, as well as decreased vibration and position sensation in the left lower extremity and decreased pain and temperature sensation in the right lower extremity. Patient is diagnosed with right-sided Brown-Sequard (hemisection).
+
+### Answer:
+{""answer"": ""INCORRECT"", ""reasoning"": ""The note contains a factual error regarding the patient's symptoms and diagnosis.""}"
+ms-test-34,CORRECT,"The note accurately describes a Brown-Sequard syndrome, which is a type of spinal cord injury resulting in hemisection of the spinal cord, typically affecting one side of the body.",CORRECT,0,"{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately describes a Brown-Sequard syndrome, which is a type of spinal cord injury resulting in hemisection of the spinal cord, typically affecting one side of the body.""}"
+ms-test-35,CORRECT,NO REASONING,INCORRECT,1,"I'll analyze the provided medical note.
+
+### Medical Note:
+A young Mediterranean teen brings her 4-year-old little brother to the Emergency Room because of a high temperature. Their parents are on their way to the hospital, but, in the meantime, she provides some of the history. She explains that he has been running a fever and limping for the past week. This morning, she had trouble awakening him, and she noticed some swelling and redness around his right ankle. In terms of his past medical history, she knows he has something wrong with his blood. He had to receive extra vaccinations as an infant, and he takes an antibiotic everyday. On exam in the ED, his temperature is 102.4 deg F (39.1 deg C), blood pressure is 90/60 mmHg, pulse is 123/min, and respirations are 22/min. He is lethargic, and is diagnosed with thrombophlebitis after his exam is noteworthy for erythema and edema in an area surrounding his distal shin.
+
+### Answer:
+{""answer"": ""CORRECT"", ""reasoning"": ""The note is factually correct, as thrombophlebitis is a possible complication of sickle cell disease, which is"
+ms-test-36,CORRECT,"The note is factually correct, as the patient's symptoms and lab results are consistent with osteomyelitis, a bacterial infection of the bone.",CORRECT,0,"I'll analyze the medical note you provided. 
+
+{""answer"": ""CORRECT"", ""reasoning"": ""The note is factually correct, as the patient's symptoms and lab results are consistent with osteomyelitis, a bacterial infection of the bone.""}"
+ms-test-37,CORRECT,"The note is factually correct, as Schistosoma mansoni is a parasitic infection that can cause fever, diarrhea, abdominal pain, and skin rash, especially in individuals who have been exposed to contaminated water while engaging in outdoor activities.",INCORRECT,1,"I'll analyze the medical note you provided. Here's my response in JSON format:
+
+{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""The note is factually correct, as Schistosoma mansoni is a parasitic infection that can cause fever, diarrhea, abdominal pain, and skin rash, especially in individuals who have been exposed to contaminated water while engaging in outdoor activities.""
+}"
+ms-test-38,INCORRECT,The note contains a factual error regarding the patient's symptoms and diagnosis.,CORRECT,0,"I'll analyze the medical note you provided. Here's my response in JSON format:
+
+{
+  ""answer"": ""INCORRECT"",
+  ""reasoning"": ""The note contains a factual error regarding the patient's symptoms and diagnosis.""
+}"
+ms-test-39,CORRECT,"The note accurately describes the patient's symptoms and diagnosis, including the potential for incarceration and the impact of illness anxiety disorder.",INCORRECT,1,"I'll analyze the provided medical note.
+
+### Medical Note:
+A 45-year-old woman repetitively visits the general surgery clinic worried that her inguinal hernia is incarcerated. 2 months ago, she was seen in the emergency department where she presented with a left lower abdominal swelling. The mass was easily reduced and the patient was referred to the general surgery clinic for elective surgical repair. Because her condition was deemed not urgent, she was informed that she was down on the surgical waiting list. Despite this, she continues to visit the clinic and the ED worried that her bowels are 'trapped and dying.' Each time she is reassured and any protrusion present is quickly reduced. She has previously frequently visited her primary care physician for complaints of abdominal pain and inconsistent bowel habits, but no etiology could be identified. She continues to intermittently have these symptoms and spends hours every day worrying about what may be going on. Patient is diagnosed with illness anxiety disorder. She has no other significant past medical history.
+
+### Answer:
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately describes the patient's symptoms and diagnosis, including the potential for incarceration and the impact of illness anxiety disorder.""}"
+ms-test-40,CORRECT,"The note accurately describes the patient's symptoms and diagnosis, including the somatic symptom disorder.",CORRECT,0,"I'll analyze the provided medical note.
+
+### Medical Note:
+A 45-year-old woman repetitively visits the general surgery clinic worried that her inguinal hernia is incarcerated. 2 months ago, she was seen in the emergency department where she presented with a left lower abdominal swelling. The mass was easily reduced and the patient was referred to the general surgery clinic for elective surgical repair. Because her condition was deemed not urgent, she was informed that she was down on the surgical waiting list. Despite this, she continues to visit the clinic and the ED worried that her bowels are 'trapped and dying.' Each time she is reassured and any protrusion present is quickly reduced. She has previously frequently visited her primary care physician for complaints of abdominal pain and inconsistent bowel habits, but no etiology could be identified. She continues to intermittently have these symptoms and spends hours every day worrying about what may be going on. She has no other significant past medical history. Patient is diagnosed with somatic symptom disorder.
+
+### Answer:
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately describes the patient's symptoms and diagnosis, including the somatic symptom disorder.""}"
+ms-test-41,INCORRECT,The note contains a factual error regarding the patient's age.,INCORRECT,1,"I'll analyze the medical note you provided. Here's my response in JSON format:
+
+{
+  ""answer"": ""INCORRECT"",
+  ""reasoning"": ""The note contains a factual error regarding the patient's age.""
+}"
+ms-test-42,INCORRECT,"The note contains a factual error. Bernard-Soulier syndrome is characterized by platelet dysfunction, but the platelets do aggregate to ristocetin in patients with this condition.",CORRECT,0,"I will analyze the medical note you provided:
+
+A 13-year-old girl is brought to the pediatrician due to a 4-month history of heavy vaginal bleeding during menstrual periods. She endorses episodes of bleeding gums after brushing her teeth and experienced prolonged bleeding after tonsillectomy 6 years ago. Her mother states that she bled significantly during childbirth and that the girl's older brother has similar symptoms including easy bruising. Vitals were stable and physical exam was not revealing. Laboratory studies show:
+
+Platelet count: 72,000/mm^3
+Bleeding time: 14 min
+Prothrombin time: 12 secs (INR = 1)
+Partial thromboplastin time: 40 secs
+
+The patient is diagnosed with Bernard-Soulier syndrome after blood smear demonstrates increased megakaryocytes and enlarged platelets. Platelets do not aggregate to ristocetin..
+
+My analysis is:
+
+{""answer"": ""INCORRECT"", ""reasoning"": ""The note contains a factual error. Bernard-Soulier syndrome is characterized by platelet dysfunction, but the platelets do aggregate to ristocetin in patients with this condition.""}"
+ms-test-43,CORRECT,"The note is factually correct, including the differential diagnosis of histoplasmosis.",INCORRECT,1,"I'll analyze the provided medical note.
+
+### Medical Note:
+A 30-year-old patient comes to the emergency room with a chief complaint of left chest pain and a productive cough with purulent sputum for 1 week. He also complains of shortness of breath. He said he had been previously diagnosed with influenza but did not follow the doctor's instructions. His vitals include: heart rate 70/min, respiratory rate 22/min, temperature 38.7 C (101.7 F), blood pressure 120/60 mm Hg, and SO2 80%. The differential diagnosis includes histoplasmosis. His hemogram and chest X-ray findings are as follows:
+Hemoglobin 14 mg/dL
+Hematocrit 45%
+Leukocyte count 12,000/mm3
+Neutrophils 82%
+Lymphocytes 15%
+Monocytes 3%
+Platelet count 270,000/mm3
+Chest X-ray alveolar infiltrates in the left base with air bronchograms
+
+### Answer:
+{""answer"": ""CORRECT"", ""reasoning"": ""The note is factually correct, including the differential diagnosis of histoplasmosis.""}"
+ms-test-44,CORRECT,"The note is factually correct, as the patient's symptoms and lab results are consistent with pneumonia.",CORRECT,0,"I'll analyze the provided medical note.
+
+### Medical Note:
+A 30-year-old patient comes to the emergency room with a chief complaint of left chest pain and a productive cough with purulent sputum for 1 week. He also complains of shortness of breath. He said he had been previously diagnosed with influenza but did not follow the doctor's instructions. His vitals include: heart rate 70/min, respiratory rate 22/min, temperature 38.7 C (101.7 F), blood pressure 120/60 mm Hg, and SO2 80%. His hemogram and chest X-ray findings are as follows:
+Hemoglobin 14 mg/dL
+Hematocrit 45%
+Leukocyte count 12,000/mm3
+Neutrophils 82%
+Lymphocytes 15%
+Monocytes 3%
+Platelet count 270,000/mm3
+Chest X-ray alveolar infiltrates in the left base with air bronchograms
+The differential diagnosis includes pneumonia.
+
+### Answer:
+{""answer"": ""CORRECT"", ""reasoning"": ""The note is factually correct, as the patient's symptoms and lab results are consistent with pneumonia.""}"
+ms-test-45,CORRECT,"The note is factually correct as microscopic polyangiitis is a type of vasculitis that can cause symptoms such as fever, abdominal pain, weight loss, muscle weakness, and numbness in the lower extremities.",INCORRECT,1,"{""answer"": ""CORRECT"", ""reasoning"": ""The note is factually correct as microscopic polyangiitis is a type of vasculitis that can cause symptoms such as fever, abdominal pain, weight loss, muscle weakness, and numbness in the lower extremities.""}"
+ms-test-46,CORRECT,"The note is factually correct as polyarteritis nodosa is a type of vasculitis that can cause fever, abdominal pain, weight loss, muscle weakness, and numbness in the lower extremities.",CORRECT,0,"{""answer"": ""CORRECT"", ""reasoning"": ""The note is factually correct as polyarteritis nodosa is a type of vasculitis that can cause fever, abdominal pain, weight loss, muscle weakness, and numbness in the lower extremities.""}"
+ms-test-47,INCORRECT,"The patient is a 35-year-old woman, not a 29-year-old man.",INCORRECT,1,"{""answer"": ""INCORRECT"", ""reasoning"": ""The patient is a 35-year-old woman, not a 29-year-old man.""}"
+ms-test-48,CORRECT,"The note is factually correct, as PML is a known complication of natalizumab treatment in patients with Crohn disease.",CORRECT,0,"I'll analyze the provided medical note for accuracy.
+
+### Medical Note:
+A 35-year-old woman with a history of Crohn disease presents for a follow-up appointment. She says that lately, she has started to notice difficulty walking. She says that some of her friends have joked that she appears to be walking as if she was drunk. Past medical history is significant for Crohn disease diagnosed 2 years ago, managed with natalizumab for the past year because her intestinal symptoms have become severe and unresponsive to other therapies. On physical examination, there is gait and limb ataxia present. Strength is 4/5 in the right upper limb. A T1/T2 MRI of the brain is ordered and is shown. The patient is diagnosed with progressive multifocal encephalopathy (PML).
+
+### Answer:
+{""answer"": ""CORRECT"", ""reasoning"": ""The note is factually correct, as PML is a known complication of natalizumab treatment in patients with Crohn disease.""}"
+ms-test-49,INCORRECT,"The note incorrectly diagnoses the patient with anemia of chronic disease, when the patient actually has sickle cell anemia.",INCORRECT,1,"{""answer"": ""INCORRECT"", ""reasoning"": ""The note incorrectly diagnoses the patient with anemia of chronic disease, when the patient actually has sickle cell anemia.""}"
+ms-test-50,CORRECT,The note accurately describes aplastic crisis in a patient with sickle cell anemia.,CORRECT,0,"I'll analyze the provided medical note.
+
+### Medical Note:
+A 10-year-old girl with previously diagnosed sickle cell anemia presents to the emergency room with a low-grade fever, malaise, petechiae on her arms, and a rash on her face. She regularly takes hydroxyurea and receives blood transfusions to treat her condition. Her blood tests show a hemoglobin of 4.0 g/dL, MCV of 87 fl, and 2% reticulocyte count. Patient is diagnosed with aplastic crisis after an attempted bone marrow biopsy was a dry, empty tap.
+
+### Answer:
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately describes aplastic crisis in a patient with sickle cell anemia.""}"
+ms-test-51,CORRECT,"The note is factually correct, as spina bifida oculta is a congenital condition that can cause impaired pain and temperature sensation in a cape-like distribution.",INCORRECT,1,"I'll analyze the medical note you provided.
+
+### Medical Note:
+A 10-year-old boy is brought to the pediatrician by his mother for evaluation. Last night, he was playing with his younger brother and a hot cup of coffee fell on his left shoulder. Though his skin became red and swollen, he acted as if nothing happened and did not complain of pain or discomfort. He has met all expected developmental milestones, and his vaccinations are up-to-date. Physical examination reveals a normal appearing boy with height and weight in the 56th and 64th percentiles for his age, respectively. The skin over his left shoulder is erythematous and swollen. Patient is diagnosed with spina bifida oculta after sensory examination reveals impaired pain and temperature sensation in a cape-like distribution across both shoulders, arms, and neck. The light touch, vibration, and position senses are preserved. The motor examination is within normal limits, and he has no signs of a cerebellar lesion. His gait is normal.
+
+### Answer:
+{""answer"": ""CORRECT"", ""reasoning"": ""The note is factually correct, as spina bifida oculta is a congenital condition that can cause impaired pain and temperature sensation in a cape-like distribution.""}"
+ms-test-52,INCORRECT,"The note incorrectly diagnoses the patient with Arnold-Chiari malformation, which is a congenital condition, whereas the patient is a 10-year-old boy with no history of such a condition.",CORRECT,0,"I'll analyze the medical note you provided. Here's my response in JSON format:
+
+{""answer"": ""INCORRECT"", ""reasoning"": ""The note incorrectly diagnoses the patient with Arnold-Chiari malformation, which is a congenital condition, whereas the patient is a 10-year-old boy with no history of such a condition.""}"
+ms-test-53,INCORRECT,The note contains a factual error.,INCORRECT,1,"I'll analyze the provided medical note.
+
+### Medical Note:
+A 26-year-old man presents to the office complaining of persistent epigastric pain for the past 2 months. He states that his pain is worse a few hours after he eats. His father had similar symptoms. Past medical history is insignificant. He is a non-smoker and does not drink alcohol. The vital signs include blood pressure 120/90 mm Hg, heart rate 83/min, and temperature 37.0 C (98.6 F). Physical examination is insignificant except for mild epigastric tenderness. A metabolic panel reveals the following:
+Serum sodium 136 mEq/L
+Serum potassium 4.2 mEq/L
+Calcium 13.2 mg/dL
+Bicarbonate 26 mEq/L
+Upper gastrointestinal endoscopy reveals multiple duodenal ulcers. Patient is diagnosed with gastric adenocarcinoma, intestinal type.
+
+### Answer:
+{""answer"": ""INCORRECT"", ""reasoning"": ""The note contains a factual error.""}"
+ms-test-54,INCORRECT,"The note contains a factual error regarding the diagnosis of MEN1, which typically involves multiple endocrine neoplasias, not duodenal ulcers.",CORRECT,0,"I'll analyze the provided medical note.
+
+### Medical Note:
+A 26-year-old man presents to the office complaining of persistent epigastric pain for the past 2 months. He states that his pain is worse a few hours after he eats. His father had similar symptoms. Past medical history is insignificant. He is a non-smoker and does not drink alcohol. The vital signs include blood pressure 120/90 mm Hg, heart rate 83/min, and temperature 37.0 C (98.6 F). Physical examination is insignificant except for mild epigastric tenderness. A metabolic panel reveals the following:
+Serum sodium 136 mEq/L
+Serum potassium 4.2 mEq/L
+Calcium 13.2 mg/dL
+Bicarbonate 26 mEq/L
+Patient is diagnosed with MEN1 after upper gastrointestinal endoscopy reveals multiple duodenal ulcers.
+
+### Answer:
+{""answer"": ""INCORRECT"", ""reasoning"": ""The note contains a factual error regarding the diagnosis of MEN1, which typically involves multiple endocrine neoplasias, not duodenal ulcers.""}"
+ms-test-55,UNKNOWN,NO REASONING,INCORRECT,1,"I'll analyze the provided medical note.
+
+### Medical Note:
+A 31-year-old man with suspected social anxiety disorder is brought in to the clinic by his sister because she is concerned about his behavior since the death of their mother 2 months ago. The patient's sister states that he has always been a 'loner' and preferred being by himself than socializing with others. His social isolation resulted in him being'socially awkward', as described by his family. However, 2 months ago, when he found out about the death of their mother, he showed little emotion and attended her funeral in jeans and a dirty T-shirt which upset the rest of their family. When asked about it, he shrugged and said he was in a hurry to get to the funeral and 'just left the house with what I had on.' He does not speak much during the interview, allowing his sister to speak on his behalf. His sister insists that he has 'always been like this', quiet and a complacent child who had no interest in playing with other children. The patient currently lives alone and spends his time repairing and building electrical appliances, and his sister is worried that his self-imposed isolation is making it 'impossible for him to interact with other people normally'.
+
+### Answer:
+"
+ms-test-56,UNKNOWN,NO REASONING,CORRECT,0,"I'll analyze the provided medical note.
+
+### Medical Note:
+A 31-year-old man is brought in to the clinic by his sister because she is concerned about his behavior since the death of their mother 2 months ago. The patient's sister states that he has always been a 'loner' and preferred being by himself than socializing with others. His social isolation resulted in him being'socially awkward', as described by his family. However, 2 months ago, when he found out about the death of their mother, he showed little emotion and attended her funeral in jeans and a dirty T-shirt which upset the rest of their family. When asked about it, he shrugged and said he was in a hurry to get to the funeral and 'just left the house with what I had on.' He does not speak much during the interview, allowing his sister to speak on his behalf. His sister insists that he has 'always been like this', quiet and a complacent child who had no interest in playing with other children. The patient currently lives alone and spends his time repairing and building electrical appliances, and his sister is worried that his self-imposed isolation is making it 'impossible for him to interact with other people normally'. Patient is diagnosed with schizoid personality"
+ms-test-57,CORRECT,"The note correctly identifies the patient's symptoms as dysphagia, fatigue, chronic cough, burning chest pain, and weight loss, which are consistent with esophageal cancer.",INCORRECT,1,"{""answer"": ""CORRECT"", ""reasoning"": ""The note correctly identifies the patient's symptoms as dysphagia, fatigue, chronic cough, burning chest pain, and weight loss, which are consistent with esophageal cancer.""}"
+ms-test-58,CORRECT,"The note correctly identifies the patient's symptoms as dysphagia, fatigue, chronic cough, and burning chest pain, which are consistent with esophageal cancer.",CORRECT,0,"{""answer"": ""CORRECT"", ""reasoning"": ""The note correctly identifies the patient's symptoms as dysphagia, fatigue, chronic cough, and burning chest pain, which are consistent with esophageal cancer.""}"
+ms-test-59,UNKNOWN,NO REASONING,INCORRECT,1,"I'll analyze the provided medical note.
+
+### Medical Note:
+A 56-year-old man comes to the clinic for a check-up. He presents with a 1-year history of worsening shortness of breath and weight loss. He is a former construction worker, and worked in a steel mill when he was in high school. He is an active smoker with a 36-pack-year smoking history. The blood pressure is 130/78 mm Hg, pulse rate is 90/min, respiratory rate is 17/min, and the BMI is 31 kg/m2. The patient is afebrile and the oxygen saturation at rest is 95% on room air. The pulmonary examination reveals a mildly prolonged expiratory phase, and no wheezing or crackles are auscultated. A pulmonary function test is recommended for the patient, and 2 weeks later he returns with a report that shows an FEV1/FVC ratio of 60% and FEV1 of 50% of the predicted value. Patient is diagnosed with bronchiectasis after the lung volumes show a total lung capacity of 110% of predicted value, a residual volume of 115% of predicted value, and a DLCO of 60% of predicted value.
+
+###"
+ms-test-60,CORRECT,"The patient's symptoms and lab results are consistent with chronic obstructive pulmonary disease (COPD), which is a common complication of long-term smoking.",CORRECT,0,"{""answer"": ""CORRECT"", ""reasoning"": ""The patient's symptoms and lab results are consistent with chronic obstructive pulmonary disease (COPD), which is a common complication of long-term smoking.""}"
+ms-test-61,CORRECT,"The note is factually correct, as Schistosoma mansoni is a common cause of skin rash and gastrointestinal symptoms in travelers to Brazil.",INCORRECT,1,"{""answer"": ""CORRECT"", ""reasoning"": ""The note is factually correct, as Schistosoma mansoni is a common cause of skin rash and gastrointestinal symptoms in travelers to Brazil.""}"
+ms-test-62,CORRECT,"The note correctly identifies the patient's symptoms as due to Schistosoma mansoni, a parasitic infection common in Brazil.",CORRECT,0,"{""answer"": ""CORRECT"", ""reasoning"": ""The note correctly identifies the patient's symptoms as due to Schistosoma mansoni, a parasitic infection common in Brazil.""}"
+uw-test-2,CORRECT,NO REASONING,CORRECT,0,"I'll analyze the provided medical note for accuracy.
+
+### Medical Note:
+Ms. <NAME/> is being managed for malnutrition, present on admit (POA).  Patient is a <AGE/> AAF with poorly differentiated gastric carcinoma (signet ring features) s/p 3 cycles x EOX and recent CT demonstrating peritoneal metastasis transferred from Surgery to Heme/Onc for management of anorexia/failure to thrive s/p NJ tube placement.  HPI:  She is unable to keep any substantial nutrition down and this has led to progressive weight loss and deconditioning (20 pounds since <DATE/>).  BMI 18.8.  <DATE/> cachectic, # Anorexia/FTT - s/p NJ tube - feeding order as outlined by Nutrition - osmolite 1.2 at 10cc/hr, titrate up by 10cc/hr w/ goal 55cc/hr; 600cc water/day - goal to improve nutritional status to where she may tolerate further chemotherapy.  Additional treatments include:  MVI, electrolyte supplementation, antiemetics.
+
+### Answer:
+{""answer"": ""CORRECT"", ""reasoning"": ""The note is factually correct, including the patient's diagnosis,"
+uw-test-4,INCORRECT,"The note contains a factual error, as the patient was transfused 2 units of PRBC, not 2 units per hour over 4 hours.",INCORRECT,1,"I'll analyze the provided medical note.
+
+### Medical Note:
+<NAME/> is an <AGE/> yo F s/p fall admitted for R intertroch hip fracture and  R distal radius fracture.  Physician documentation on <DATE/> noted for "" Anemia Hct 29 --> 28--> 25 --> 24--> 23 this am- most likely source of blood loss hematoma around hip facture...Transfuse 2 U PRBC for pt comfort slowly (over 4 hours per bandage).""  Patient is also being managed for acute blood loss anemia.
+
+### Answer:
+{""answer"": ""INCORRECT"", ""reasoning"": ""The note contains a factual error, as the patient was transfused 2 units of PRBC, not 2 units per hour over 4 hours.""}"
+uw-test-5,CORRECT,"The note is factually correct, as it accurately describes the patient's symptoms, medical history, and treatment plan.",INCORRECT,1,"I'll analyze the provided medical note. 
+
+{""answer"": ""CORRECT"", ""reasoning"": ""The note is factually correct, as it accurately describes the patient's symptoms, medical history, and treatment plan.""}"
+uw-test-6,UNKNOWN,NO REASONING,INCORRECT,1,"I'll analyze the provided medical note.
+
+### Medical Note:
+Ms. <NAME/> is being mangaed for acute hypoxemic respiratory failure, present on admission. The patient is a <AGE/> year old female with h/o pT3pN1 pancreatic adenocarcinoma s/p Whipple (<DATE/>) and s/p cycle 4 of adjuvant Gem-Cape (d1 <DATE/>) who presents with pneumonia and hyponatremia. <DATE/> ICU Consult  Upon presentation to <LOCATION/> ED, she was found to be hypoxic high 80%s on RA, correcting to mid 90%s on 2L NC. CXR at that time showed multifocal infiltrates. she was started on meropenem and given 1L IVF. Last night at <TIME/>, her O2 requirements began increasing first to 3L NC then to 3L oximizer. She then desat'd to 60% when she got up to use the restroom and required 10L oximizer to correct her hypoxia. She is now resting in bed on 6L oximizer. I am concerned for pulmonary edema in setting of underlying infection and recommended giving 20mg IV lasix."
+uw-test-7,CORRECT,"The note is factually correct, as it accurately describes the patient's condition and management.",CORRECT,0,"I'll analyze the provided medical note.
+
+### Medical Note:
+This patient is also being managed for chronic systolic heart failure.  Mr. <NAME/> has complex congenital heart disease with single ventricle with Fontan physiology.  He presented with a-fib and underwent DC cardioversion; his postoperative diagnosis includes systemic LV systolic dysfunction with ejection fraction of 27%.  He is noted as CTAB, no edema, currently euvolemic and well compensated.  Management has included continuation of home cardiac medications.
+
+### Answer:
+{""answer"": ""CORRECT"", ""reasoning"": ""The note is factually correct, as it accurately describes the patient's condition and management.""}"
+uw-test-8,CORRECT,"The note is factually correct, as patients with pulmonary hypertension and pulmonary fibrosis often require lung transplantation.",CORRECT,0,"I'll analyze the provided medical note.
+
+### Medical Note:
+This patient was admitted with a concomitant diagnosis of chronic respiratory failure.  Ms. <NAME/> presented with pulmonary hypertension and pulmonary fibrosis in the setting of rheumatoid arthritis.  Her pre-anesthesia assessment notes severe hypoxemia on 8L NC at rest, up to 10L with exertion.  She was admitted for and received a bilateral lung transplant.
+
+### Answer:
+{""answer"": ""CORRECT"", ""reasoning"": ""The note is factually correct, as patients with pulmonary hypertension and pulmonary fibrosis often require lung transplantation.""}"
+uw-test-9,INCORRECT,The note contains a factual error.,INCORRECT,1,"I'll analyze the provided medical note.
+
+### Medical Note:
+A 29-year-old internal medicine resident presents to the emergency department with complaints of fevers, diarrhea, abdominal pain, and skin rash for 2 days. He feels fatigued and has lost his appetite. On further questioning, he says that he returned from his missionary trip to Brazil last week. He is excited as he talks about his trip. Besides a worthy clinical experience, he also enjoyed local outdoor activities, like swimming and rafting. His past medical history is insignificant. The blood pressure is 120/70 mm Hg, the pulse is 100/min, and the temperature is 38.3 C (100.9 F). On examination, there is a rash on the legs. Patient's symptoms are suspected to be due to hepatitis A. The rest of the examination is normal.
+
+### Answer:
+{""answer"": ""INCORRECT"", ""reasoning"": ""The note contains a factual error.""}"
+uw-test-10,UNKNOWN,NO REASONING,CORRECT,0,"I'll analyze the provided medical note.
+
+### Medical Note:
+Ms. <NAME/> is also being managed for severe protein calorie malnutrition, present on admission (POA).  Patient is a <AGE/> woman with metastatic ER/PR positive, HER-2/neu negative breast cancer, with mets to her lung, ovary, and the peritoneum on weekly Taxol and was planned on initiation of eribulin, readmitted after 2 days of discharge, with nausea, vomiting, unable to pass gas, stool, increasing distention. <DATE/> Diagnosis Clarification - Severe protein calorie malnutrition, POA. <DATE/> Nut - Pt classifies as severe protein calorie malnutrition 2/2 reduced intake and weight loss.  Pt with < 75% intake in past 3 months:  unable to tolerate much po intake for past 2 weeks, prior to this eating in small amounts and with minimal to no po intake since admit (<DATE/>).  Patient with noted 19 kg (13%) weight loss in 6 months.  Recommendations:  diet progression when clinically appropriate.  TPN recs prn if unable to progress diet for next 48 hours and if appropriate with goals of care. **Pt"
+uw-test-11,INCORRECT,The note contains a factual error regarding the blood culture result.,INCORRECT,1,"I'll analyze the provided medical note.
+
+### Medical Note:
+Mr. <NAME/> was Mr. <NAME/> treated for sepsis, present on admission. Pt is a <AGE/> yo M who was admitted with hypoxia, cough and AMS; pt is discovered to have pneumonia and blood cultures from admission grew Strep pneumococcus. Pt presented with WBC 29, tachypneic, with AKI and somnolence/lethargy. Mental status much improved and Fever and WBC coming down on hospital day #2 following IV abx and IVF; an 8 day course of Antifungal Medication at home will be completed.
+
+### Answer:
+{""answer"": ""INCORRECT"", ""reasoning"": ""The note contains a factual error regarding the blood culture result.""}"
+uw-test-12,INCORRECT,The note contains a factual error.,CORRECT,0,"I'll analyze the provided medical note.
+
+### Medical Note:
+A 29-year-old internal medicine resident presents to the emergency department with complaints of fevers, diarrhea, abdominal pain, and skin rash for 2 days. He feels fatigued and has lost his appetite. On further questioning, he says that he returned from his missionary trip to Brazil last week. He is excited as he talks about his trip. Besides a worthy clinical experience, he also enjoyed local outdoor activities, like swimming and rafting. His past medical history is insignificant. The blood pressure is 120/70 mm Hg, the pulse is 100/min, and the temperature is 38.3 C (100.9 F). On examination, there is a rash on the legs. Patient's symptoms are suspected to be due to hepatitis A. The rest of the examination is normal.
+
+### Answer:
+{""answer"": ""INCORRECT"", ""reasoning"": ""The note contains a factual error.""}"
+uw-test-13,CORRECT,"The note is factually correct, as it accurately describes a patient with secondary AML post allotransplant for follicular lymphoma presenting with hematemesis and undergoing consolidation therapy.",INCORRECT,1,"I'll analyze the provided medical note. 
+
+{""answer"": ""CORRECT"", ""reasoning"": ""The note is factually correct, as it accurately describes a patient with secondary AML post allotransplant for follicular lymphoma presenting with hematemesis and undergoing consolidation therapy.""}"
+uw-test-14,INCORRECT,"The note incorrectly states that the patient was being managed for hypokalemia, when in fact, the patient was being treated for hyperkalemia.",CORRECT,0,"I'll analyze the provided medical note.
+
+Medical Note:
+Mr. <NAME/> is a <AGE/> yo M who is admitted for control of hematuria and definitive evaluation, re-staging, and management of prostate cancer.  On admission his K was 2.9.  This was replaced w/ 80 mEq CKL.   Mr. <NAME/> was being managed for hypokalemia, present on admission.
+
+{""answer"": ""INCORRECT"", ""reasoning"": ""The note incorrectly states that the patient was being managed for hypokalemia, when in fact, the patient was being treated for hyperkalemia.""}"
+uw-test-15,INCORRECT,The note contains a factual error regarding the treatment for hypokalemia.,INCORRECT,1,"I'll analyze the provided medical note.
+
+### Medical Note:
+Ms. <NAME/> is being treated for hypokalemia, POA. Pt is a <AGE/> yo M transferred from OSH for IR drainage of liver abscess. Pt is noted to present with an elevated glucose and K level of 3.5. Pt is treated with 20 mEq NaCl Infusion.
+
+### Answer:
+{""answer"": ""INCORRECT"", ""reasoning"": ""The note contains a factual error regarding the treatment for hypokalemia.""}
+
+The medical note incorrectly states that the patient is being treated for hypokalemia, which is a condition of low potassium levels. However, the treatment for hypokalemia is typically potassium replacement, not sodium chloride (NaCl) infusion."
+uw-test-16,CORRECT,"The note is factually correct, as ATG therapy is a common treatment for Myelodysplastic Syndromes (MDS) and can cause hypotension, fever, and diarrhea as side effects.",CORRECT,0,"I'll analyze the provided medical note for accuracy.
+
+Medical Note: Mr. <NAME/> is a <AGE/> yo M admitted for ATG therapy for MDS.  Clinical events are noted for hypotension, fever and diarrhea after ATG infusion.  T max 39.6 w/ hypotension to 70's systolic.  He was treated w/ NS bolus,  benedryl 25mg IV x2 and stopping of ATG, chills resolved s/p total of demerol 25mg IV.  Temperature continued to elevate despite tylenol, mild hypotension noted, given hydrocort 100mg IV per order.  Mr. <NAME/> was also managed for Systemic inflammatory response syndrome (SIRS) due to first dose of ATG.
+
+{""answer"": ""CORRECT"", ""reasoning"": ""The note is factually correct, as ATG therapy is a common treatment for Myelodysplastic Syndromes (MDS) and can cause hypotension, fever, and diarrhea as side effects.""}"
+uw-test-17,UNKNOWN,NO REASONING,CORRECT,0,"I'll analyze the provided medical note. 
+
+### Medical Note:
+Mr. <NAME/> is a <AGE/>M with recurrent sigmoid ca, admitted <DATE/> with partial SBO d/t recurrent pelvic mass. Since prior discharge he has been at SNF. On arrival he endorses ongoing diarrhea significantly impacting his quality of life (found to be cdiff+ on day of admission), early satiety, and occasional n/v associated with eating too much. Despite great po intake he has been unable to gain back any of his substantial weight loss since before his initial operation. He also describes intermittent severe, twisting abd pain. On <DATE/> Nutritionist notes Mr. <NAME/> meets criteria for severe protein energy malnutrition aeb ~7.5% significant wt loss x 1 month and moderate-severe muscle wasting in temples, quadriceps, calf and interosseous muscles. He is now s/p ex-lap, SB resection and primary end to end anastomosis, diverting loop colostomy and mesenteric flap to pelvis on <DATE/>. Tunneled line placed <DATE/> and TPN started. Continues PO vanc for c diff. This patient is also being managed for severe protein energy malnutrition PO"
+uw-test-18,INCORRECT,The note contains a factual error.,INCORRECT,1,"I'll analyze the provided medical note.
+
+### Medical Note:
+A 29-year-old internal medicine resident presents to the emergency department with complaints of fevers, diarrhea, abdominal pain, and skin rash for 2 days. He feels fatigued and has lost his appetite. On further questioning, he says that he returned from his missionary trip to Brazil last week. He is excited as he talks about his trip. Besides a worthy clinical experience, he also enjoyed local outdoor activities, like swimming and rafting. His past medical history is insignificant. The blood pressure is 120/70 mm Hg, the pulse is 100/min, and the temperature is 38.3 C (100.9 F). On examination, there is a rash on the legs. Patient's symptoms are suspected to be due to hepatitis A. The rest of the examination is normal.
+
+### Answer:
+{""answer"": ""INCORRECT"", ""reasoning"": ""The note contains a factual error.""}"
+uw-test-19,CORRECT,"The note accurately describes the patient's history, symptoms, and laboratory results, including the diagnosis of Signet ring adenocarcinoma and high-grade dysplasia.",INCORRECT,1,"I'll analyze the provided medical note. Here's my response in JSON format:
+
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately describes the patient's history, symptoms, and laboratory results, including the diagnosis of Signet ring adenocarcinoma and high-grade dysplasia.""}"
+uw-test-20,CORRECT,"The note is factually correct, as it accurately describes the patient's condition and treatment.",CORRECT,0,"I'll analyze the provided medical note.
+
+### Medical Note:
+Mrs.  <NAME/> is also being managed for hypovolemic shock. She is a <AGE/> F with complex abdominal hernia, pelvic mass now s/p colostomy reversal, VHR, TAH-BSO and abdominal wall reconstruction.  In PACU following a 2cc bolus from her epidural the pt became hypotensive. She received 1 L bolus and was started on a phenylephrine drip.  Pt was transferred to the ICU.  In the ICU the pt required additional increases in her phenylephrine drip. Leveophed gtt was then initiated.  Per ICU notes her epidural infusion was decreased sequentially from 10cc/hr to off. At <TIME/>, with no local anesthetic infusing, pt continued to require max dose of neo. Per ICU team the pt is under-resuscitated and pressor-dependent postoperatively. Further treatment includes fluid boluses.
+
+### Answer:
+{""answer"": ""CORRECT"", ""reasoning"": ""The note is factually correct, as it accurately describes the patient's condition and treatment.""}"
+uw-test-21,INCORRECT,The note contains a factual error.,CORRECT,0,"I'll analyze the provided medical note.
+
+### Medical Note:
+A 29-year-old internal medicine resident presents to the emergency department with complaints of fevers, diarrhea, abdominal pain, and skin rash for 2 days. He feels fatigued and has lost his appetite. On further questioning, he says that he returned from his missionary trip to Brazil last week. He is excited as he talks about his trip. Besides a worthy clinical experience, he also enjoyed local outdoor activities, like swimming and rafting. His past medical history is insignificant. The blood pressure is 120/70 mm Hg, the pulse is 100/min, and the temperature is 38.3 C (100.9 F). On examination, there is a rash on the legs. Patient's symptoms are suspected to be due to hepatitis A. The rest of the examination is normal.
+
+### Answer:
+{""answer"": ""INCORRECT"", ""reasoning"": ""The note contains a factual error.""}"
+uw-test-22,UNKNOWN,NO REASONING,INCORRECT,1,"I'll analyze the provided medical note.
+
+### Medical Note:
+Ms. <NAME/> is also being managed for early sepsis meeting SIRS (Systemic Inflammatory Response Syndrome) criteria due to recurrent bacterial sinusitis.  Patient is a <AGE/> F with cutaneous T cell lymphoma with CSF involvement, recently admitted for sepsis from bacterial sinusitis and pre-septal sinusitis, admitted for HD IV MTX.  VS history:  <DATE/> <TIME/> 38.5, 103, 96/51--><TIME/> 39.1, 98--><DATE/> 39.8, 109.  <DATE/> <TIME/> RN - Pt had a fever spike of 39.1, HR 98.  Tylenol and 1 liter  saline bolus given.  <DATE/> <TIME/> RN - Pt had one episode of hypotension BP 78/44, HR 98.  500cc bolus given, pt responded appropriately.  <DATE/> #Non-neutropenic fever, pre-sepsis: Developed <DATE/>. Initially no s/s of infection but now with increasing nasal congestion concerning for recurrent CoNS sinus/preseptal infection which"
+uw-test-23,UNKNOWN,NO REASONING,INCORRECT,1,"I'll analyze the provided medical note.
+
+### Medical Note:
+Ms. <NAME/> is a <AGE/> YO woman with h/o erythropoeitic protoporphyria (EPP) and acute liver failure admitted for Dialysis treatments.  Per Nutrition <DATE/>, patient of high nutr complexity with  wt loss of 10kg in one month.  <DATE/> RN <TIME/> -  She states she just doesn't have much of an appetite when she is getting her exchange transfusions.  <DATE/> Progress Note:  poor po intake.  Clinical s/s: RN <DATE/> <TIME/>  Pt. appears very thin and malnourished, Alb 2.2-->1.5, TP 4.5-->3.3, BMI 17.7.  Treatments include:  Nutrition assessment: Nutrition requirements 1600-1800kcal, 70g protein (1.3g/kg), regular diet, Nut <DATE/> - willing to try milkshakes with Haagan Daz and instant breakfast, MVI, Vitamin E, Cholecalciferol, IV maintenance fluids.  Patient also being treated for severe protein calorie malnutrition.
+
+### Answer:
+{""answer"": """
+uw-test-24,CORRECT,"The note is factually correct, as melphalan is a chemotherapy agent used in conditioning regimens for autologous peripheral stem cell transplant.",INCORRECT,1,"I'll analyze the provided medical note.
+
+### Medical Note:
+Mr. <NAME/> is being managed for toxic gastroenteritis due to melphalan conditioning. He is a <AGE/>-old man s/p autologous peripheral stem cell transplant on <DATE/> for MM, conditioning with melphalan. He was admitted <DATE/> with severe RRT including mucositis, nausea, vomiting, and diarrhea with decreased PO intake, pain and inability to take PO meds. Patient is receiving Zofran scheduled + prn Ativan, Imodium, TPN and PCA Codeine. Electrolytes are being monitored and replaced with TPN and prn.
+
+### Answer:
+{""answer"": ""CORRECT"", ""reasoning"": ""The note is factually correct, as melphalan is a chemotherapy agent used in conditioning regimens for autologous peripheral stem cell transplant.""}"
+uw-test-25,CORRECT,"The note is factually correct, as it accurately describes the patient's condition and management.",INCORRECT,1,"I'll analyze the provided medical note.
+
+### Medical Note:
+This patient is also being managed for acute on chronic combined systolic/diastolic heart failure.  Mr. <NAME/> presented with an NSTEMI and progressed to cardiogenic shock. Management has included Epinephrine administration, Dopamine and IABP implanted <DATE/>.  His  last pre-IABP TTE (<DATE/>), report notes global left ventricular hypokinesis with superimposed regional wall motion abnormalities, impaired L ventricular relaxation,  and an EF of 40%.
+
+### Answer:
+{""answer"": ""CORRECT"", ""reasoning"": ""The note is factually correct, as it accurately describes the patient's condition and management.""}"
+uw-test-26,CORRECT,"The note is factually correct, as it accurately describes the patient's chronic respiratory failure, severe CAD, and multiple comorbidities.",CORRECT,0,"I'll analyze the provided medical note.
+
+### Medical Note:
+Ms. <NAME/> is being managed for chronic respiratory failure, present on admit (POA).  Patient is a <AGE/> F with severe CAD s/p MI x5 and multiple medical problems, presenting after her gastrojejunal feeding tube fell out.  PMH:  COPD on 4L nc at baseline.  GEN:  obese.   <DATE/> #Goals of Care - Pt status-post 12mo of hospice for terminal cardiac dx (unstable angina at rest causing pt to be bed-bound) and multiple other comorbiditites.  #Stable problems - COPD -- cont home inhalers/nebs.  Additional treatments include:  supplemental oxygen.
+
+### Answer:
+{""answer"": ""CORRECT"", ""reasoning"": ""The note is factually correct, as it accurately describes the patient's chronic respiratory failure, severe CAD, and multiple comorbidities.""}"
+uw-test-27,CORRECT,The note accurately describes the surgical procedure and the incidental liver laceration as a normal occurrence.,INCORRECT,1,"I'll analyze the provided medical note.
+
+### Medical Note:
+Mr. <NAME/> <AGE/> year old man with duodenal squamous cell carcinoma of 2nd portion, causing biliary obstruction. On <DATE/> he underwent Laparoscopy, laparotomy, pancreaticoduodenectomy. As noted in the operative report, all of the anastomoses took significantly longer to perform because of the patient's body habitus and the difficulty obtaining adequate exposure. During placement of lap sponges for exposure, we created a small laceration at the edge of segment 3 of the liver and we were able to easily control the bleeding from this with ligasure and suture compression. The small laceration of the liver was an incidental occurrence inherent to the surgical procedure, not a complication.
+
+### Answer:
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately describes the surgical procedure and the incidental liver laceration as a normal occurrence.""}"
+uw-test-28,CORRECT,"The note is factually correct, as patients with liver dysfunction often require monitoring of INR and treatment with vitamin K.",INCORRECT,1,"I'll analyze the provided medical note.
+
+### Medical Note:
+Ms. <NAME/> is also being managed for coagulopathy, present on admission (POA).  Patient is a <AGE/> admitted with jaundice and hepatic dysfunction in the setting of EtOH and minocycline use.  Admit INR 3.1.  <DATE/> # Hepatic Dysfunction - eGFR and urine albumin test, INR - Vit K 10mg PO x 3d to assess for improvement in INR.
+
+{""answer"": ""CORRECT"", ""reasoning"": ""The note is factually correct, as patients with liver dysfunction often require monitoring of INR and treatment with vitamin K.""}"
+uw-test-29,UNKNOWN,NO REASONING,INCORRECT,1,"I'll analyze the provided medical note.
+
+### Medical Note:
+Ms. <NAME/> is being managed for Stage 3 R and L coccyx pressure ulcers, present on admit (POA).  Patient  is a <AGE/> YO F recently discharged after a 1 month hospitalization for recurrent cirrhosis of transplant liver graft s/p TIPS, hepatic hydrothorax with VRE positive pleural fluid s/p removal of chest tubes, and pressure ulcers who presents with 24 hours of fever, rigors, nausea/vomiting.  <DATE/> Wound RN - Patient has pressure ulcers over right and left coccyx.  The right coccyx pressure ulcer is an unstageable, at least stage three, pressure ulcer.  Left coccyx wound is unstageable, at least stage 3 pressure ulcer.  <DATE/> RN IVIEW - IVIEW <DATE/> - R & L butttocks pressure ulcers Stage 3.  <DATE/> Skin: several sacral decubitus ulcers: non-infected appearing. institute wound care per previous recommendations.  <DATE/> SKIN:  Buttock ulcers stage 3.  Other treatments include:  Patient"
+uw-test-30,CORRECT,"The note is factually correct, including the patient's age, surgical procedure, estimated blood loss, lowest hematocrit, and post-operative hematocrit.",CORRECT,0,"I'll analyze the provided medical note.
+
+Medical Note: Ms. <NAME/> is a 29-year-old female with a right parotid sarcoma. She is s/p a 16 hour a resection and fibula free flap. Her EBL was 2L. Her lowest Hct in the OR was 14. She received 4 units of RBCs. Her post op Hct was 27. Further treatment includes QD CBC.
+
+{""answer"": ""CORRECT"", ""reasoning"": ""The note is factually correct, including the patient's age, surgical procedure, estimated blood loss, lowest hematocrit, and post-operative hematocrit.""}"
+uw-test-31,INCORRECT,The note contains a factual error.,CORRECT,0,"I'll analyze the provided medical note for accuracy.
+
+### Medical Note:
+A 29-year-old internal medicine resident presents to the emergency department with complaints of fevers, diarrhea, abdominal pain, and skin rash for 2 days. He feels fatigued and has lost his appetite. On further questioning, he says that he returned from his missionary trip to Brazil last week. He is excited as he talks about his trip. Besides a worthy clinical experience, he also enjoyed local outdoor activities, like swimming and rafting. His past medical history is insignificant. The blood pressure is 120/70 mm Hg, the pulse is 100/min, and the temperature is 38.3 C (100.9 F). On examination, there is a rash on the legs. Patient's symptoms are suspected to be due to hepatitis A. The rest of the examination is normal.
+
+### Answer:
+{""answer"": ""INCORRECT"", ""reasoning"": ""The note contains a factual error.""}
+
+### Medical Note:
+A 29-year-old internal medicine resident presents to the emergency department with complaints of fevers, diarrhea, abdominal pain, and skin rash for 2 days. He feels fatigued and has lost his appetite. On further questioning, he says that he returned"
+uw-test-32,UNKNOWN,NO REASONING,INCORRECT,1,"I'll analyze the provided medical note.
+
+### Medical Note:
+Mr <NAME/> <AGE/> year old male evaluated at <LOCATION/> for increasing DOE for 3 days prior to admission and found to have an NSTEMI and severe 2 vessel CAD. He has had a long history of CAD, COPD, OSA, tobacco abuse, poorly controlled DMII,HTN and progressive diabetic disease with retinopathy, peripheral nephropathy and  CKD with mild proteinuria. Left heart cath noted severe obstructive CAD of the proximal LAD and mid ramus intermedius, TTE noted EF 62%, apical akinesis and mild LVH with no significant valvular disease. PFTs - FVC 2.93 - 73%, FEV1 2.36 - 69%, DLCO 41%. Carotid duplex 16 - 49% stenosis.  Patient was transferred to <LOCATION/> for surgical planning for CABG and on <DATE/> - Urgent Coronary Artery Bypass Grafting x 3, LIMA to left anterior descending (LAD) artery  SVG to Ramus intermedius, SVG to PL Circumflex. Following CABG, 100% oc"
+uw-test-33,CORRECT,"The note is factually correct, as it accurately describes the management of a patient with significant coagulopathy during an operation.",CORRECT,0,"I'll analyze the provided medical note for accuracy.
+
+### Medical Note:
+Mr. <NAME/> is a <AGE/> yo M admitted for OLT.  Operatively he is noted for:...The patient presented oozing and significant coagulopathy which required large volumes of blood and blood products....We spent about 4 hours doing hemostasis since the patient developed significant coagulopathy and required a lot of blood products.  He had a 20L EBL with the following given: 23L crystalloid, 17U RBCs, 17U FFP, 2U Plts, 4U Cryoprecipitate.  Intraop blood work in the setting transfusion is noted for nadir counts including platelets <12, fibrinogen 84, INR increased to 2.9 and lactate increased to 8.4.  Mr. <NAME/> was managed for consumptive coagulopathy.
+
+### Answer:
+{""answer"": ""CORRECT"", ""reasoning"": ""The note is factually correct, as it accurately describes the management of a patient with significant coagulopathy during an operation.""}"
+uw-test-34,UNKNOWN,NO REASONING,CORRECT,0,"I'll analyze the provided medical note.
+
+### Medical Note:
+Ms. <NAME/> is a <AGE/> woman with a past medical history of chronic kidney disease, who has been diagnosed with ovarian cancer, presents with increasing shortness of breath and dyspnea, and was found to have a large right symptomatic pleural effusion. Her admit labs are notable for BUN= 56, Cre=4.50, GFR 10.  Gynecologic Oncology consult note on <DATE/> reports Renal: - Cr elevated to 4.5 on admission likely prerenal etiology in the setting of emesis and intability to tolerate PO for several days - would recommend rechecking today to ensure that it is normalizing, if not downtrending would recommend additional work-up for AKI. Thoracic surgery progress note <DATE/> Cr downtrending, currently 1.8 from baseline of 1.2-1.4 and peak of 4 on admit.  The patient received NS 500cc IV Bolus x1 and her BMP is monitored daily. This patient has a history of obstructive kidney disease with ureteral stent  placement but has prior to admission reported poor PO intake and likely has a pre renal AKI"
+uw-test-35,CORRECT,"The note is factually correct, as it accurately describes the patient's condition and treatment plan.",CORRECT,0,"I'll analyze the provided medical note.
+
+### Medical Note:
+Ms. <NAME/> is being managed for pancytopenia, present on admission (POA).  Patient is a <AGE/> y/o Vietnamese speaking woman with AML who is admitted for treatment of a line associated cellulitis.  HPI:  Her last bone marrow showed her to be in CR with + MRD.  Admit: WBC 2.42, Hct 25, Plt 39.  <DATE/> #Line associated cellulitis: - Will attempt to pull line this evening - MAPS ordered from <LOCATION/>, If excess bleeding after line pull, will substitute with attempt to treat with pooled platelets and give Amicar - Vancomycin for cellulitic infection.  <TIME/> RN - Planned to transfuse platelets tonight, but needs MAPs which are not available now. Type and cross sent, 1u PRBCs ordered.
+
+### Answer:
+{""answer"": ""CORRECT"", ""reasoning"": ""The note is factually correct, as it accurately describes the patient's condition and treatment plan.""}"
+uw-test-36,CORRECT,"The note is factually correct, as it accurately describes the patient's condition and treatment.",INCORRECT,1,"I'll analyze the provided medical note.
+
+### Medical Note:
+Ms. <NAME/> is being managed for hypokalemia and hypomagnesemia, present on admission (POA). Pt is a <AGE/> YO F with plasma cell leukemia admitted for scheduled VTD-PACE chemotherapy cycle #2. Pt is noted to have a history of hypokalemia and hypomagnesia with daily outpatient PO replacement. Pt presents with K of 3.5 and Mg of 1.5; pt received CaCl2 treatment IV 20mEq x 1 and 16 mEq MgSO4 x 1.
+
+### Answer:
+{""answer"": ""CORRECT"", ""reasoning"": ""The note is factually correct, as it accurately describes the patient's condition and treatment.""}"
+uw-test-37,CORRECT,"The note is factually correct, as it accurately describes the patient's condition and treatment plan.",INCORRECT,1,"I'll analyze the provided medical note.
+
+### Medical Note:
+Ms. <NAME/> is being managed for hypokalemia, present on admission (POA).  Patient is a <AGE/> F with severe, refractory Crohn's disease on a clinical trial presenting with 1-2 weeks of progressive abdominal pain, nausea, fever and worsened diarrhea consistent with Crohn's flare.  Admit  K 3.5-->3.4.  <DATE/> #Protein-calorie malnutrition.  FEN: giving 1L NS over 4 hrs followed by D5 1/2 NS + 20mEq MgSO4 therapy at 100ml/hr, 20 mEq IV MgSO4 therapy, Qday BMP.
+
+### Answer:
+{""answer"": ""CORRECT"", ""reasoning"": ""The note is factually correct, as it accurately describes the patient's condition and treatment plan.""}"
+uw-test-38,CORRECT,"The note is factually correct, as it accurately describes the patient's medical history and surgical complications.",CORRECT,0,"I'll analyze the provided medical note.
+
+### Medical Note:
+Mr. <NAME/> is a <AGE/> y/o man with non-ischemic cardiomyopathy s/p LVAD as bridge to transplant, tricusped repair and PFO closure on <DATE/> who is now s/p orthotopic heart transplant and LVAD explantation. Per ICU documentation <DATE/> operation was complicated by R pleural laceration during removal of his native heartalso had a laceration to his right lung with a persistent air leak in the setting of a difficult dissection during redo sternotomy. The R pleural/lung laceration was an incidental occurrence inherent to the surgical procedure.
+
+### Answer:
+{""answer"": ""CORRECT"", ""reasoning"": ""The note is factually correct, as it accurately describes the patient's medical history and surgical complications.""}"
+uw-test-39,CORRECT,"The note accurately describes the patient's condition and treatment plan, including the presence of post-operative pulmonary insufficiency and the plan to fast track intubation.",CORRECT,0,"{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately describes the patient's condition and treatment plan, including the presence of post-operative pulmonary insufficiency and the plan to fast track intubation.""}"
+uw-test-40,CORRECT,"The note is factually correct, as it accurately describes a patient with severe protein-calorie malnutrition, recent surgical procedures, and laboratory results.",CORRECT,0,"I'll analyze the provided medical note. Here's my response in JSON format:
+
+{
+  ""answer"": ""CORRECT"",
+  ""reasoning"": ""The note is factually correct, as it accurately describes a patient with severe protein-calorie malnutrition, recent surgical procedures, and laboratory results.""
+}"
+uw-test-41,CORRECT,"The note is factually correct, as it accurately describes the patient's severe malnutrition and treatment.",INCORRECT,1,"I'll analyze the provided medical note.
+
+### Medical Note:
+Ms. <NAME/> is being managed for severe malnutrition, present on admission. Pt is a <AGE/> YO F with h/o cyclic vomiting syndrome s/p lap J-Tube placement. The patients BMI is 16.3. The Op Report notes,...who currently has issues with PO intake despite being on an aggressive medical regimen. The patient has lost approximately 100 pounds over the past year and a half and on physical examination does have temporal wasting and signs of malnutrition. The patient has had a nutrition consult and is receiving catheter feedings.
+
+### Answer:
+{""answer"": ""CORRECT"", ""reasoning"": ""The note is factually correct, as it accurately describes the patient's severe malnutrition and treatment.""}"
+uw-test-42,CORRECT,"The note accurately documents the patient's potassium level (K= 3.2) and the treatment administered (KCl 40 meq IV), and correctly states that hypokalemia was present on admission (POA).",CORRECT,0,"For the provided medical note, I analyzed the information as follows:
+
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately documents the patient's potassium level (K= 3.2) and the treatment administered (KCl 40 meq IV), and correctly states that hypokalemia was present on admission (POA).""}"
+uw-test-43,INCORRECT,"The note contains a factual error, as a PT/INR of 22.4 is extremely high and not consistent with a patient being treated for massive GI bleeding.",INCORRECT,1,"I'll analyze the provided medical note.
+
+### Medical Note:
+Ms. <NAME/> is a <AGE/> yo F with ESLD tx from OSH for further management of massive GI bleeding. Pt is noted on admission to have PT/INR of 22.4/2.1 and pt is treated with 8 units FFP and platelets.
+
+### Answer:
+{""answer"": ""INCORRECT"", ""reasoning"": ""The note contains a factual error, as a PT/INR of 22.4 is extremely high and not consistent with a patient being treated for massive GI bleeding.""}"
+uw-test-44,CORRECT,"The note is factually correct, including the treatment for chemotherapy-induced nausea and the nutritional requirements.",INCORRECT,1,"I'll analyze the provided medical note.
+
+### Medical Note:
+Mr. <NAME/> is a <AGE/> YO man with AML diagnosed in <DATE/> s/p 7+3 chemotherapy and transplant in <DATE/>, now with relapse and admitted for 7+3 chemotherapy.  Per Nutrition, pt reports not eating very well for ~3-6 months and loss of ~10Ib most of it w/i the past month.  <DATE/> PN: Chemo induced nausea not well controlled with dutasteride, compazine, benadryl, scopolamine.  Patient continues to have poor po intake.  Clinical s/s: Admit Alb 3.0, Total protein 5.9.  Treatments include: Nutrition consult: Nutrition requirements 2400-2800kcal, 100-115g protein, 2700ml fluid, Neutrotpenic diet, Resource/Enlive supplements, IV Mg and KCl replacement, TPN.  Patient is also being treated for protein calorie malnutrition.
+
+### Answer:
+{""answer"": ""CORRECT"", ""reasoning"": ""The note is factually correct, including the treatment for chemotherapy-induced nausea and the nutritional requirements.""}"
+uw-test-45,CORRECT,"The note is factually correct, as IL-2 therapy is a common treatment for metastatic renal cell carcinoma.",CORRECT,0,"I'll analyze the provided medical note for accuracy.
+
+### Medical Note:
+Mr. <NAME/> was admitted for high dose interleukin 2 immunotherapy.  Patient is a <AGE/> YO M w/ metastatic renal cell carcinoma here for Cycle #2 of IL-2 therapy.  #IL2 (scheduled <TIME/>, <TIME/> and > <TIME/>) - CXR to confirm picc line placement - Holding home anti-hypertensives throughout this admission.  #ACTIVITY - Critical care floor protocol.
+
+### Answer:
+{""answer"": ""CORRECT"", ""reasoning"": ""The note is factually correct, as IL-2 therapy is a common treatment for metastatic renal cell carcinoma.""}"
+uw-test-46,INCORRECT,"The note incorrectly states that the patient has metastatic cancer of unknown primary, most likely pancreatic, when the correct diagnosis is metastatic cancer of unknown primary, most likely lung or breast cancer.",INCORRECT,1,"I'll analyze the provided medical note for accuracy.
+
+### Medical Note:
+Ms. <NAME/> is being managed for secondary hyperparathyroidism, present on admission. The patient is a <AGE/> yo F with history of ESRD who presented with subacute severe neck pain and hyperkalemia due to poor tolerance of CBT. Since found to have metastatic cancer of unknown primary, most likely pancreatic. <DATE/> Nephrology - # Bone mineral metabolism: Ca wnl, phos acceptable - c/w zemplar on HD - restart home lanthanum as phos binder.
+
+### Answer:
+{""answer"": ""INCORRECT"", ""reasoning"": ""The note incorrectly states that the patient has metastatic cancer of unknown primary, most likely pancreatic, when the correct diagnosis is metastatic cancer of unknown primary, most likely lung or breast cancer.""}"
+uw-test-47,CORRECT,The note accurately reports the patient's preoperative and intraoperative hemoglobin (Hct) values and transfusion.,INCORRECT,1,"I'll analyze the provided medical note.
+
+### Medical Note:
+<NAME/> s/p exploration of fusion mass T9-T11, removal of hardware, and posterior instrumented extension of fusion from T3-T10 had an EBL of 1300 ml.  Preoperatively her Hct=42 it droppped intraoperatively to Hct=30.  She was transfused 2 units Platelet Transfusion intraoperatively and her Hct continues to be monitored.  Patient also being managed for acute blood loss anemia
+
+### Answer:
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately reports the patient's preoperative and intraoperative hemoglobin (Hct) values and transfusion.""}"
+uw-test-48,CORRECT,"The note is factually correct, including the patient's weight loss and nutritional status.",CORRECT,0,"I'll analyze the provided medical note.
+
+### Medical Note:
+Mr. <NAME/> is a <AGE/> M with gastric antral cancer s/p lap subtotal gastrectomy (<DATE/>) now with intraabdominal abscess. His admit labs are notable for an albumin = 1.8. Initial nutrition consult note documents UBW prior to starting chemo: 156 lbs / 70.9 kg - wt down 14.2 kg (20% body wt) x 4 months = classifies as nutritionally severe weight loss / severe malnutrition. Wt had been in in process of repletion from low wt during chemo of 122 lbs / 55.5 kg, however now 1.3 kg drop in wt since surgery ~2 weeks ago. Management includes: PICC/TPN for improved nutrition, nutrition consults, and monitoring BMP, electrolytes, and prealbumin levels. This patient is also being managed for: Protein calorie malnutrition, present on admission (POA)
+
+### Answer:
+{""answer"": ""CORRECT"", ""reasoning"": ""The note is factually correct, including the patient's weight loss and nutritional status.""}"
+uw-test-49,CORRECT,"The note is factually correct, as it accurately describes the patient's history, laboratory results, and management plan.",CORRECT,0,"I'll analyze the provided medical note.
+
+### Medical Note:
+Ms. <NAME/> is a <AGE/> yo F admitted w/ a H/O anemia 2/2 anovulatory bleeding vs. tumor involvement of endometrium.  Her hct on admission was 23 (decreased from 31 - <DATE/>) and she was transfused w/ 2U PRBC's.  Mixing studies have been ordered w/ results pending ATT.  Ms. <NAME/> is also being managed for acute blood loss anemia vs. anemia of chronic disease.
+
+### Answer:
+{""answer"": ""CORRECT"", ""reasoning"": ""The note is factually correct, as it accurately describes the patient's history, laboratory results, and management plan.""}"
+uw-test-50,CORRECT,"The note is factually correct, including the patient's diagnosis, medical history, and treatment plan.",CORRECT,0,"I'll analyze the provided medical note for accuracy.
+
+Medical Note: Ms. <NAME/> is being managed for pneumonia.  Patient is a <AGE/> YO F with Kartagener's syndrome, sinus inversus and bronchiectasis transferred to <LOCATION/> from OSH for increasing hemoptysis now s/p IR embolization.  HPI:  not on home oxygen at baseline, Severe bronchiectasis with FEV1 40% predicted -chronically infected with pseudomonas.  <DATE/> Med -  sputum growing 4+ pseudomonas.  Treatments include:  inhaled tobramycin and cefepime, continue home albuterol-ipratropium and azithromycin, supplemental oxygen, Respiratory Therapy, Pulmonary Consult.
+
+{""answer"": ""CORRECT"", ""reasoning"": ""The note is factually correct, including the patient's diagnosis, medical history, and treatment plan.""}"
+uw-test-51,CORRECT,NO REASONING,CORRECT,0,"I'll analyze the provided medical note.
+
+### Medical Note:
+Ms. <NAME/> is a <AGE/> yo F with AML s/p induction with IAP (day 1=<DATE/>) and s/p reinduction with IAP (day 1 = <DATE/>), readmitted with neutropenic fever and septic R knee. The patient labs on <DATE/> reveal  Prealbumin =10.1.  <DATE/> Heme/Onc note reports Nutrition: poor PO intake for days, 2/2 inanition more than nausea. <DATE/> nutrition note reports Patient meets criteria for severe protein-calorie malnutrition based on weight loss of >7.5% x 3 months and meeting <75% of estimated nutrition needs for >1 month. <DATE/> Heme/onc assessment and plan Nutrition:  -- continue megace 400 mg BID for appetite stimulation  -- check nutrition labs qweek and supplement PRN  --added chewable MVI per nutrition recs  This patient is also being managed for: Severe protein calorie malnutrition
+
+### Answer:
+{""answer"": ""CORRECT"", ""reasoning"": ""The note is factually correct, as it accurately describes the patient's medical history,"
+uw-test-52,INCORRECT,"The note incorrectly states that the patient was managed for hyponatremia, when in fact, the patient was managed for hypernatremia (elevated sodium levels).",INCORRECT,1,"I'll analyze the provided medical note.
+
+Medical Note: Mr. <NAME/> is a <AGE/> yo M who was found down w/ LOC and head injury.  He is noted for heavy drinking history.  On presentation Mr. <NAME/>'s K+ is 3.0 and this was replaced w/ IV & PO KCL.  Mr. <NAME/> was managed for hyponatremia, present on admission.
+
+{""answer"": ""INCORRECT"", ""reasoning"": ""The note incorrectly states that the patient was managed for hyponatremia, when in fact, the patient was managed for hypernatremia (elevated sodium levels).""}"
+uw-test-53,INCORRECT,"The note incorrectly states that the patient is being managed for a sacral pressure ulcer, Stage 2, when the nursing documentation actually indicates a Stage 2 pressure ulcer on the right sacrum, 1.5 X 1 cm.",INCORRECT,1,"I'll analyze the provided medical note.
+
+### Medical Note:
+Mr. <NAME/> is a <AGE/> yo man with Ph- ALL s/p TBI/Cy MRD PBSC, admitted <DATE/> for fevers/hypothermia, worsening SOB, hypotension. He is being treated in the hospital for complications of pneumonia, sepsis, bronchiolitis obliterans syndrome, hepatic encephalopathy which are complications related to graft versus host disease. Per nursing documentation <DATE/> patient noted to have a Stage 2 pressure ulcer on the right sacrum, 1.5 X 1 cm. Treatments include barrier cream with zinc, turn every 2 hours. Mr. <NAME/> is also being managed for a sacral pressure ulcer, Stage 2.
+
+### Answer:
+{""answer"": ""INCORRECT"", ""reasoning"": ""The note incorrectly states that the patient is being managed for a sacral pressure ulcer, Stage 2, when the nursing documentation actually indicates a Stage 2 pressure ulcer on the right sacrum, 1.5 X 1 cm.""}"
+uw-test-54,INCORRECT,The note incorrectly states 'yo F' instead of 'F s/p' for female patient.,CORRECT,0,"I'll analyze the provided medical note.
+
+### Medical Note:
+<NAME/> is a <AGE/> yo F s/p revision of left shoulder hemiarthroplasty who had an EBL of 150 ml.  Her preoperative Hct 36 has dropped to 29.  Chart documentation noted for ""transfuse 2 Units PRBCs today for Hct of 29"". Patient is also being managed for acute blood loss anemia.
+
+### Answer:
+{""answer"": ""INCORRECT"", ""reasoning"": ""The note incorrectly states 'yo F' instead of 'F s/p' for female patient.""}"
+uw-test-55,CORRECT,"The note is factually correct, as it accurately describes the patient's medical history and laboratory results.",CORRECT,0,"I'll analyze the provided medical note for accuracy.
+
+Medical Note:
+Mr. <NAME/> presented for carotid-carotid and left carotid-subclavian bypass as a first stage of two stages for repair of his TAA. PMH includes chronic renal insufficiency with baseline Cr 1.7-2.0. His last recorded pre-admit (<DATE/>), Cr of 1.71 was associated with a GFR of 39, and his admit Cr of 1.93 was associated with a GFR of 34. Management includes monitoring his BMP.
+
+{""answer"": ""CORRECT"", ""reasoning"": ""The note is factually correct, as it accurately describes the patient's medical history and laboratory results.""}"
+uw-test-56,CORRECT,"The note accurately documents the patient's management for acute blood loss anemia, including PRBCs, monitoring of hematocrit, and treatment for nosebleeds.",CORRECT,0,"I'll analyze the provided medical note. Here's my response in JSON format:
+
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately documents the patient's management for acute blood loss anemia, including PRBCs, monitoring of hematocrit, and treatment for nosebleeds.""}"
+uw-test-57,INCORRECT,The note contains a factual error.,CORRECT,0,"I'll analyze the provided medical note.
+
+### Medical Note:
+A 29-year-old internal medicine resident presents to the emergency department with complaints of fevers, diarrhea, abdominal pain, and skin rash for 2 days. He feels fatigued and has lost his appetite. On further questioning, he says that he returned from his missionary trip to Brazil last week. He is excited as he talks about his trip. Besides a worthy clinical experience, he also enjoyed local outdoor activities, like swimming and rafting. His past medical history is insignificant. The blood pressure is 120/70 mm Hg, the pulse is 100/min, and the temperature is 38.3 C (100.9 F). On examination, there is a rash on the legs. Patient's symptoms are suspected to be due to hepatitis A. The rest of the examination is normal.
+
+### Answer:
+{""answer"": ""INCORRECT"", ""reasoning"": ""The note contains a factual error.""}"
+uw-test-58,CORRECT,"The note is factually correct, including the treatments for hypercalcemia and toxic metabolic encephalopathy.",CORRECT,0,"I'll analyze the provided medical note.
+
+### Medical Note:
+Ms. <NAME/> is a <AGE/> YO F with a previous history of multiply relapsed refractory Hodgkin lymphoma, presenting with mild mentation changes in the setting of hypercalcemia. <DATE/> <TIME/> RN - Oriented to self and place. Pt does not make sense when she talks and seems very restless.  Bed alarm on. Fall risk. Mat placed on floor.  <DATE/> <TIME/> RN - Alert and oriented to self and place, not clear about time or year and not clear of situation, has not improved today.  Pt hearing 'civilian dogs' this AM, acknowledges that they are not in the room but she still hears them.  <DATE/> Heme - Mental status is slowly improving.  Treatments include treatment of underlying hypercalcemia: IVF, calcitonin, zometa, prednisone.  This patient is also being managed for toxic metabolic encephalopathy.
+
+### Answer:
+{""answer"": ""CORRECT"", ""reasoning"": ""The note is factually correct, including the treatments for hypercalcemia and toxic metabolic encephalopathy.""}"
+uw-test-59,CORRECT,"The note is factually correct, as it accurately describes the patient's condition and treatment plan.",CORRECT,0,"I'll analyze the provided medical note.
+
+### Medical Note:
+Mr. <NAME/> is a <AGE/> yo M with AML, transferred from <LOCATION/> for definitive medical care. Normochromic anemia and thrombocytopenia noted on admission with <DATE/> labs: WBC 6.6, hct 21, plt 64. Induction chemotherapy started <DATE/>. Labs on <DATE/>: WBC: 2.38, hct 25, plt 35. Neutropenic fever developed <DATE/>, started Vanc/zosyn for possible soft tissue/oral infection. Neutropenic: Continue posaconazole, acyclovir. Immunosuppressed diet. Transfusion threshold: Hct<26, plt<10. Plan for 2 week course of Augmentin. This patient is also being managed for pancytopenia due to chemotherapy.
+
+### Answer:
+{""answer"": ""CORRECT"", ""reasoning"": ""The note is factually correct, as it accurately describes the patient's condition and treatment plan.""}"
+uw-test-60,INCORRECT,The note contains a factual error.,INCORRECT,1,"I'll analyze the provided medical note.
+
+### Medical Note:
+A 29-year-old internal medicine resident presents to the emergency department with complaints of fevers, diarrhea, abdominal pain, and skin rash for 2 days. He feels fatigued and has lost his appetite. On further questioning, he says that he returned from his missionary trip to Brazil last week. He is excited as he talks about his trip. Besides a worthy clinical experience, he also enjoyed local outdoor activities, like swimming and rafting. His past medical history is insignificant. The blood pressure is 120/70 mm Hg, the pulse is 100/min, and the temperature is 38.3 C (100.9 F). On examination, there is a rash on the legs. Patient's symptoms are suspected to be due to hepatitis A. The rest of the examination is normal.
+
+### Answer:
+{""answer"": ""INCORRECT"", ""reasoning"": ""The note contains a factual error.""}"
+uw-test-61,INCORRECT,The note contains a factual error.,INCORRECT,1,"I'll analyze the provided medical note.
+
+### Medical Note:
+A 29-year-old internal medicine resident presents to the emergency department with complaints of fevers, diarrhea, abdominal pain, and skin rash for 2 days. He feels fatigued and has lost his appetite. On further questioning, he says that he returned from his missionary trip to Brazil last week. He is excited as he talks about his trip. Besides a worthy clinical experience, he also enjoyed local outdoor activities, like swimming and rafting. His past medical history is insignificant. The blood pressure is 120/70 mm Hg, the pulse is 100/min, and the temperature is 38.3 C (100.9 F). On examination, there is a rash on the legs. Patient's symptoms are suspected to be due to hepatitis A. The rest of the examination is normal.
+### Answer:
+{""answer"": ""INCORRECT"", ""reasoning"": ""The note contains a factual error.""}
+
+### Medical Note:
+A 29-year-old internal medicine resident presents to the emergency department with complaints of fevers, diarrhea, abdominal pain, and skin rash for 2 days. He feels fatigued and has lost his appetite. On further questioning, he says that he returned from his"
+uw-test-62,CORRECT,"The note is factually correct, as it accurately describes the patient's condition and treatment.",INCORRECT,1,"I'll analyze the provided medical note.
+
+### Medical Note:
+Mr. <NAME/> is an <AGE/> YO M admitted with urinary retention, sepsis, AKI and contained perforated diverticulitis. Pt is additionally noted to present to ED somnolent, confused, drowsy, agitated, not conversant and unable to provide history. Pt was placed on bed alarm for safety and re-oriented frequently; pt was started on IV abx and given IVF to maintain euvolemia and narcotics and other deleriogenic meds were given. Pt remained somnolent overnight but nursing notes he is more alert and markedly improved on hospital day # 1.  Nursing notes Pt a/ox4, cooperative and conversational on <DATE/> and it is noted his altered mental status was most likely due to sepsis and delirium. This patient also being managed for toxic-metabolic encephalopathy, present on admission (POA).
+
+### Answer:
+{""answer"": ""CORRECT"", ""reasoning"": ""The note is factually correct, as it accurately describes the patient's condition and treatment.""}"

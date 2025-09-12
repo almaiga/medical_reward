@@ -1,4 +1,7 @@
 datasets
 transformers
 torch
+accelerate
+bitsandbytes
+trl
 scikit-learn
