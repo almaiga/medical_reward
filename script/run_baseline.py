@@ -21,7 +21,7 @@ def load_model_and_tokenizer(model_id):
     tokenizer = AutoTokenizer.from_pretrained(model_id, trust_remote_code=True)
     model = AutoModelForCausalLM.from_pretrained(
         model_id,
-        quantization_config=quantization_config,  # <-- Enable quantization
+        #quantization_config=quantization_config,  # <-- Enable quantization
         device_map="auto",
         trust_remote_code=True
     )
