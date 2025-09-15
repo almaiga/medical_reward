@@ -30,7 +30,7 @@ def load_model_and_tokenizer(model_id):
     print("Model and tokenizer loaded successfully.")
     return model, tokenizer
 
-def load_medec_benchmark(num_ai_errors=60, num_doctor_errors=60):
+def load_medec_benchmark(num_ai_errors=50, num_doctor_errors=50):
     """
     Loads and prepares the MEDEC benchmark dataset from local CSV files,
     separating few-shot examples from the main evaluation set.
@@ -79,35 +79,49 @@ def run_inference(model, tokenizer, dataset, few_shot_examples):
     """Runs inference on the dataset and collects model outputs."""
     results = []
 
-    prompt_system = "You are a skilled medical doctor reviewing clinical texts for accuracy."
-    prompt_user_template = (
-        "Each text is either entirely correct or contains exactly one medical error.\n"
-        "Medical errors are clinically harmful inaccuracies in patient records.\n"
-        "Analyze the following medical note carefully.\n"
-        "Medical Note: {medical_note}\n"
-        "Respond in JSON format with two fields:\n"
-        '- \"answer\": either \"CORRECT\" or \"INCORRECT\"\n'
-        '- \"reasoning\": a brief, single-sentence explanation for your decision (no more than 25 words).\n'
-    )
+    prompt_system = """You are an expert AI medical reviewer. Your task is to determine if a medical note contains a clinically significant error.
 
-    # Create the few-shot prompt prefix once
-    few_shot_examples_text = ""
-    for _, example in few_shot_examples.iterrows():
-        label = "INCORRECT" if example['Error Flag'] == 1 else "CORRECT"
-        reasoning = "The note contains a factual error." if label == "INCORRECT" else "The note is factually correct."
-        few_shot_examples_text += f"\n### Medical Note:\n{example['Text']}\n### Answer:\n{{\"answer\": \"{label}\", \"reasoning\": \"{reasoning}\"}}"
+Your decision must be based solely on clinical reasoning and medical knowledge, not on the style, format, or origin of the note. Do not assume a note is incorrect simply because it differs from textbook language or standardized formats.
+
+Step 1: Think inside <think> tags. Be concise and focused. Only identify an error if you are confident one exists, based on clinical evidence or guidelines.
+
+Step 2: After </think>, provide your answer as a JSON object: {"answer": "CORRECT" or "INCORRECT", "reasoning": "..."}.
+In your reasoning, justify your decision using clinical knowledge. If the note is correct, explain why it is appropriate and follows clinical guidelines. If you are unsure, classify as CORRECT.
+"""
+    prompt_user_template = "### Medical Note:\n{Text}"
+
+    few_shot_prompt = ""
+    for _, ex in few_shot_examples.iterrows():
+        label = "INCORRECT" if ex['Error Flag'] == 1 else "CORRECT"
+        if label == "INCORRECT":
+            # Example: clinical reasoning for an error
+            reasoning = (
+                f"The note states '{ex['Error Sentence']}', which is incorrect because "
+                f"according to clinical guidelines, '{ex['Corrected Sentence']}' is the appropriate management. "
+                f"Incorrect management could lead to adverse outcomes such as [insert consequence if available]."
+            )
+        else:
+            # Example: clinical reasoning for correctness
+            reasoning = (
+                "The note accurately describes the clinical scenario and recommended management, "
+                "which aligns with current medical guidelines and best practices."
+            )
+        example_response = f"""<think>
+Conclusion: The note is {label.lower()}.
+</think>
+{{"answer": "{label}", "reasoning": "{reasoning}"}}"""
+        few_shot_prompt += f"\n\n---\n\n{prompt_user_template.format(Text=ex['Text'])}\n{example_response}"
 
     for item in tqdm(dataset, desc="Inference"):
-        medical_note = item['Text']
+        note = item['Text']
         error_flag = item['Error Flag']
+        gt_label = "INCORRECT" if error_flag == 1 else "CORRECT"
 
-        # Combine the few-shot prefix with the current example
-        prompt_user = f"{prompt_user_template.format(medical_note=medical_note)}\n{few_shot_examples_text}"
-        
-        messages = [
-            {"role": "system", "content": prompt_system},
-            {"role": "user", "content": prompt_user}
-        ]
+        full_prompt = (
+            f"{prompt_system}{few_shot_prompt}\n\n---\n\n"
+            f"Now, apply this process to the following note.\n\n{prompt_user_template.format(Text=note)}"
+        )
+        messages = [{"role": "user", "content": full_prompt}]
         inputs = tokenizer.apply_chat_template(
             messages,
             add_generation_prompt=True,
@@ -115,25 +129,18 @@ def run_inference(model, tokenizer, dataset, few_shot_examples):
             return_dict=True,
             return_tensors="pt",
         ).to(model.device)
-        
-        # Generate the output
+
         outputs = model.generate(
-            **inputs, 
-            max_new_tokens=512, # Increased token count for reasoning
-            temperature=0.1, 
-            do_sample=False, # Disabled sampling for more deterministic output
+            **inputs,
+            max_new_tokens=512,
             pad_token_id=tokenizer.eos_token_id
         )
-        
         response_text = tokenizer.decode(outputs[0][inputs["input_ids"].shape[-1]:], skip_special_tokens=True)
-        
-        # Parse the model's answer and reasoning
+
         answer_match = re.search(r'"answer"\s*:\s*"?(CORRECT|INCORRECT)"?', response_text, re.IGNORECASE)
         reasoning_match = re.search(r'"reasoning"\s*:\s*"(.*?)"', response_text, re.DOTALL)
-        
         model_label = answer_match.group(1).upper() if answer_match else "UNKNOWN"
         model_reasoning = reasoning_match.group(1).strip() if reasoning_match else "NO REASONING"
-        gt_label = "INCORRECT" if error_flag == 1 else "CORRECT"
 
         results.append({
             'Text ID': item['Text ID'],
@@ -143,7 +150,7 @@ def run_inference(model, tokenizer, dataset, few_shot_examples):
             'Error Flag': error_flag,
             'full_response': response_text
         })
-        
+
     return pd.DataFrame(results)
 
 def main():
