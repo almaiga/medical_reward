@@ -153,7 +153,7 @@ Conclusion: The note is {label.lower()}.
         })
 
         # Optionally clear cache after each step
-        torch.cuda.empty_cache()
+        #torch.cuda.empty_cache()
 
     return pd.DataFrame(results)
 
