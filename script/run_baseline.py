@@ -21,7 +21,7 @@ def load_model_and_tokenizer(model_id):
     tokenizer = AutoTokenizer.from_pretrained(model_id, trust_remote_code=True)
     model = AutoModelForCausalLM.from_pretrained(
         model_id,
-       # quantization_config=quantization_config,
+        quantization_config=quantization_config,  # <-- Enable quantization
         device_map="auto",
         trust_remote_code=True
     )
@@ -122,19 +122,20 @@ Conclusion: The note is {label.lower()}.
             f"Now, apply this process to the following note.\n\n{prompt_user_template.format(Text=note)}"
         )
         messages = [{"role": "user", "content": full_prompt}]
-        inputs = tokenizer.apply_chat_template(
-            messages,
-            add_generation_prompt=True,
-            tokenize=True,
-            return_dict=True,
-            return_tensors="pt",
-        ).to(model.device)
+        with torch.no_grad():  # <-- Disable gradient calculation
+            inputs = tokenizer.apply_chat_template(
+                messages,
+                add_generation_prompt=True,
+                tokenize=True,
+                return_dict=True,
+                return_tensors="pt",
+            ).to(model.device)
 
-        outputs = model.generate(
-            **inputs,
-            max_new_tokens=512,
-            pad_token_id=tokenizer.eos_token_id
-        )
+            outputs = model.generate(
+                **inputs,
+                max_new_tokens=512,
+                pad_token_id=tokenizer.eos_token_id
+            )
         response_text = tokenizer.decode(outputs[0][inputs["input_ids"].shape[-1]:], skip_special_tokens=True)
 
         answer_match = re.search(r'"answer"\s*:\s*"?(CORRECT|INCORRECT)"?', response_text, re.IGNORECASE)
@@ -150,6 +151,9 @@ Conclusion: The note is {label.lower()}.
             'Error Flag': error_flag,
             'full_response': response_text
         })
+
+        # Optionally clear cache after each step
+        torch.cuda.empty_cache()
 
     return pd.DataFrame(results)
 
