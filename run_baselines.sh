@@ -1,8 +1,4 @@
 models=(
-    "Qwen/Qwen3-4B-Instruct-2507"
-    "meta-llama/Llama-3.2-3B-Instruct"
-    "google/gemma-3-4b-it"
-    "google/medgemma-4b-it"
     "meta-llama/Llama-3.1-8B-Instruct"
     "Qwen/Qwen3-8B"
     "Intelligent-Internet/II-Medical-8B" 
