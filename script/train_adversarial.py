@@ -330,5 +330,12 @@ def main():
     print(f"JSONL log written to {log_path}")
 
 
+# Add a small helper to decode only new tokens (not the prompt)
+def _decode_new_only(tokenizer, inputs, generated_ids):
+    prompt_len = inputs["input_ids"].shape[1]
+    new_ids = generated_ids[0, prompt_len:]
+    return tokenizer.decode(new_ids, skip_special_tokens=True).strip()
+
+
 if __name__ == "__main__":
     main()
