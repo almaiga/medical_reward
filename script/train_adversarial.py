@@ -249,6 +249,7 @@ def main():
                     "round": state["round"],
                     "role": "defender",
                     "step": state["def_step"],
+                    "defender_prompt": p,
                     "original_note": original,
                     "attacked_note": attacked,
                     "defender_thought": d_think,
@@ -302,6 +303,8 @@ def main():
                     "round": state["round"],
                     "role": "attacker",
                     "step": state["atk_step"],
+                    "attacker_prompt": p,
+                    "defender_prompt": defend_prompt,
                     "original_note": original,
                     "attacker_thought": a_think,
                     "attacked_note": attacked,
@@ -353,6 +356,8 @@ def main():
         ).to(device)
         snap.load_state_dict(policy_model.state_dict(), strict=False)
         snap.eval()
+        # Ensure snapshot uses identical sampling/anti-repetition config as the live policy
+        snap.generation_config = deepcopy(policy_model.generation_config)
         defender_snapshot["model"] = snap
 
         # 1) Attacker epoch (shared model)
@@ -369,7 +374,8 @@ def main():
         # 2) Build defender prompts by letting snapshot attack a subset of originals
         attacked_records = []
         with torch.no_grad():
-            sel = ds_originals.select(range(min(args.max_defender_batch, len(ds_originals))))
+            # Shuffle per round so defender sees fresh self-play samples
+            sel = ds_originals.shuffle(seed=42 + r).select(range(min(args.max_defender_batch, len(ds_originals))))
             for row in sel:
                 original = row["original"]
                 attack_prompt = (
