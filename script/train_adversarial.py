@@ -155,8 +155,16 @@ def main():
 
     # Defender reward: judge(original, defender_correction)
     def defender_reward_fn(prompts, completions, **kwargs):
+        if not prompts or not completions:
+            return []
+        # Align prompts with completions for num_generations > 1
+        if len(completions) % len(prompts) == 0:
+            repeat = len(completions) // len(prompts)
+            aligned_prompts = [p for p in prompts for _ in range(repeat)]
+        else:
+            aligned_prompts = prompts[: len(completions)]
         scores = []
-        for p, c in zip(prompts, completions):
+        for p, c in zip(aligned_prompts, completions):
             original = extract_original_from_prompt(p)
             corrected = c.strip()
             score = get_rubric_based_reward(original, corrected, judge_model, judge_tok, device)
@@ -165,11 +173,18 @@ def main():
 
     # Attacker reward: -judge(original, defender(current_policy, attacked))
     def attacker_reward_fn(prompts, completions, **kwargs):
+        if not prompts or not completions:
+            return []
+        # Align prompts with completions for num_generations > 1
+        if len(completions) % len(prompts) == 0:
+            repeat = len(completions) // len(prompts)
+            aligned_prompts = [p for p in prompts for _ in range(repeat)]
+        else:
+            aligned_prompts = prompts[: len(completions)]
         scores = []
-        for p, attacked_note in zip(prompts, completions):
+        for p, attacked_note in zip(aligned_prompts, completions):
             original = extract_original_from_prompt(p)
             attacked = attacked_note.strip()
-
             # Let current defender try to fix it, then judge the fix
             defend_prompt = (
                 "You are a medical assistant. Review the medical note for errors and provide a corrected version.\n"
@@ -207,8 +222,8 @@ def main():
         save_steps=0,
         report_to=None,
     )
-    attacker_config = GRPOConfig(stop_token_ids=[attacker_tok.eos_token_id], **common_cfg)
-    defender_config = GRPOConfig(stop_token_ids=[defender_tok.eos_token_id], **common_cfg)
+    attacker_config = GRPOConfig(**common_cfg)  # TRL 0.23.0: no stop_token_ids in config
+    defender_config = GRPOConfig(**common_cfg)
 
     # Trainers (require TRL with GRPO)
     if len(ds_attacker) > 0:
