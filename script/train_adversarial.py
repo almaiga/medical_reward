@@ -142,7 +142,7 @@ def main():
         args=ppo_config,
         model=attacker_model,
         ref_model=attacker_ref_model,  # The required reference model
-        tokenizer=attacker_tokenizer,
+        #tokenizer=attacker_tokenizer,
         dataset=dataset
     )
 
@@ -150,7 +150,7 @@ def main():
         args=ppo_config,
         model=defender_model,
         ref_model=defender_ref_model,  # The required reference model
-        tokenizer=defender_tokenizer,
+        #tokenizer=defender_tokenizer,
         dataset=dataset
     )
 
