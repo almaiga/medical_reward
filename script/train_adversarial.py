@@ -153,11 +153,14 @@ def main():
     policy_model, policy_tok = load_causal_lm(args.model_id, device)
     judge_model, judge_tok = load_causal_lm(args.judge_model_id, device)
 
-    # Make sampling effective via generation_config to avoid ignored kwargs warnings
+    # Make sampling effective via generation_config and reduce repetition
     gc = policy_model.generation_config
     gc.do_sample = True
     gc.temperature = 0.7
     gc.top_p = 0.95
+    gc.top_k = 50
+    gc.repetition_penalty = 1.15
+    gc.no_repeat_ngram_size = 6
     gc.max_new_tokens = 350
     gc.pad_token_id = policy_tok.eos_token_id
     gc.eos_token_id = policy_tok.eos_token_id
@@ -243,13 +246,11 @@ def main():
             )
             with torch.no_grad():
                 inputs = policy_tok(defend_prompt, return_tensors="pt").to(device)
-                out = policy_model.generate(
-                    **inputs,
-                    max_new_tokens=350,
-                    do_sample=True,
-                    pad_token_id=policy_tok.eos_token_id,
-                )
-                defender_completion = policy_tok.decode(out[0], skip_special_tokens=True).strip()
+                out = policy_model.generate(**inputs)
+                defender_completion = _decode_new_only(policy_tok, inputs, out)
+                # If the model starts another section, keep only the corrected note
+                if "###" in defender_completion:
+                    defender_completion = defender_completion.split("###", 1)[0].strip()
 
             score = get_rubric_based_reward(original, defender_completion, judge_model, judge_tok, device)
             scores.append(float(-score))  # attacker is rewarded when defender fails
