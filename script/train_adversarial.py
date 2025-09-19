@@ -1,12 +1,12 @@
 import os
 import re
+import json
 import argparse
 from datetime import datetime
 
 import torch
 import pandas as pd
 from datasets import Dataset
-from tqdm import tqdm
 from transformers import AutoTokenizer, AutoModelForCausalLM
 from trl import GRPOConfig, GRPOTrainer
 
@@ -84,8 +84,10 @@ def load_medec_subset(num_samples: int) -> Dataset:
 def build_datasets(base_ds: Dataset):
     # Attacker: train on clean notes (Error Flag == 0), produce attacked note
     ds_attacker = base_ds.filter(lambda x: int(x["Error Flag"]) == 0)
+
     def to_attack_prompt(row):
         original = row.get("Text", "") or ""
+        # If you want chain-of-thought, include an explicit <think> section in your instruction.
         return {
             "prompt": (
                 "You are an AI red-teaming assistant. Introduce a subtle but clinically significant error into the note.\n"
@@ -95,10 +97,14 @@ def build_datasets(base_ds: Dataset):
                 "### Note with Error:\n"
             )
         }
-    ds_attacker = ds_attacker.map(to_attack_prompt, remove_columns=[c for c in ds_attacker.column_names if c != "prompt"])
+
+    ds_attacker = ds_attacker.map(
+        to_attack_prompt, remove_columns=[c for c in ds_attacker.column_names if c != "prompt"]
+    )
 
     # Defender: train on erroneous notes (Error Flag != 0), produce corrected note
     ds_defender = base_ds.filter(lambda x: int(x["Error Flag"]) != 0)
+
     def to_defend_prompt(row):
         attacked = row.get("Text", "") or ""
         original = row.get("Corrected Text", "") or ""
@@ -113,7 +119,10 @@ def build_datasets(base_ds: Dataset):
                 "### Corrected Note:\n"
             )
         }
-    ds_defender = ds_defender.map(to_defend_prompt, remove_columns=[c for c in ds_defender.column_names if c != "prompt"])
+
+    ds_defender = ds_defender.map(
+        to_defend_prompt, remove_columns=[c for c in ds_defender.column_names if c != "prompt"]
+    )
 
     return ds_attacker, ds_defender
 
@@ -124,68 +133,107 @@ def extract_original_from_prompt(prompt: str) -> str:
 
 
 def extract_attacked_from_prompt(prompt: str) -> str:
-    # Used when defender trains; the prompt includes Medical Note section
     m = re.search(r"Medical Note:\n(.*?)\n\n### Corrected Note:", prompt, re.DOTALL)
     return m.group(1).strip() if m else ""
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Adversarial self-play with GRPO: attacker and defender with rubric judge.")
-    parser.add_argument("--model_id", type=str, required=True, help="Base model ID for attacker and defender policies.")
+    parser = argparse.ArgumentParser(description="Adversarial self-play with GRPO: single shared policy, rubric judge.")
+    parser.add_argument("--model_id", type=str, required=True, help="Base model ID for policy (used as both attacker/defender).")
     parser.add_argument("--judge_model_id", type=str, default="Qwen/Qwen3-4B-Instruct-2507", help="Judge model ID.")
     parser.add_argument("--num_samples", type=int, default=200, help="Dataset subset size.")
     parser.add_argument("--num_generations", type=int, default=2, help="Completions per prompt for GRPO.")
     parser.add_argument("--learning_rate", type=float, default=1e-5)
+    parser.add_argument("--rounds", type=int, default=6, help="Number of self-play rounds (1 epoch per round).")
     args = parser.parse_args()
 
     device = get_device()
 
-    # Load policies and judge
-    attacker_model, attacker_tok = load_causal_lm(args.model_id, device)
-    defender_model, defender_tok = load_causal_lm(args.model_id, device)
+    # Shared policy and judge
+    policy_model, policy_tok = load_causal_lm(args.model_id, device)
     judge_model, judge_tok = load_causal_lm(args.judge_model_id, device)
+
+    # Make sampling effective via generation_config to avoid ignored kwargs warnings
+    gc = policy_model.generation_config
+    gc.do_sample = True
+    gc.temperature = 0.7
+    gc.top_p = 0.95
+    gc.max_new_tokens = 350
+    gc.pad_token_id = policy_tok.eos_token_id
+    gc.eos_token_id = policy_tok.eos_token_id
 
     # Prepare datasets
     base_ds = load_medec_subset(args.num_samples)
     ds_attacker, ds_defender = build_datasets(base_ds)
     if len(ds_attacker) == 0:
-        print("Warning: attacker dataset empty (no Error Flag == 0 rows). Attacker will be skipped.")
+        print("Warning: attacker dataset empty (no Error Flag == 0 rows).")
     if len(ds_defender) == 0:
-        print("Warning: defender dataset empty (no Error Flag != 0 rows). Defender will be skipped.")
+        print("Warning: defender dataset empty (no Error Flag != 0 rows).")
 
-    # Defender reward: judge(original, defender_correction)
+    # JSONL logging
+    os.makedirs("results/selfplay", exist_ok=True)
+    ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+    model_name = args.model_id.replace("/", "_")
+    log_path = f"results/selfplay/{ts}_{model_name}_grpo_selfplay.jsonl"
+
+    round_idx_holder = {"round": 0}
+    atk_step = {"i": 0}
+    def_step = {"i": 0}
+
+    def log_jsonl(entry: dict):
+        with open(log_path, "a", encoding="utf-8") as f:
+            f.write(json.dumps(entry, ensure_ascii=False) + "\n")
+
+    # Reward functions (aligned with num_generations in TRL 0.23.0)
     def defender_reward_fn(prompts, completions, **kwargs):
         if not prompts or not completions:
             return []
-        # Align prompts with completions for num_generations > 1
+        # Align prompts with completions
         if len(completions) % len(prompts) == 0:
             repeat = len(completions) // len(prompts)
             aligned_prompts = [p for p in prompts for _ in range(repeat)]
         else:
             aligned_prompts = prompts[: len(completions)]
+
         scores = []
         for p, c in zip(aligned_prompts, completions):
             original = extract_original_from_prompt(p)
+            attacked = extract_attacked_from_prompt(p)
             corrected = c.strip()
             score = get_rubric_based_reward(original, corrected, judge_model, judge_tok, device)
             scores.append(float(score))
+            # Log
+            log_jsonl(
+                {
+                    "round": round_idx_holder["round"],
+                    "role": "defender",
+                    "step": def_step["i"],
+                    "prompt": p,
+                    "original_note": original,
+                    "attacked_note": attacked,
+                    "defender_completion": corrected,
+                    "judge_score": score,
+                }
+            )
+            def_step["i"] += 1
         return scores
 
-    # Attacker reward: -judge(original, defender(current_policy, attacked))
     def attacker_reward_fn(prompts, completions, **kwargs):
         if not prompts or not completions:
             return []
-        # Align prompts with completions for num_generations > 1
+        # Align prompts with completions
         if len(completions) % len(prompts) == 0:
             repeat = len(completions) // len(prompts)
             aligned_prompts = [p for p in prompts for _ in range(repeat)]
         else:
             aligned_prompts = prompts[: len(completions)]
+
         scores = []
         for p, attacked_note in zip(aligned_prompts, completions):
             original = extract_original_from_prompt(p)
             attacked = attacked_note.strip()
-            # Let current defender try to fix it, then judge the fix
+
+            # Let current shared policy act as defender
             defend_prompt = (
                 "You are a medical assistant. Review the medical note for errors and provide a corrected version.\n"
                 "Provide only the corrected note under '### Corrected Note:' and nothing else.\n\n"
@@ -194,84 +242,91 @@ def main():
                 "### Corrected Note:\n"
             )
             with torch.no_grad():
-                inputs = defender_tok(defend_prompt, return_tensors="pt").to(device)
-                out = defender_model.generate(
+                inputs = policy_tok(defend_prompt, return_tensors="pt").to(device)
+                out = policy_model.generate(
                     **inputs,
                     max_new_tokens=350,
-                    temperature=0.7,
-                    top_p=0.95,
                     do_sample=True,
-                    pad_token_id=defender_tok.eos_token_id,
+                    pad_token_id=policy_tok.eos_token_id,
                 )
-                correction = defender_tok.decode(out[0], skip_special_tokens=True)
-            score = get_rubric_based_reward(original, correction, judge_model, judge_tok, device)
-            scores.append(float(-score))  # attacker aims to make defender fail
+                defender_completion = policy_tok.decode(out[0], skip_special_tokens=True).strip()
+
+            score = get_rubric_based_reward(original, defender_completion, judge_model, judge_tok, device)
+            scores.append(float(-score))  # attacker is rewarded when defender fails
+
+            # Log
+            log_jsonl(
+                {
+                    "round": round_idx_holder["round"],
+                    "role": "attacker",
+                    "step": atk_step["i"],
+                    "prompt": p,
+                    "original_note": original,
+                    "attacked_note": attacked,
+                    "defender_completion": defender_completion,
+                    "judge_score": score,
+                    "attacker_reward": -score,
+                }
+            )
+            atk_step["i"] += 1
         return scores
 
-    # Configs
+    # Configs for TRL 0.23.0 (no stop_token_ids; align batch sizes)
     common_cfg = dict(
         num_generations=args.num_generations,
-        generation_batch_size=args.num_generations,  # TRL 0.23.0 requires divisible by num_generations
+        generation_batch_size=args.num_generations,  # must divide evenly by num_generations
         max_prompt_length=1024,
         max_completion_length=350,
-        temperature=0.7,
-        top_p=0.95,
+        # Sampling handled via model.generation_config
         learning_rate=args.learning_rate,
         per_device_train_batch_size=1,
         gradient_accumulation_steps=1,
         logging_steps=10,
         save_steps=0,
         report_to=None,
+        dataloader_pin_memory=False,  # avoid MPS warning
+        gradient_checkpointing=False,
+        num_train_epochs=1,  # one epoch per round
     )
+    atk_cfg = GRPOConfig(**common_cfg)
+    def_cfg = GRPOConfig(**common_cfg)
 
-    attacker_config = GRPOConfig(**common_cfg)
-    defender_config = GRPOConfig(**common_cfg)
+    # Interleaved self-play rounds; both trainers share the same policy model
+    for r in range(args.rounds):
+        round_idx_holder["round"] = r + 1
+        print(f"\n=== Self-play round {r+1}/{args.rounds} ===")
 
-    # Trainers (require TRL with GRPO)
-    if len(ds_attacker) > 0:
-        attacker_trainer = GRPOTrainer(
-            model=attacker_model,
-            config=attacker_config,
-            processing_class=attacker_tok,
-            train_dataset=ds_attacker,
-            reward_funcs=[attacker_reward_fn],
-        )
-    else:
-        attacker_trainer = None
+        # Attacker epoch
+        if len(ds_attacker) > 0:
+            print("--- Attacker epoch ---")
+            attacker_trainer = GRPOTrainer(
+                model=policy_model,
+                args=atk_cfg,
+                processing_class=policy_tok,
+                train_dataset=ds_attacker,
+                reward_funcs=[attacker_reward_fn],
+            )
+            attacker_trainer.train()
 
-    if len(ds_defender) > 0:
-        defender_trainer = GRPOTrainer(
-            model=defender_model,
-            config=defender_config,
-            processing_class=defender_tok,
-            train_dataset=ds_defender,
-            reward_funcs=[defender_reward_fn],
-        )
-    else:
-        defender_trainer = None
+        # Defender epoch
+        if len(ds_defender) > 0:
+            print("--- Defender epoch ---")
+            defender_trainer = GRPOTrainer(
+                model=policy_model,
+                args=def_cfg,
+                processing_class=policy_tok,
+                train_dataset=ds_defender,
+                reward_funcs=[defender_reward_fn],
+            )
+            defender_trainer.train()
 
-    # Train sequentially (simple, avoids interleaving complexity)
-    if attacker_trainer:
-        print("\n--- Training attacker with GRPO ---")
-        attacker_trainer.train()
-    if defender_trainer:
-        print("\n--- Training defender with GRPO ---")
-        defender_trainer.train()
-
-    # Save models
+    # Save the single shared policy
     os.makedirs("models", exist_ok=True)
-    ts = datetime.now().strftime("%Y%m%d_%H%M%S")
-    name = args.model_id.replace("/", "_")
-    if attacker_trainer:
-        save_a = f"models/{ts}_{name}_attacker_grpo"
-        attacker_model.save_pretrained(save_a)
-        attacker_tok.save_pretrained(save_a)
-        print(f"Attacker model saved to {save_a}")
-    if defender_trainer:
-        save_d = f"models/{ts}_{name}_defender_grpo"
-        defender_model.save_pretrained(save_d)
-        defender_tok.save_pretrained(save_d)
-        print(f"Defender model saved to {save_d}")
+    save_dir = f"models/{ts}_{model_name}_shared_grpo"
+    policy_model.save_pretrained(save_dir)
+    policy_tok.save_pretrained(save_dir)
+    print(f"Shared self-play policy saved to {save_dir}")
+    print(f"JSONL log written to {log_path}")
 
 
 if __name__ == "__main__":

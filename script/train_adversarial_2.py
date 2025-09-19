@@ -3,6 +3,7 @@ import argparse
 import re
 import os
 import csv
+import json
 import pandas as pd
 from datetime import datetime
 from transformers import AutoTokenizer, AutoModelForCausalLM, GenerationConfig
@@ -138,43 +139,54 @@ def main():
     os.makedirs(log_dir, exist_ok=True)
     log_filename = f"{timestamp}_{model_name_safe}_{args.num_steps}_adversarial_log.csv"
     log_filepath = os.path.join(log_dir, log_filename)
-    
-    with open(log_filepath, 'w', newline='', encoding='utf-8') as csvfile:
-        csv_writer = csv.writer(csvfile)
-        csv_writer.writerow([
-            "timestamp", "step", "source_type", "original_note", 
-            "attacker_thought", "attacked_note", "defender_thought", "defender_response", 
-            "defender_reward", "attacker_reward"
-        ])
+    log_filename_jsonl = f"{timestamp}_{model_name_safe}_{args.num_steps}_adversarial_log.jsonl"
+    log_jsonl_path = os.path.join(log_dir, log_filename_jsonl)
+     
+    with open(log_filepath, 'w', newline='', encoding='utf-8') as csvfile, \
+         open(log_jsonl_path, 'a', encoding='utf-8') as jsonlfile:
+         csv_writer = csv.writer(csvfile)
+         csv_writer.writerow([
+             "timestamp", "step", "source_type", "original_note", 
+             "attacker_thought", "attacked_note", "defender_thought", "defender_response", 
+             "defender_reward", "attacker_reward"
+         ])
 
-        print("\n--- Starting Adversarial Training ---")
-        progress_bar = tqdm(enumerate(defender_ppo_trainer.dataloader), total=len(defender_ppo_trainer.dataloader), desc="Adversarial Training")
+         print("\n--- Starting Adversarial Training ---")
+         progress_bar = tqdm(enumerate(defender_ppo_trainer.dataloader), total=len(defender_ppo_trainer.dataloader), desc="Adversarial Training")
 
-        for step, batch in progress_bar:
-            is_self_play_round = batch['Error Flag'][0] == 0
-            source_type = "Self-Play" if is_self_play_round else "Supervised-Correction"
-            original_note = batch['Text'][0] if is_self_play_round else batch['Corrected Text'][0]
+         for step, batch in progress_bar:
+             is_self_play_round = batch['Error Flag'][0] == 0
+             source_type = "Self-Play" if is_self_play_round else "Supervised-Correction"
+             original_note = batch['Text'][0] if is_self_play_round else batch['Corrected Text'][0]
 
-            if not original_note: continue
+             if not original_note: continue
 
-            # 1. Attacker's turn
-            if is_self_play_round:
-                attack_prompt = f"You are an AI red-teaming assistant...### Original Note:\n{original_note}\n\n### Your Process:\n"
+             # 1. Attacker's turn
+             if is_self_play_round:
+                attack_prompt = (
+                    "You are an AI red-teaming assistant. Introduce a subtle but clinically significant error into the note.\n"
+                    "Provide your reasoning inside <think>...</think>, then output only under '### Note with Error:'.\n\n"
+                    f"### Original Note:\n{original_note}\n\n### Your Process:\n"
+                )
                 attack_query_tensor = attacker_tokenizer.encode(attack_prompt, return_tensors='pt').to(device)
-                
+                 
                 response_tensor = attacker_ppo_trainer.generate(attack_query_tensor, return_prompt=False, **generation_kwargs)
                 full_attack_response = attacker_tokenizer.decode(response_tensor[0], skip_special_tokens=True)
                 attacker_thought, attacked_note_text = parse_thought_and_output(full_attack_response, "### Note with Error:")
-            else:
-                attacked_note_text = batch['Text'][0]
-                attacker_thought = "N/A (from dataset)"
+             else:
+                 attacked_note_text = batch['Text'][0]
+                 attacker_thought = "N/A (from dataset)"
 
-            if not attacked_note_text: continue
+             if not attacked_note_text: continue
 
             # 2. Defender's turn
-            defend_prompt = f"You are a medical assistant...### Medical Note:\n{attacked_note_text}\n\n### Your Process:\n"
+            defend_prompt = (
+                "You are a medical assistant. Review the medical note for errors and provide a corrected version.\n"
+                "Provide your reasoning inside <think>...</think>, then output only under '### Corrected Note:'.\n\n"
+                f"### Medical Note:\n{attacked_note_text}\n\n### Your Process:\n"
+            )
             defend_query_tensor = defender_tokenizer.encode(defend_prompt, return_tensors='pt').to(device)
-            
+             
             defender_response_tensor = defender_ppo_trainer.generate(defend_query_tensor, return_prompt=False, **generation_kwargs)
             full_defender_response = defender_tokenizer.decode(defender_response_tensor[0], skip_special_tokens=True)
             defender_thought, corrected_note_text = parse_thought_and_output(full_defender_response, "### Corrected Note:")
@@ -185,20 +197,41 @@ def main():
 
             # 4. PPO Step for each player
             defender_stats = defender_ppo_trainer.step([defend_query_tensor[0]], [defender_response_tensor[0]], [defender_reward])
-            
+             
             if is_self_play_round:
                 attacker_stats = attacker_ppo_trainer.step([attack_query_tensor[0]], [response_tensor[0]], [attacker_reward])
 
-            # Logging
+            # Logging (CSV row)
             csv_writer.writerow([
                 datetime.now().strftime("%Y-%m-%d %H:%M:%S"), step, source_type, original_note,
                 attacker_thought, attacked_note_text, defender_thought, corrected_note_text,
                 defender_reward.item(), attacker_reward.item() if is_self_play_round else "N/A"
-            ])
-            
+             ])
+            # Logging (JSONL object per episode)
+            json_entry = {
+                "timestamp": datetime.now().isoformat(),
+                "episode": int(step),
+                "source_type": source_type,
+                "original_note": original_note,
+                "attacker": {
+                    "prompt": attack_prompt if is_self_play_round else None,
+                    "thought": attacker_thought,
+                    "attacked_note": attacked_note_text,
+                    "reward": float(attacker_reward.item()) if is_self_play_round else None,
+                 },
+                "defender": {
+                    "prompt": defend_prompt,
+                    "thought": defender_thought,
+                    "corrected_note": corrected_note_text,
+                    "reward": float(defender_reward.item()),
+                },
+             }
+            jsonlfile.write(json.dumps(json_entry, ensure_ascii=False) + "\n")
+            jsonlfile.flush()
+
             progress_bar.set_description(f"Step {step} | Defender Reward: {defender_reward.item():.2f}")
 
-    print(f"\n--- Training Complete ---")
+            print(f"\n--- Training Complete ---")
 
     # Save models
     os.makedirs("models", exist_ok=True)
@@ -212,6 +245,7 @@ def main():
     defender_tokenizer.save_pretrained(save_path_defender)
     
     print(f"Log saved to {log_filepath}")
+    print(f"JSONL log saved to {log_jsonl_path}")
     print(f"Attacker model saved to {save_path_attacker}")
     print(f"Defender model saved to {save_path_defender}")
 
