@@ -211,6 +211,7 @@ def main():
     # Configs
     common_cfg = dict(
         num_generations=args.num_generations,
+        generation_batch_size=args.num_generations,  # TRL 0.23.0 requires divisible by num_generations
         max_prompt_length=1024,
         max_completion_length=350,
         temperature=0.7,
@@ -222,7 +223,8 @@ def main():
         save_steps=0,
         report_to=None,
     )
-    attacker_config = GRPOConfig(**common_cfg)  # TRL 0.23.0: no stop_token_ids in config
+
+    attacker_config = GRPOConfig(**common_cfg)
     defender_config = GRPOConfig(**common_cfg)
 
     # Trainers (require TRL with GRPO)
