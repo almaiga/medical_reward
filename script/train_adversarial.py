@@ -139,17 +139,23 @@ def main():
     if dataset is None: return
 
     attacker_ppo_trainer = PPOTrainer(
-        config=ppo_config,
+        args=ppo_config,
+        processing_class=attacker_tokenizer,
         model=attacker_model,
         ref_model=attacker_ref_model,
-        dataset=dataset
+        reward_model=judge_model,
+        train_dataset=dataset,
+        value_model=attacker_model
     )
 
     defender_ppo_trainer = PPOTrainer(
-        config=ppo_config,
+        args=ppo_config,
+        processing_class=defender_tokenizer,
         model=defender_model,
         ref_model=defender_ref_model,
-        dataset=dataset
+        reward_model=judge_model,
+        train_dataset=dataset,
+        value_model=defender_model
     )
 
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
