@@ -131,31 +131,27 @@ def main():
     defender_model, defender_tokenizer = load_training_model(args.model_id, device, is_ppo=True)
     judge_model, judge_tokenizer = load_training_model(args.judge_model_id, device, is_ppo=False)
 
+    print("Loading reference models...")
+    attacker_ref_model, _ = load_training_model(args.model_id, device, is_ppo=False)
+    defender_ref_model, _ = load_training_model(args.model_id, device, is_ppo=False)
+
     dataset = load_and_prepare_dataset(num_samples=args.num_steps)
     if dataset is None: return
 
     attacker_ppo_trainer = PPOTrainer(
-        # First three required positional arguments:
-        args=ppo_config,  # This is actually the first positional argument
-        processing_class=attacker_tokenizer,
+        config=ppo_config,
         model=attacker_model,
-        
-        # Now provide the missing required positional arguments:
-        reward_model=judge_model,  # Use judge as reward model
-        train_dataset=dataset,     # The dataset we loaded
-        value_model=attacker_model # The model itself has a value head
+        ref_model=attacker_ref_model,  # The required reference model
+        tokenizer=attacker_tokenizer,
+        dataset=dataset
     )
-    
+
     defender_ppo_trainer = PPOTrainer(
-        # First three required positional arguments:
-        args=ppo_config,
-        processing_class=defender_tokenizer,
+        config=ppo_config,
         model=defender_model,
-        
-        # Now provide the missing required positional arguments:
-        reward_model=judge_model,  # Use judge as reward model
-        train_dataset=dataset,     # The dataset we loaded
-        value_model=defender_model # The model itself has a value head
+        ref_model=defender_ref_model,  # The required reference model
+        tokenizer=defender_tokenizer,
+        dataset=dataset
     )
 
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
