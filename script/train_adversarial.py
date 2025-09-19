@@ -3,6 +3,7 @@ import re
 import json
 import argparse
 from datetime import datetime
+from copy import deepcopy
 
 import torch
 import pandas as pd
@@ -24,7 +25,11 @@ def get_device():
 
 def load_causal_lm(model_id: str, device: torch.device):
     print(f"Loading model: {model_id} to device: {device}")
-    dtype = torch.float16 if device.type != "cpu" else torch.float32
+    # Prefer bf16 on CUDA for stability; fallback to fp32
+    if device.type == "cuda":
+        dtype = torch.bfloat16 if torch.cuda.is_bf16_supported() else torch.float32
+    else:
+        dtype = torch.float32
     model = AutoModelForCausalLM.from_pretrained(
         model_id,
         dtype=dtype,
@@ -148,6 +153,13 @@ def main():
     args = parser.parse_args()
 
     device = get_device()
+    # Allow TF32 on CUDA for numerical headroom (no effect on correctness)
+    if device.type == "cuda":
+        try:
+            torch.backends.cuda.matmul.allow_tf32 = True
+            torch.backends.cudnn.allow_tf32 = True
+        except Exception:
+            pass
 
     # Shared policy and judge
     policy_model, policy_tok = load_causal_lm(args.model_id, device)
@@ -187,6 +199,9 @@ def main():
         with open(log_path, "a", encoding="utf-8") as f:
             f.write(json.dumps(entry, ensure_ascii=False) + "\n")
 
+    # Mutable holder for a frozen defender snapshot used during attacker rewards
+    defender_snapshot = {"model": None}
+
     # Reward functions (aligned with num_generations in TRL 0.23.0)
     def defender_reward_fn(prompts, completions, **kwargs):
         if not prompts or not completions:
@@ -219,6 +234,10 @@ def main():
                 }
             )
             def_step["i"] += 1
+        # Add tiny jitter if all rewards equal (prevents zero-variance blowups)
+        if len(scores) > 1 and max(scores) - min(scores) < 1e-12:
+            eps = 1e-3
+            scores = [s + (torch.rand(1).item() - 0.5) * eps for s in scores]
         return scores
 
     def attacker_reward_fn(prompts, completions, **kwargs):
@@ -232,11 +251,12 @@ def main():
             aligned_prompts = prompts[: len(completions)]
 
         scores = []
+        frozen_defender = defender_snapshot["model"]
         for p, attacked_note in zip(aligned_prompts, completions):
             original = extract_original_from_prompt(p)
             attacked = attacked_note.strip()
 
-            # Let current shared policy act as defender
+            # Let frozen defender try to fix it
             defend_prompt = (
                 "You are a medical assistant. Review the medical note for errors and provide a corrected version.\n"
                 "Provide only the corrected note under '### Corrected Note:' and nothing else.\n\n"
@@ -246,9 +266,8 @@ def main():
             )
             with torch.no_grad():
                 inputs = policy_tok(defend_prompt, return_tensors="pt").to(device)
-                out = policy_model.generate(**inputs)
+                out = frozen_defender.generate(**inputs)
                 defender_completion = _decode_new_only(policy_tok, inputs, out)
-                # If the model starts another section, keep only the corrected note
                 if "###" in defender_completion:
                     defender_completion = defender_completion.split("###", 1)[0].strip()
 
@@ -270,6 +289,9 @@ def main():
                 }
             )
             atk_step["i"] += 1
+        if len(scores) > 1 and max(scores) - min(scores) < 1e-12:
+            eps = 1e-3
+            scores = [s + (torch.rand(1).item() - 0.5) * eps for s in scores]
         return scores
 
     # Configs for TRL 0.23.0 (no stop_token_ids; align batch sizes)
@@ -277,11 +299,14 @@ def main():
         num_generations=args.num_generations,
         generation_batch_size=args.num_generations,  # must divide evenly by num_generations
         max_prompt_length=1024,
-        max_completion_length=350,
+        max_completion_length=300,  # slightly shorter to reduce clipping
         # Sampling handled via model.generation_config
         learning_rate=args.learning_rate,
         per_device_train_batch_size=1,
-        gradient_accumulation_steps=1,
+        gradient_accumulation_steps=2,  # small accumulation improves stability
+        max_grad_norm=0.5,              # clip to prevent NaNs
+        lr_scheduler_type="cosine",
+        warmup_ratio=0.03,
         logging_steps=10,
         save_steps=0,
         report_to=None,
@@ -296,6 +321,16 @@ def main():
     for r in range(args.rounds):
         round_idx_holder["round"] = r + 1
         print(f"\n=== Self-play round {r+1}/{args.rounds} ===")
+
+        # Build a frozen defender snapshot from the current policy
+        snap = AutoModelForCausalLM.from_pretrained(
+            args.model_id,
+            dtype=policy_model.dtype,
+            trust_remote_code=True,
+        ).to(device)
+        snap.load_state_dict(policy_model.state_dict(), strict=False)
+        snap.eval()
+        defender_snapshot["model"] = snap
 
         # Attacker epoch
         if len(ds_attacker) > 0:
@@ -320,6 +355,12 @@ def main():
                 reward_funcs=[defender_reward_fn],
             )
             defender_trainer.train()
+
+        # Cleanup snapshot between rounds
+        defender_snapshot["model"] = None
+        del snap
+        if device.type == "cuda":
+            torch.cuda.empty_cache()
 
     # Save the single shared policy
     os.makedirs("models", exist_ok=True)
