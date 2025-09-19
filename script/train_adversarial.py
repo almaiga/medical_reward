@@ -135,17 +135,27 @@ def main():
     if dataset is None: return
 
     attacker_ppo_trainer = PPOTrainer(
-        config=ppo_config, 
-        model=attacker_model, 
-        tokenizer=attacker_tokenizer,
-        ref_model=None
+        # First three required positional arguments:
+        args=ppo_config,  # This is actually the first positional argument
+        processing_class=attacker_tokenizer,
+        model=attacker_model,
+        
+        # Now provide the missing required positional arguments:
+        reward_model=judge_model,  # Use judge as reward model
+        train_dataset=dataset,     # The dataset we loaded
+        value_model=attacker_model # The model itself has a value head
     )
     
     defender_ppo_trainer = PPOTrainer(
-        config=ppo_config,
-        model=defender_model, 
-        tokenizer=defender_tokenizer,
-        ref_model=None
+        # First three required positional arguments:
+        args=ppo_config,
+        processing_class=defender_tokenizer,
+        model=defender_model,
+        
+        # Now provide the missing required positional arguments:
+        reward_model=judge_model,  # Use judge as reward model
+        train_dataset=dataset,     # The dataset we loaded
+        value_model=defender_model # The model itself has a value head
     )
 
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
