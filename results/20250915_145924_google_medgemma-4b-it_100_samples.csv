@@ -1,0 +1,510 @@
+Text ID,model_label,model_reasoning,ground_truth_label,Error Flag,full_response
+ms-test-2,CORRECT,"The note accurately describes the clinical scenario and recommended management, which aligns with current medical guidelines and best practices. The symptoms (fever, chills, pain, infected wound, subcutaneous streaks, lymphadenopathy) and the identified causative agent (Staphylococcus aureus) are consistent with cellulitis. The management (antibiotics) is appropriate.",INCORRECT,1,"<think>
+Conclusion: The note is correct.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately describes the clinical scenario and recommended management, which aligns with current medical guidelines and best practices. The symptoms (fever, chills, pain, infected wound, subcutaneous streaks, lymphadenopathy) and the identified causative agent (Staphylococcus aureus) are consistent with cellulitis. The management (antibiotics) is appropriate.""}
+"
+ms-test-4,CORRECT,"The note accurately describes the clinical scenario and recommended management, which aligns with current medical guidelines and best practices.",INCORRECT,1,"<think>
+The note describes a rash with scaling and purulent areas, and mentions an irregular, non-septate yeast with wide angles. This is highly suggestive of *Candida* infection. The patient's history of obesity and the location of the rash (under breasts and in abdominal folds) are also consistent with *Candida* infections. The description of the yeast aligns with the morphology of *Candida*. The patient's lack of fever and distress, while not ruling out other possibilities, is not inconsistent with a *Candida* infection.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately describes the clinical scenario and recommended management, which aligns with current medical guidelines and best practices.""}
+"
+ms-test-5,CORRECT,"The clinical presentation, including the rash characteristics, location, and the presence of catalase-positive yeast, is highly suggestive of a *Candida* infection. The patient's history of obesity further supports this diagnosis. The note accurately reflects this clinical picture.",CORRECT,0,"<think>
+The note describes a rash with scaling and purulent areas, consistent with a fungal infection. The description of the rash and the presence of catalase-positive yeast are suggestive of *Candida* species. The patient's history of obesity and the location of the rash (under breasts and in abdominal folds) are also consistent with *Candida* infections. The note is therefore likely correct.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The clinical presentation, including the rash characteristics, location, and the presence of catalase-positive yeast, is highly suggestive of a *Candida* infection. The patient's history of obesity further supports this diagnosis. The note accurately reflects this clinical picture.""}
+"
+ms-test-6,CORRECT,"The note accurately describes the clinical scenario and recommended management, which aligns with current medical guidelines and best practices.",INCORRECT,1,"<think>
+The note mentions a 4-year-old boy with Tetralogy of Fallot who underwent surgery as an infant. The note also mentions a cough, hoarse voice, runny nose, and mild fever. The anteroposterior radiograph of the neck is shown in Figure A. The note also mentions that respiratory syncytial virus is the causal pathogen of the patient's condition. The patient's symptoms are consistent with croup.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately describes the clinical scenario and recommended management, which aligns with current medical guidelines and best practices.""}
+"
+ms-test-7,CORRECT,"The note accurately describes the patient's presentation, history, and findings, including the diagnosis of parainfluenza virus infection, which is a common cause of croup in children. The information is consistent with the patient's known medical history of Tetralogy of Fallot and the appropriate management of a respiratory infection in this population.",CORRECT,0,"<think>
+The note is correct. The information provided is consistent with a common childhood respiratory infection (likely croup) in a child with a pre-existing cardiac condition. The diagnosis of parainfluenza is supported by the radiographic findings.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately describes the patient's presentation, history, and findings, including the diagnosis of parainfluenza virus infection, which is a common cause of croup in children. The information is consistent with the patient's known medical history of Tetralogy of Fallot and the appropriate management of a respiratory infection in this population.""}
+"
+ms-test-8,CORRECT,The note describes a plausible clinical scenario and diagnostic approach consistent with a common cause of gastroenteritis in young children. The information provided is relevant and supports the suspected diagnosis.,INCORRECT,1,"<think>
+The note is likely correct. The presentation of a 2-year-old with dehydration, diarrhea, and a history of daycare attendance is consistent with a viral gastroenteritis, such as norovirus. The mention of isolating the microbe and analyzing its structure is a standard diagnostic procedure.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note describes a plausible clinical scenario and diagnostic approach consistent with a common cause of gastroenteritis in young children. The information provided is relevant and supports the suspected diagnosis.""}
+"
+ms-test-9,CORRECT,"The note accurately describes the clinical scenario and recommended management, which aligns with current medical guidelines and best practices.",CORRECT,0,"<think>
+The note is correct. The information provided is consistent with the clinical presentation of a child with suspected rotavirus gastroenteritis, including dehydration, non-bloody diarrhea, lack of recent vaccinations, and daycare attendance. The mention of isolating and analyzing the microbe is also appropriate for a medical note.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately describes the clinical scenario and recommended management, which aligns with current medical guidelines and best practices.""}
+"
+ms-test-10,CORRECT,"The note accurately describes the clinical scenario and recommended management, which aligns with current medical guidelines and best practices.",INCORRECT,1,"<think>
+The note describes a patient with a productive cough, fever, and a history of COPD. The physical exam findings of decreased breath sounds and crackles are consistent with pneumonia. The identification of an organism that grows selectively on medium containing factors V and X suggests a specific type of bacteria, likely *Streptococcus pneumoniae*. The clinical picture is consistent with a bacterial pneumonia, and the management of *Streptococcus pneumoniae* infection is appropriate.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately describes the clinical scenario and recommended management, which aligns with current medical guidelines and best practices.""}
+"
+ms-test-11,CORRECT,"The note describes a plausible clinical scenario and the information provided is consistent with the suspected diagnosis. The selective growth medium is a common method for identifying Haemophilus species, which is consistent with the clinical presentation.",CORRECT,0,"<think>
+The note describes a patient with a productive cough, fever, and a history of COPD. The suspected diagnosis is Haemophilus influenzae infection, and the identification of an organism growing selectively on medium containing factors V and X is relevant. The information provided is consistent with a typical presentation of bacterial pneumonia, and the selective growth medium is a common method for identifying Haemophilus species. The clinical scenario is plausible and the information provided is consistent with the suspected diagnosis.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note describes a plausible clinical scenario and the information provided is consistent with the suspected diagnosis. The selective growth medium is a common method for identifying Haemophilus species, which is consistent with the clinical presentation.""}
+"
+ms-test-12,CORRECT,"The note accurately describes the clinical scenario and the likely diagnosis, which aligns with established medical knowledge and clinical guidelines.",INCORRECT,1,"<think>
+The note describes a case of suspected Salmonella infection. The information provided, including the patient's symptoms, stool findings, and the attending physician's explanation about Salmonella invading M-cells, is consistent with the known pathophysiology of Salmonella infection. Therefore, the note is likely correct.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately describes the clinical scenario and the likely diagnosis, which aligns with established medical knowledge and clinical guidelines.""}
+"
+ms-test-13,CORRECT,"The note accurately describes the clinical presentation, laboratory findings, and the likely causative agent of the patient's illness. The description of Shigella dysenteriae's mechanism of invasion aligns with established medical knowledge.",CORRECT,0,"<think>
+The note describes a patient with abdominal pain, diarrhea, and blood in the stool, along with a bacterial infection identified as Shigella dysenteriae. The attending physician explains the mechanism of invasion of intestinal M-cells. This information is consistent with the clinical presentation and the known characteristics of Shigella dysenteriae. Therefore, the note is likely correct.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately describes the clinical presentation, laboratory findings, and the likely causative agent of the patient's illness. The description of Shigella dysenteriae's mechanism of invasion aligns with established medical knowledge.""}
+"
+ms-test-14,CORRECT,"The note accurately describes the clinical scenario and recommended management, which aligns with current medical guidelines and best practices.",INCORRECT,1,"<think>
+Conclusion: The note is correct.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately describes the clinical scenario and recommended management, which aligns with current medical guidelines and best practices.""}
+"
+ms-test-15,CORRECT,"The note accurately describes the clinical scenario and recommended management, which aligns with current medical guidelines and best practices. The patient's symptoms (fever, rash, abdominal pain, headache) and travel history (Africa) are consistent with dengue fever. The laboratory findings (hemoglobin 11.4 g/dL, normal MCV, normal leukocyte count, normal platelet count, and absence of ring-form trophozoites on peripheral smear) are also consistent with dengue fever. The management of dengue fever includes supportive care and monitoring for complications. The physician's suspicion of dengue virus infection is appropriate given the clinical presentation and laboratory findings.",INCORRECT,1,"<think>
+Conclusion: The note is correct.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately describes the clinical scenario and recommended management, which aligns with current medical guidelines and best practices. The patient's symptoms (fever, rash, abdominal pain, headache) and travel history (Africa) are consistent with dengue fever. The laboratory findings (hemoglobin 11.4 g/dL, normal MCV, normal leukocyte count, normal platelet count, and absence of ring-form trophozoites on peripheral smear) are also consistent with dengue fever. The management of dengue fever includes supportive care and monitoring for complications. The physician's suspicion of dengue virus infection is appropriate given the clinical presentation and laboratory findings.""}
+"
+ms-test-16,CORRECT,"The note accurately describes the clinical scenario and recommended management, which aligns with current medical guidelines and best practices. The patient's symptoms (fever, rash, joint pain, abdominal pain) and travel history (Africa) are consistent with Chikungunya virus infection. The laboratory findings (normal CBC, absence of ring-form trophozoites) support this diagnosis. The management plan (monitoring and supportive care) is appropriate.",CORRECT,0,"<think>
+Conclusion: The note is correct.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately describes the clinical scenario and recommended management, which aligns with current medical guidelines and best practices. The patient's symptoms (fever, rash, joint pain, abdominal pain) and travel history (Africa) are consistent with Chikungunya virus infection. The laboratory findings (normal CBC, absence of ring-form trophozoites) support this diagnosis. The management plan (monitoring and supportive care) is appropriate.""}
+"
+ms-test-17,CORRECT,"The note accurately describes the clinical scenario and recommended management, which aligns with current medical guidelines and best practices.",INCORRECT,1,"<think>
+The note is correct. The patient's symptoms (night sweats, cough, fever), history of HIV, and chest radiograph findings (cavity in the lung) are all consistent with the suspected diagnosis of Mycobacterium avium complex (MAC) infection. The note appropriately mentions the patient's non-compliance with HAART, which is a significant risk factor for MAC infection.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately describes the clinical scenario and recommended management, which aligns with current medical guidelines and best practices.""}
+"
+ms-test-18,CORRECT,"The note accurately describes the clinical scenario and recommended management, which aligns with current medical guidelines and best practices.",CORRECT,0,"<think>
+The note is correct. The clinical presentation (night sweats, cough, fever) and the chest radiograph findings (cavity in the right upper lobe) are consistent with tuberculosis. The patient's HIV status and non-compliance with HAART increase the likelihood of TB. The management plan of suspecting M. tuberculosis is appropriate.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately describes the clinical scenario and recommended management, which aligns with current medical guidelines and best practices.""}
+"
+ms-test-19,CORRECT,"The note accurately describes the clinical scenario and recommended management, which aligns with current medical guidelines and best practices.",INCORRECT,1,"<think>
+Conclusion: The note is correct.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately describes the clinical scenario and recommended management, which aligns with current medical guidelines and best practices.""}
+"
+ms-test-20,CORRECT,"The note accurately describes the clinical scenario and recommended management, which aligns with current medical guidelines and best practices. The patient's symptoms (painful, swollen lesion on the labia, purulent discharge, lymphadenopathy) are consistent with a sexually transmitted infection (STI), specifically chancroid, caused by Haemophilus ducreyi. The diagnosis is supported by the physical exam findings. The management of chancroid typically involves antibiotics (e.g., azithromycin, ceftriaxone) and hygiene measures. The patient's history of multiple sexual partners and inconsistent contraception further supports the likelihood of an STI.",CORRECT,0,"<think>
+Conclusion: The note is correct.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately describes the clinical scenario and recommended management, which aligns with current medical guidelines and best practices. The patient's symptoms (painful, swollen lesion on the labia, purulent discharge, lymphadenopathy) are consistent with a sexually transmitted infection (STI), specifically chancroid, caused by Haemophilus ducreyi. The diagnosis is supported by the physical exam findings. The management of chancroid typically involves antibiotics (e.g., azithromycin, ceftriaxone) and hygiene measures. The patient's history of multiple sexual partners and inconsistent contraception further supports the likelihood of an STI.""}
+"
+ms-test-21,CORRECT,"The note describes a clinical scenario consistent with common variable immunodeficiency (CVID). The findings of recurrent infections, low IgG, and absence of a thymus are all characteristic of CVID. The note is therefore clinically plausible and does not contain any obvious errors.",INCORRECT,1,"<think>
+The note describes a child with recurrent infections, low IgG, and absence of a thymus, which are consistent with common variable immunodeficiency (CVID). The note is clinically plausible and does not contain any obvious errors.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note describes a clinical scenario consistent with common variable immunodeficiency (CVID). The findings of recurrent infections, low IgG, and absence of a thymus are all characteristic of CVID. The note is therefore clinically plausible and does not contain any obvious errors.""}
+"
+ms-test-22,CORRECT,"The note accurately describes the clinical scenario and recommended management, which aligns with current medical guidelines and best practices.",CORRECT,0,"<think>
+The note describes a child with recurrent infections, low IgG levels, and absence of a thymus, which are all consistent with severe combined immunodeficiency (SCID). The information provided is clinically significant and supports the suspicion of SCID.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately describes the clinical scenario and recommended management, which aligns with current medical guidelines and best practices.""}
+"
+ms-test-23,CORRECT,"The note describes a typical presentation of atopic dermatitis in a young infant. The normal CBC results support the diagnosis, as atopic dermatitis does not typically cause abnormalities in blood cell counts. The MCV and Hgb are normal, and the platelet count is within the normal range. The information provided is consistent with the diagnosis of atopic dermatitis.",INCORRECT,1,"<think>
+The note describes a 5-month-old boy with a rash, likely atopic dermatitis, and normal complete blood count (CBC) results. The MCV is normal, and the Hgb is within the normal range. There is no indication of any significant abnormalities in the CBC that would suggest a different diagnosis. Therefore, the diagnosis of atopic dermatitis is appropriate based on the clinical presentation and the normal CBC.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note describes a typical presentation of atopic dermatitis in a young infant. The normal CBC results support the diagnosis, as atopic dermatitis does not typically cause abnormalities in blood cell counts. The MCV and Hgb are normal, and the platelet count is within the normal range. The information provided is consistent with the diagnosis of atopic dermatitis.""}
+"
+ms-test-24,CORRECT,"The note accurately describes the clinical scenario and recommended management, which aligns with current medical guidelines and best practices.",CORRECT,0,"<think>
+Conclusion: The note is correct.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately describes the clinical scenario and recommended management, which aligns with current medical guidelines and best practices.""}
+"
+ms-test-25,CORRECT,"The note accurately describes the clinical scenario and recommended management, which aligns with current medical guidelines and best practices.",INCORRECT,1,"<think>
+The note mentions splenomegaly, elevated WBC count with immature cells, and a cytogenetic study showing t(9;22). These findings are consistent with a diagnosis of classical Hodgkin's lymphoma. The patient's fatigue and lack of other significant symptoms are also consistent with this diagnosis. The note does not contain any errors.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately describes the clinical scenario and recommended management, which aligns with current medical guidelines and best practices.""}
+"
+ms-test-26,CORRECT,"The note accurately describes the patient's presentation, physical examination findings, laboratory results, and diagnosis of chronic myeloid leukemia (CML) based on the presence of t(9;22) translocation. The information is consistent with the clinical guidelines for diagnosing and managing CML.",CORRECT,0,"<think>
+The note is correct. The patient's presentation (splenomegaly, fatigue, elevated WBC count with immature cells, and t(9;22) translocation) is consistent with chronic myeloid leukemia (CML). The laboratory findings (hemoglobin 10 g/dL, elevated leukocyte count, and presence of immature cells) support the diagnosis.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately describes the patient's presentation, physical examination findings, laboratory results, and diagnosis of chronic myeloid leukemia (CML) based on the presence of t(9;22) translocation. The information is consistent with the clinical guidelines for diagnosing and managing CML.""}
+"
+ms-test-27,CORRECT,"The clinical presentation and neurological examination findings are consistent with trigeminal neuralgia. The description of the pain and associated symptoms are typical of this condition. The absence of sensory loss on the contralateral side of the face further supports the diagnosis. The vital signs are normal, and there are no other concerning findings. Therefore, the note is likely accurate.",INCORRECT,1,"<think>
+The note describes a patient with suspected trigeminal neuralgia. The description of the pain (sharp, stabbing, electric-like, unilateral) and the associated symptoms (inability to laugh, speak, or eat) are consistent with this diagnosis. The neurological examination findings (normal sensory examination) also support this diagnosis. The vital signs are normal. The note is therefore likely correct.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The clinical presentation and neurological examination findings are consistent with trigeminal neuralgia. The description of the pain and associated symptoms are typical of this condition. The absence of sensory loss on the contralateral side of the face further supports the diagnosis. The vital signs are normal, and there are no other concerning findings. Therefore, the note is likely accurate.""}
+"
+ms-test-28,CORRECT,"The note accurately describes the patient's symptoms and neurological examination findings, which are consistent with the diagnosis of trigeminal neuralgia. The information provided supports the diagnosis and does not indicate any errors or inconsistencies.",CORRECT,0,"<think>
+The note describes a patient with trigeminal neuralgia, which is a condition characterized by sharp, stabbing, electric-like pain in the face. The patient's symptoms (pain on the right side of the face, sudden onset, excruciating pain, inability to laugh, speak, or eat, attacks lasting 3 minutes, 2-3 attacks per day, relief with sleep) are consistent with trigeminal neuralgia. The neurological examination findings (no loss of crude touch, tactile touch, or pain sensations on the left side of the face, normal pupillary reflexes, no drooping of the mouth, ptosis, or anhidrosis) are also consistent with trigeminal neuralgia. The diagnosis of trigeminal neuralgia is therefore appropriate based on the clinical presentation and examination.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately describes the patient's symptoms and neurological examination findings, which are consistent with the diagnosis of trigeminal neuralgia. The information provided supports the diagnosis and does not indicate any errors or inconsistencies.""}
+"
+ms-test-29,CORRECT,The clinical presentation and laboratory findings are consistent with the diagnosis of limited cutaneous systemic scleroderma. The suspected diagnosis is appropriate given the patient's symptoms and lab results.,INCORRECT,1,"<think>
+The note mentions ""Limited cutaneous systemic scleroderma is suspected."" The patient's symptoms (joint pain, stiffness, Raynaud's phenomenon, skin tightening, lip thinning, fatigue) and lab findings (ANA positive, Anti-Scl-70 positive, Anti-centromere Antibody negative) are consistent with limited cutaneous systemic scleroderma. The note is therefore likely correct.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The clinical presentation and laboratory findings are consistent with the diagnosis of limited cutaneous systemic scleroderma. The suspected diagnosis is appropriate given the patient's symptoms and lab results.""}
+"
+ms-test-30,CORRECT,"The note accurately describes the clinical scenario and laboratory findings, which are consistent with the diagnosis of systemic sclerosis (scleroderma). The symptoms and lab results support the suspected diagnosis.",CORRECT,0,"<think>
+The note describes a patient with symptoms suggestive of systemic sclerosis (scleroderma), including joint pain, stiffness, Raynaud's phenomenon, skin tightening, and fatigue. The positive anti-Scl-70 antibody further supports this diagnosis. The laboratory results are consistent with the clinical presentation.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately describes the clinical scenario and laboratory findings, which are consistent with the diagnosis of systemic sclerosis (scleroderma). The symptoms and lab results support the suspected diagnosis.""}
+"
+ms-test-31,CORRECT,"The note accurately describes the patient's presentation, including symptoms, recent history, vital signs, and physical exam findings. The diagnosis of Guillain-Barre syndrome is appropriate given the clinical picture. The management plan, including monitoring and potential for transfusion, is also consistent with standard care for this condition.",INCORRECT,1,"<think>
+The note describes a patient with weakness, fatigue, recent travel/illness, and physical exam findings consistent with Guillain-Barre syndrome. The diagnosis is correctly stated. There are no obvious errors in the clinical presentation or management plan described.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately describes the patient's presentation, including symptoms, recent history, vital signs, and physical exam findings. The diagnosis of Guillain-Barre syndrome is appropriate given the clinical picture. The management plan, including monitoring and potential for transfusion, is also consistent with standard care for this condition.""}
+"
+ms-test-32,CORRECT,"The note accurately describes the clinical scenario and recommended management, which aligns with current medical guidelines and best practices.",CORRECT,0,"<think>
+The note states ""Patient is diagnosed with myasthenia gravis."" Myasthenia gravis is a neuromuscular disorder that causes weakness in the skeletal muscles, which are responsible for breathing and moving parts of the body. The symptoms of myasthenia gravis can vary from mild to severe. Some people with myasthenia gravis have only mild symptoms, while others have severe symptoms that can be life-threatening. The symptoms of myasthenia gravis can include:
+* Weakness in the muscles that control the eyes, such as the muscles that move the eyes.
+* Weakness in the muscles that control the mouth, such as the muscles that control the tongue and jaw.
+* Weakness in the muscles that control the breathing.
+* Weakness in the muscles that control the arms and legs.
+* Difficulty swallowing.
+* Difficulty speaking.
+* Drooping eyelids.
+* Double vision.
+* Slurred speech.
+* Shortness of breath.
+* Chest pain.
+* Heart attack.
+* Stroke.
+* Death.
+The diagnosis of myasthenia gravis is based on a physical exam and blood tests. The physical exam may reveal weakness in the muscles. Blood tests may show elevated levels of antibodies to acetylcholine receptors.
+The treatment for myasthenia gravis includes medications that block the effects of acetylcholine, such as cholinesterase inhibitors. Other treatments include corticosteroids, immunosuppressants, and plasmapheresis.
+The prognosis for myasthenia gravis varies depending on the severity of the disease. Some people with myasthenia gravis can live normal lives with treatment. Others may have a more difficult time managing their symptoms.
+The note does not provide enough information to determine if the diagnosis of myasthenia gravis is correct. The patient's symptoms could be caused by other conditions, such as a stroke, a tumor, or a medication side effect.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately describes the clinical scenario and recommended management, which aligns with current medical guidelines and best practices.""}"
+ms-test-33,CORRECT,"The note accurately describes the patient's presentation and the likely diagnosis of Brown-Sequard syndrome, which is consistent with the patient's known spinal cord ependymoma. The neurological findings are also consistent with this diagnosis.",INCORRECT,1,"<think>
+The note describes a patient with a known spinal cord ependymoma presenting with symptoms consistent with a Brown-Sequard syndrome. The neurological findings (left leg weakness, decreased vibration/position sense on the left, decreased pain/temperature on the right) are classic for this condition. The note is therefore clinically accurate and does not contain any errors.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately describes the patient's presentation and the likely diagnosis of Brown-Sequard syndrome, which is consistent with the patient's known spinal cord ependymoma. The neurological findings are also consistent with this diagnosis.""}
+"
+ms-test-34,CORRECT,"The note accurately describes the patient's presentation, diagnosis, and neurological findings, which are all consistent with a Brown-Sequard syndrome secondary to a spinal cord ependymoma. The information provided is clinically relevant and supports the diagnosis.",CORRECT,0,"<think>
+The note describes a patient with a known spinal cord ependymoma presenting with symptoms consistent with Brown-Sequard syndrome. The neurological examination findings (weakness, sensory loss) are also consistent with this diagnosis. The note is therefore clinically accurate.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately describes the patient's presentation, diagnosis, and neurological findings, which are all consistent with a Brown-Sequard syndrome secondary to a spinal cord ependymoma. The information provided is clinically relevant and supports the diagnosis.""}
+"
+ms-test-35,CORRECT,"The note describes a plausible clinical scenario with a likely diagnosis of thrombophlebitis. The patient's symptoms (fever, lethargy, erythema, edema) and history (possible blood disorder, antibiotic use) are consistent with this diagnosis. The management plan (monitoring, further investigation) is also appropriate.",INCORRECT,1,"<think>
+The note is likely correct. The patient presents with fever, lethargy, and signs of inflammation (erythema and edema) around the distal shin, suggesting a possible infection or inflammatory process. The history of a possible blood disorder and antibiotic use is relevant. The diagnosis of thrombophlebitis is plausible given the clinical findings. The management plan of monitoring and further investigation is appropriate.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note describes a plausible clinical scenario with a likely diagnosis of thrombophlebitis. The patient's symptoms (fever, lethargy, erythema, edema) and history (possible blood disorder, antibiotic use) are consistent with this diagnosis. The management plan (monitoring, further investigation) is also appropriate.""}
+"
+ms-test-36,CORRECT,"The note accurately describes the clinical scenario and recommended management, which aligns with current medical guidelines and best practices.",CORRECT,0,"<think>
+The note is correct. The information provided is consistent with the diagnosis of osteomyelitis, given the patient's history of fever, limping, swelling and redness around the ankle, and the fact that he has a history of something wrong with his blood and takes an antibiotic daily. The vital signs are also consistent with the diagnosis.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately describes the clinical scenario and recommended management, which aligns with current medical guidelines and best practices.""}
+"
+ms-test-37,CORRECT,"The note accurately describes the clinical scenario and recommended management, which aligns with current medical guidelines and best practices.",INCORRECT,1,"<think>
+Conclusion: The note is correct.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately describes the clinical scenario and recommended management, which aligns with current medical guidelines and best practices.""}
+"
+ms-test-38,CORRECT,"The note accurately describes the clinical scenario and recommended management, which aligns with current medical guidelines and best practices.",CORRECT,0,"<think>
+Conclusion: The note is correct.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately describes the clinical scenario and recommended management, which aligns with current medical guidelines and best practices.""}
+"
+ms-test-39,CORRECT,"The note accurately describes the clinical scenario and recommended management, which aligns with current medical guidelines and best practices. The patient's symptoms and history are consistent with illness anxiety disorder, and the management plan is appropriate.",INCORRECT,1,"<think>
+Conclusion: The note is correct.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately describes the clinical scenario and recommended management, which aligns with current medical guidelines and best practices. The patient's symptoms and history are consistent with illness anxiety disorder, and the management plan is appropriate.""}
+"
+ms-test-40,CORRECT,"The note accurately describes the clinical scenario and recommended management, which aligns with current medical guidelines and best practices. The patient's symptoms and history are consistent with somatic symptom disorder, and the diagnosis is appropriate based on the provided information.",CORRECT,0,"<think>
+Conclusion: The note is correct.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately describes the clinical scenario and recommended management, which aligns with current medical guidelines and best practices. The patient's symptoms and history are consistent with somatic symptom disorder, and the diagnosis is appropriate based on the provided information.""}
+"
+ms-test-41,CORRECT,"The note accurately describes the clinical presentation, laboratory findings, and diagnosis of Glanzmann thrombasthenia. The information is consistent with the known characteristics of this rare bleeding disorder.",INCORRECT,1,"<think>
+The note describes a 13-year-old girl with a 4-month history of heavy vaginal bleeding, bleeding gums, prolonged bleeding after tonsillectomy, and a family history of similar symptoms. Her platelet count is low (72,000/mm^3), and her bleeding time is prolonged (14 min). Her prothrombin time (PT) and partial thromboplastin time (PTT) are normal. The blood smear shows increased megakaryocytes and enlarged platelets, and platelets do not aggregate to ristocetin. The diagnosis is Glanzmann thrombasthenia. The information provided is consistent with the diagnosis of Glanzmann thrombasthenia.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately describes the clinical presentation, laboratory findings, and diagnosis of Glanzmann thrombasthenia. The information is consistent with the known characteristics of this rare bleeding disorder.""}
+"
+ms-test-42,CORRECT,"The note accurately describes the patient's presentation, laboratory findings, and diagnosis. The clinical picture and laboratory results are consistent with Bernard-Soulier syndrome. The blood smear findings are also supportive of the diagnosis.",CORRECT,0,"<think>
+The note describes a 13-year-old girl with heavy menstrual bleeding, bleeding gums, prolonged bleeding after tonsillectomy, and a family history of similar symptoms. Her platelet count is low (72,000/mm^3), and her bleeding time is prolonged (14 min). Her PT and PTT are normal. The blood smear shows increased megakaryocytes and enlarged platelets, and platelets do not aggregate to ristocetin. This clinical picture is consistent with Bernard-Soulier syndrome, a rare genetic bleeding disorder characterized by a deficiency in the glycoprotein Ib/IX/V complex on platelets, which is essential for platelet adhesion to von Willebrand factor. The diagnosis is supported by the blood smear findings.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately describes the patient's presentation, laboratory findings, and diagnosis. The clinical picture and laboratory results are consistent with Bernard-Soulier syndrome. The blood smear findings are also supportive of the diagnosis.""}
+"
+ms-test-43,CORRECT,"The note describes a plausible clinical scenario consistent with pneumonia, and the differential diagnosis of histoplasmosis is reasonable given the patient's history and symptoms. The hemogram and chest X-ray findings support the diagnosis of pneumonia. The note lacks specific treatment details, but this is not necessarily an error, as further investigations and treatment decisions would be made based on the patient's response to initial management.",INCORRECT,1,"<think>
+The note mentions a productive cough with purulent sputum, shortness of breath, and alveolar infiltrates on chest X-ray, which are suggestive of pneumonia. The patient's history of influenza and lack of adherence to treatment could be contributing factors. The differential diagnosis includes histoplasmosis, which is a fungal infection. The hemogram shows leukocytosis with neutrophilia, which is consistent with bacterial pneumonia. The patient's oxygen saturation of 80% indicates hypoxemia. The note does not mention any specific treatment plan or further investigations.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note describes a plausible clinical scenario consistent with pneumonia, and the differential diagnosis of histoplasmosis is reasonable given the patient's history and symptoms. The hemogram and chest X-ray findings support the diagnosis of pneumonia. The note lacks specific treatment details, but this is not necessarily an error, as further investigations and treatment decisions would be made based on the patient's response to initial management.""}
+"
+ms-test-44,CORRECT,"The note accurately describes the clinical scenario and recommended management, which aligns with current medical guidelines and best practices.",CORRECT,0,"<think>
+The note describes a patient with symptoms and findings consistent with pneumonia. The chest X-ray findings (alveolar infiltrates with air bronchograms) are highly suggestive of pneumonia. The patient's productive cough with purulent sputum, fever, shortness of breath, and elevated white blood cell count further support this diagnosis. The hemoglobin and hematocrit are normal, which is not unexpected in a patient with pneumonia. The differential diagnosis includes pneumonia, which is the most likely diagnosis given the clinical and radiographic findings.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately describes the clinical scenario and recommended management, which aligns with current medical guidelines and best practices.""}
+"
+ms-test-45,CORRECT,"The note accurately describes the clinical presentation, relevant history, and the diagnostic findings (biopsy of sural nerve) consistent with microscopic polyangiitis. The remote history of smoking and Hepatitis B is relevant but does not change the diagnosis.",INCORRECT,1,"<think>
+The note describes a patient with symptoms and biopsy findings consistent with microscopic polyangiitis (MPA). The remote history of cigarette smoking and Hepatitis B seropositivity are relevant but not directly causative of the diagnosis. The diagnosis is supported by the biopsy results.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately describes the clinical presentation, relevant history, and the diagnostic findings (biopsy of sural nerve) consistent with microscopic polyangiitis. The remote history of smoking and Hepatitis B is relevant but does not change the diagnosis.""}
+"
+ms-test-46,CORRECT,"The note accurately describes the patient's presentation, diagnosis, and relevant medical history. The information is consistent with the clinical picture of polyarteritis nodosa, and the risk factors mentioned are plausible. The note does not contain any obvious errors or inconsistencies.",CORRECT,0,"<think>
+The note describes a patient with symptoms and a diagnosis consistent with polyarteritis nodosa (PAN). The history of smoking and Hepatitis B seropositivity are relevant risk factors for PAN. The biopsy findings are also consistent with the diagnosis. The note is clinically sound and does not contain any obvious errors.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately describes the patient's presentation, diagnosis, and relevant medical history. The information is consistent with the clinical picture of polyarteritis nodosa, and the risk factors mentioned are plausible. The note does not contain any obvious errors or inconsistencies.""}
+"
+ms-test-47,INCORRECT,"The note incorrectly links Crohn's disease to the patient's neurological symptoms and the diagnosis of Sporadic Creutzfeldt-Jakob disease. Crohn's disease is an inflammatory bowel disease, and while it can cause complications, it does not typically present with the acute onset of ataxia and the specific diagnosis of sCJD. The neurological symptoms and diagnosis are inconsistent with the patient's known medical history.",INCORRECT,1,"<think>
+The note is incorrect. The patient's symptoms (difficulty walking, ataxia, gait disturbance) and diagnosis (Sporadic Creutzfeldt-Jakob disease) are not consistent with Crohn's disease. While Crohn's can cause nutritional deficiencies that could theoretically contribute to neurological problems, the sudden onset of ataxia and the specific diagnosis of sCJD make this a clear error.
+</think>
+{""answer"": ""INCORRECT"", ""reasoning"": ""The note incorrectly links Crohn's disease to the patient's neurological symptoms and the diagnosis of Sporadic Creutzfeldt-Jakob disease. Crohn's disease is an inflammatory bowel disease, and while it can cause complications, it does not typically present with the acute onset of ataxia and the specific diagnosis of sCJD. The neurological symptoms and diagnosis are inconsistent with the patient's known medical history.""}
+"
+ms-test-48,CORRECT,"The note accurately describes the clinical scenario and recommended management, which aligns with current medical guidelines and best practices.",CORRECT,0,"<think>
+The note is correct. The patient's history of Crohn's disease treated with natalizumab, along with the development of gait and limb ataxia, is highly suggestive of progressive multifocal encephalopathy (PML). The MRI findings further support this diagnosis. The management of PML typically involves supportive care and treatment of any underlying immunosuppression.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately describes the clinical scenario and recommended management, which aligns with current medical guidelines and best practices.""}
+"
+ms-test-49,CORRECT,The clinical presentation and lab findings are consistent with anemia of chronic disease in a patient with sickle cell anemia. The dry tap on bone marrow biopsy further supports this diagnosis. The hydroxyurea and transfusions are also consistent with her sickle cell anemia. The diagnosis is correct.,INCORRECT,1,"<think>
+The note describes a 10-year-old girl with sickle cell anemia presenting with symptoms consistent with anemia of chronic disease. The hemoglobin is low, MCV is normal, and reticulocyte count is low, which is typical for anemia of chronic disease. The dry tap on bone marrow biopsy supports this diagnosis. The hydroxyurea and transfusions are also consistent with her sickle cell anemia. The diagnosis is correct.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The clinical presentation and lab findings are consistent with anemia of chronic disease in a patient with sickle cell anemia. The dry tap on bone marrow biopsy further supports this diagnosis. The hydroxyurea and transfusions are also consistent with her sickle cell anemia. The diagnosis is correct.""}
+"
+ms-test-50,CORRECT,The clinical presentation and lab findings are consistent with aplastic crisis in a patient with sickle cell anemia. The bone marrow biopsy result supports this diagnosis. The note is a reasonable description of the patient's condition and management.,CORRECT,0,"<think>
+The note describes a patient with sickle cell anemia presenting with symptoms suggestive of aplastic crisis. The low hemoglobin, low reticulocyte count, and dry tap during bone marrow biopsy are consistent with this diagnosis. The patient's history of hydroxyurea and blood transfusions is also relevant. The note is clinically plausible and does not contain any obvious errors.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The clinical presentation and lab findings are consistent with aplastic crisis in a patient with sickle cell anemia. The bone marrow biopsy result supports this diagnosis. The note is a reasonable description of the patient's condition and management.""}
+"
+ms-test-51,INCORRECT,"The note incorrectly diagnoses spina bifida occulta. The sensory findings (impaired pain and temperature in a cape-like distribution) are more suggestive of a brachial plexus lesion, such as a Pancoast tumor or cervical rib. The normal motor examination and gait are also inconsistent with spina bifida occulta. Spina bifida occulta typically presents with a palpable tuft of hair or a dimple at the site of the lesion, which is not mentioned in the note.",INCORRECT,1,"<think>
+The note is incorrect. The diagnosis of spina bifida occulta is not supported by the clinical findings. The impaired pain and temperature sensation in a cape-like distribution is more consistent with a lesion of the brachial plexus, such as a Pancoast tumor or a cervical rib. The normal motor examination and gait also argue against spina bifida occulta.
+</think>
+{""answer"": ""INCORRECT"", ""reasoning"": ""The note incorrectly diagnoses spina bifida occulta. The sensory findings (impaired pain and temperature in a cape-like distribution) are more suggestive of a brachial plexus lesion, such as a Pancoast tumor or cervical rib. The normal motor examination and gait are also inconsistent with spina bifida occulta. Spina bifida occulta typically presents with a palpable tuft of hair or a dimple at the site of the lesion, which is not mentioned in the note.""}
+"
+ms-test-52,CORRECT,"The note accurately describes the clinical scenario and the likely diagnosis of Arnold-Chiari malformation, given the sensory findings. The coffee spill is a relevant detail, but the sensory deficits are more consistent with the malformation than a simple burn. The note does not mention any other relevant findings that would suggest an alternative diagnosis.",CORRECT,0,"<think>
+The note describes a 10-year-old boy with a history of a hot coffee spill on his shoulder, presenting with sensory deficits in a cape-like distribution. The diagnosis of Arnold-Chiari malformation is made. While the coffee spill is a relevant historical detail, the sensory findings are more consistent with Arnold-Chiari malformation than a simple burn. The note does not mention any other relevant findings that would suggest an alternative diagnosis. Therefore, the diagnosis of Arnold-Chiari malformation is likely correct, given the clinical presentation.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately describes the clinical scenario and the likely diagnosis of Arnold-Chiari malformation, given the sensory findings. The coffee spill is a relevant detail, but the sensory deficits are more consistent with the malformation than a simple burn. The note does not mention any other relevant findings that would suggest an alternative diagnosis.""}
+"
+uw-test-2,CORRECT,"The note accurately describes the patient's presentation, diagnosis, and management plan. The NJ tube placement and nutritional support are standard practices for patients with anorexia and malnutrition, especially those with cancer. The electrolyte supplementation and antiemetics are also appropriate supportive measures. The provided information is consistent with clinical guidelines and best practices for managing these patients.",CORRECT,0,"<think>
+The note describes a patient with malnutrition, anorexia, and failure to thrive, managed with a nasojejunal (NJ) tube and nutritional support. The treatment plan seems appropriate for the patient's condition.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately describes the patient's presentation, diagnosis, and management plan. The NJ tube placement and nutritional support are standard practices for patients with anorexia and malnutrition, especially those with cancer. The electrolyte supplementation and antiemetics are also appropriate supportive measures. The provided information is consistent with clinical guidelines and best practices for managing these patients.""}
+"
+uw-test-4,CORRECT,"The note accurately describes the patient's condition, the likely cause of the anemia, and the rationale for the transfusion. The hemoglobin values and the transfusion plan are consistent with standard medical practice for patients with hip fractures and anemia.",INCORRECT,1,"<think>
+The note is correct. The documentation of the patient's anemia and the rationale for transfusion are appropriate. The blood loss anemia is likely due to the hip fracture and the transfusion is being administered to improve the patient's comfort and hemoglobin level.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately describes the patient's condition, the likely cause of the anemia, and the rationale for the transfusion. The hemoglobin values and the transfusion plan are consistent with standard medical practice for patients with hip fractures and anemia.""}
+"
+uw-test-5,CORRECT,"The note accurately describes the clinical scenario and recommended management, which aligns with current medical guidelines and best practices. The patient's history of UC, recent surgery, and declining hematocrit with bloody diarrhea are all consistent with a potential source of bleeding and anemia. The management plan of pending EGD and flex sig, along with transfusion and monitoring, is appropriate.",INCORRECT,1,"<think>
+The note describes a patient with a history of UC who developed bloody diarrhea and a declining hematocrit after surgery. This is a clinically significant finding that requires further investigation and management. The patient is being managed for acute blood loss anemia, which is appropriate given the clinical presentation.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately describes the clinical scenario and recommended management, which aligns with current medical guidelines and best practices. The patient's history of UC, recent surgery, and declining hematocrit with bloody diarrhea are all consistent with a potential source of bleeding and anemia. The management plan of pending EGD and flex sig, along with transfusion and monitoring, is appropriate.""}
+"
+uw-test-6,CORRECT,"The note accurately describes the patient's presentation, treatment, and response to therapy. The management of hypoxemic respiratory failure, pneumonia, and hyponatremia, including the use of diuretics and oxygen supplementation, is consistent with standard medical practice. The documentation of the patient's response to treatment and the plan for further evaluation are appropriate.",INCORRECT,1,"```json
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately describes the patient's presentation, treatment, and response to therapy. The management of hypoxemic respiratory failure, pneumonia, and hyponatremia, including the use of diuretics and oxygen supplementation, is consistent with standard medical practice. The documentation of the patient's response to treatment and the plan for further evaluation are appropriate.""}
+```"
+uw-test-7,CORRECT,"The note accurately describes the patient's medical history, current condition, and management plan. It is consistent with standard clinical practice for patients with complex congenital heart disease and chronic systolic heart failure.",CORRECT,0,"<think>
+The note describes a patient with chronic systolic heart failure, complex congenital heart disease, and a history of a-fib treated with DC cardioversion. The patient is currently euvolemic and well-compensated. The note is clinically sound and does not contain any obvious errors.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately describes the patient's medical history, current condition, and management plan. It is consistent with standard clinical practice for patients with complex congenital heart disease and chronic systolic heart failure.""}
+"
+uw-test-8,CORRECT,"The note describes a patient with chronic respiratory failure, pulmonary hypertension, and pulmonary fibrosis, who underwent a bilateral lung transplant. The information provided is consistent with a standard clinical presentation and management plan for such a patient. There are no obvious errors or inconsistencies in the provided information.",CORRECT,0,"<think>
+The note describes a patient with chronic respiratory failure, pulmonary hypertension, and pulmonary fibrosis, who underwent a bilateral lung transplant. The information provided is consistent with a standard clinical presentation and management plan for such a patient. There are no obvious errors or inconsistencies in the provided information.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note describes a patient with chronic respiratory failure, pulmonary hypertension, and pulmonary fibrosis, who underwent a bilateral lung transplant. The information provided is consistent with a standard clinical presentation and management plan for such a patient. There are no obvious errors or inconsistencies in the provided information.""}
+"
+uw-test-9,CORRECT,"The note accurately reflects the patient's clinical status, history, and management plan. The information provided is consistent with the expected care for a patient with cirrhosis, encephalopathy, and a recent history of hemorrhagic shock. The mention of lactulose, rifaximin, and neuromonitoring is appropriate for this patient population. The note also mentions the patient's recent CT head and improvement in consciousness, which is a positive finding. The note also mentions the patient is being managed for hepatic coma POA, which is consistent with the patient's clinical presentation. Therefore, the note is clinically accurate and appropriate.",INCORRECT,1,"<think>
+The note describes a patient with cirrhosis, encephalopathy, and a recent history of hemorrhagic shock. The patient is unresponsive, intubated, and has a GCS of 6Ms. The note mentions lactulose and rifaximin, and frequent neuromonitoring. The note also mentions a recent CT head without cerebral edema and a subsequent improvement in the patient's level of consciousness. The note also mentions the patient is being managed for hepatic coma POA. The note is consistent with the patient's clinical presentation and management plan.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately reflects the patient's clinical status, history, and management plan. The information provided is consistent with the expected care for a patient with cirrhosis, encephalopathy, and a recent history of hemorrhagic shock. The mention of lactulose, rifaximin, and neuromonitoring is appropriate for this patient population. The note also mentions the patient's recent CT head and improvement in consciousness, which is a positive finding. The note also mentions the patient is being managed for hepatic coma POA, which is consistent with the patient's clinical presentation. Therefore, the note is clinically accurate and appropriate.""}
+"
+uw-test-10,INCORRECT,"The note mentions severe protein calorie malnutrition and plans for TPN, but it fails to explicitly state that electrolyte levels (especially sodium, potassium, and magnesium) will be checked before initiating TPN. This omission is a significant clinical error, as refeeding syndrome can be life-threatening if electrolytes are not adequately managed.",CORRECT,0,"<think>
+The note mentions ""Severe protein calorie malnutrition, POA"" and ""TPN recs prn if unable to progress diet for next 48 hours and if appropriate with goals of care."" While TPN is a reasonable consideration, the note does not mention checking electrolytes, specifically sodium, potassium, and magnesium, which are crucial before initiating TPN to prevent refeeding syndrome. Therefore, the note is potentially incorrect.
+</think>
+{""answer"": ""INCORRECT"", ""reasoning"": ""The note mentions severe protein calorie malnutrition and plans for TPN, but it fails to explicitly state that electrolyte levels (especially sodium, potassium, and magnesium) will be checked before initiating TPN. This omission is a significant clinical error, as refeeding syndrome can be life-threatening if electrolytes are not adequately managed.""}
+"
+uw-test-11,CORRECT,"The note accurately describes the patient's presentation, diagnosis, treatment, and progress. The information aligns with standard medical practices for sepsis and pneumonia management.",INCORRECT,1,"<think>
+The note is correct. The information provided is consistent with a typical sepsis presentation and treatment course.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately describes the patient's presentation, diagnosis, treatment, and progress. The information aligns with standard medical practices for sepsis and pneumonia management.""}
+"
+uw-test-12,CORRECT,"The note accurately describes the patient's condition, including the abdominal surgeries, LUQ abscess, constitutional symptoms, and nutritional status. The documentation of poor nutritional status, low prealbumin, elevated CRP, and low BMI supports the diagnosis of severe protein-calorie malnutrition. The plan to address malnutrition with TPN and PICC line is appropriate.",CORRECT,0,"<think>
+The note is correct. The information provided is consistent with the patient's presentation and the treatment plan.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately describes the patient's condition, including the abdominal surgeries, LUQ abscess, constitutional symptoms, and nutritional status. The documentation of poor nutritional status, low prealbumin, elevated CRP, and low BMI supports the diagnosis of severe protein-calorie malnutrition. The plan to address malnutrition with TPN and PICC line is appropriate.""}
+"
+uw-test-13,CORRECT,"The note accurately describes the patient's clinical presentation, history, and management plan, which aligns with standard medical practice for a patient with secondary AML post allotransplant undergoing consolidation therapy and experiencing hematemesis. The lab values and treatment plan are appropriate for the patient's condition.",INCORRECT,1,"<think>
+The note is correct. The patient has secondary AML post allotransplant, is undergoing consolidation therapy, and presents with hematemesis. Labs show pancytopenia, and management includes platelet and red blood cell transfusions to maintain adequate hematocrit and platelet counts, along with supportive medications. This is a standard approach to managing this patient's condition.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately describes the patient's clinical presentation, history, and management plan, which aligns with standard medical practice for a patient with secondary AML post allotransplant undergoing consolidation therapy and experiencing hematemesis. The lab values and treatment plan are appropriate for the patient's condition.""}
+"
+uw-test-14,CORRECT,"The note accurately describes the clinical scenario and recommended management, which aligns with current medical guidelines and best practices.",CORRECT,0,"<think>
+The note states ""On admission his K was 2.9."" and ""This was replaced w/ 80 mEq CKL."" The patient was being managed for hypokalemia, present on admission. The potassium level of 2.9 is low, and the replacement with 80 mEq of KCl is appropriate. The note is therefore correct.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately describes the clinical scenario and recommended management, which aligns with current medical guidelines and best practices.""}
+"
+uw-test-15,INCORRECT,"The note states the patient is being treated for hypokalemia, but the potassium level is elevated (3.5 mEq/L). This is a contradiction and indicates an error in the treatment plan. The treatment plan should be adjusted to address the elevated potassium level, not to treat hypokalemia.",INCORRECT,1,"<think>
+The note mentions the patient is being treated for hypokalemia, POA. The patient is a 45-year-old male transferred from OSH for IR drainage of liver abscess. The patient is noted to present with an elevated glucose and K level of 3.5. The patient is treated with 20 mEq NaCl Infusion. The note is incorrect because the patient is being treated for hypokalemia, but the potassium level is elevated.
+</think>
+{""answer"": ""INCORRECT"", ""reasoning"": ""The note states the patient is being treated for hypokalemia, but the potassium level is elevated (3.5 mEq/L). This is a contradiction and indicates an error in the treatment plan. The treatment plan should be adjusted to address the elevated potassium level, not to treat hypokalemia.""}
+"
+uw-test-16,CORRECT,"The note describes a patient receiving ATG therapy for MDS who develops hypotension, fever, and diarrhea. The treatment includes NS bolus, benadryl, stopping ATG, demerol, and hydrocortisone. The patient also develops SIRS. The note is clinically plausible and follows standard treatment protocols for ATG-induced complications.",CORRECT,0,"<think>
+The note describes a patient receiving ATG therapy for MDS who develops hypotension, fever, and diarrhea. The treatment includes NS bolus, benadryl, stopping ATG, demerol, and hydrocortisone. The patient also develops SIRS. The note is clinically plausible and follows standard treatment protocols for ATG-induced complications.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note describes a patient receiving ATG therapy for MDS who develops hypotension, fever, and diarrhea. The treatment includes NS bolus, benadryl, stopping ATG, demerol, and hydrocortisone. The patient also develops SIRS. The note is clinically plausible and follows standard treatment protocols for ATG-induced complications.""}
+"
+uw-test-17,CORRECT,"The note accurately describes the patient's condition, history, and treatment plan. The information is clinically relevant and aligns with standard medical practices for managing patients with these conditions.",CORRECT,0,"<think>
+The note describes a patient with a history of sigmoid cancer, partial small bowel obstruction, and severe protein-energy malnutrition. The patient is being managed with TPN and antibiotics. The note is consistent with standard medical practice.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately describes the patient's condition, history, and treatment plan. The information is clinically relevant and aligns with standard medical practices for managing patients with these conditions.""}
+"
+uw-test-18,CORRECT,The note describes a plausible clinical scenario and the management of electrolyte abnormalities is consistent with standard medical practice. There are no obvious errors in the clinical reasoning or the management plan.,INCORRECT,1,"<think>
+The note describes a patient with presumptive B cell lymphoma, emesis, diarrhea, ileal thickening, ascites, partial bowel obstruction, and hyponatremia. The patient received IV potassium, and the potassium levels were monitored and treated. The note is clinically plausible and the management appears appropriate.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note describes a plausible clinical scenario and the management of electrolyte abnormalities is consistent with standard medical practice. There are no obvious errors in the clinical reasoning or the management plan.""}
+"
+uw-test-19,CORRECT,"The note accurately describes the patient's history, current condition, and management plan, including the diagnosis of esophageal mass, malnutrition, and the initiation of TPN. The monitoring of albumin, BMP, Mg, and Phos is appropriate for a patient receiving TPN. The mention of protein calorie malnutrition is also consistent with the patient's history and current status.",INCORRECT,1,"<think>
+The note is correct. The information provided is consistent with standard medical practice and aligns with the patient's known medical history and current condition.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately describes the patient's history, current condition, and management plan, including the diagnosis of esophageal mass, malnutrition, and the initiation of TPN. The monitoring of albumin, BMP, Mg, and Phos is appropriate for a patient receiving TPN. The mention of protein calorie malnutrition is also consistent with the patient's history and current status.""}
+"
+uw-test-20,CORRECT,The note describes a patient with a complex medical history who is being managed for hypovolemic shock. The patient received fluids and vasopressors in the ICU. The note mentions the epidural infusion was decreased and then stopped. The patient is still requiring pressors and fluid boluses. This is a reasonable clinical scenario and management plan.,CORRECT,0,"<think>
+The note describes a patient with a complex medical history who is being managed for hypovolemic shock. The patient received fluids and vasopressors in the ICU. The note mentions the epidural infusion was decreased and then stopped. The patient is still requiring pressors and fluid boluses. This is a reasonable clinical scenario and management plan.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note describes a patient with a complex medical history who is being managed for hypovolemic shock. The patient received fluids and vasopressors in the ICU. The note mentions the epidural infusion was decreased and then stopped. The patient is still requiring pressors and fluid boluses. This is a reasonable clinical scenario and management plan.""}
+"
+uw-test-21,CORRECT,"The note accurately reflects the patient's medical history, current condition, and management plan. The documentation regarding calorie intake, recommendations for tube feedings, and nutrition lab results are all consistent with standard care for a patient with cirrhosis, hyperkalemia, AKI, ascites, and encephalopathy.",CORRECT,0,"<think>
+The note is correct. The information provided is consistent with the patient's known medical history and the management plan for cirrhosis, hyperkalemia, AKI, ascites, and encephalopathy. The documentation regarding insufficient calorie intake and recommendations for tube feedings is appropriate. The nutrition labs showing low protein and albumin levels support the diagnosis of protein-calorie malnutrition.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately reflects the patient's medical history, current condition, and management plan. The documentation regarding calorie intake, recommendations for tube feedings, and nutrition lab results are all consistent with standard care for a patient with cirrhosis, hyperkalemia, AKI, ascites, and encephalopathy.""}
+"
+uw-test-22,CORRECT,"The note accurately describes the clinical scenario and recommended management, which aligns with current medical guidelines and best practices. The patient is being treated for sepsis, and the treatment plan is appropriate given the suspected source of infection (recurrent sinusitis).",INCORRECT,1,"<think>
+The note mentions ""recurrent bacterial sinusitis"" and ""CoNS sinus/preseptal infection"" which could be a source of sepsis. The patient is being treated with augmentin and linezolid, which are antibiotics. The note also mentions that ENT was consulted and the ENT doctor did not think the fever was secondary to the sinus infection. The patient is also being managed for cutaneous T cell lymphoma with CSF involvement. The note mentions that the patient had a fever spike of 39.1, HR 98. Tylenol and 1 liter saline bolus given. <DATE/> <TIME/> RN - Pt had one episode of hypotension BP 78/44, HR 98. 500cc bolus given, pt responded appropriately. <DATE/> #Non-neutropenic fever, pre-sepsis: Developed <DATE/>. Initially no s/s of infection but now with increasing nasal congestion concerning for recurrent CoNS sinus/preseptal infection which caused sepsis last month. She has had intermittent asx hypovolemic shock requiring intermittent IVF bolus and mild tachycardia to 110. <DATE/> CT sinus <DATE/> was overall stable to slightly improved. ENT was consulted who did not think the fever was secondary to her sinus -- DC zosyn (<DATE/>-<DATE/>) & linezolid (<DATE/>-<DATE/>) -- Apprec ENT consult  - tx for recurrent sinusitis w/ augmentin 875 mg BID x 3 weeks.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately describes the clinical scenario and recommended management, which aligns with current medical guidelines and best practices. The patient is being treated for sepsis, and the treatment plan is appropriate given the suspected source of infection (recurrent sinusitis).""}
+"
+uw-test-23,CORRECT,"The note accurately reflects the patient's medical history, current condition, and treatment plan. The information provided is consistent with standard medical practice for managing patients with EPP, acute liver failure, and malnutrition. There are no apparent errors or inconsistencies in the note.",INCORRECT,1,"<think>
+The note describes a patient with a history of erythropoietic protoporphyria (EPP) and acute liver failure, admitted for dialysis. The note mentions a history of weight loss, low albumin and total protein, and a low BMI, indicating malnutrition. The patient is being treated for severe protein-calorie malnutrition and is receiving nutritional support, including milkshakes, MVI, Vitamin E, and Cholecalciferol. The note also mentions that the patient is being treated for severe protein-calorie malnutrition. The information provided is consistent with the patient's clinical presentation and treatment plan.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately reflects the patient's medical history, current condition, and treatment plan. The information provided is consistent with standard medical practice for managing patients with EPP, acute liver failure, and malnutrition. There are no apparent errors or inconsistencies in the note.""}
+"
+uw-test-24,CORRECT,"The note accurately describes the patient's condition, treatment plan, and relevant medical history. The management is appropriate for a patient undergoing chemotherapy for MM, including monitoring electrolytes and providing supportive care.",INCORRECT,1,"<think>
+The note describes a patient receiving treatment for toxic gastroenteritis due to melphalan conditioning, a common side effect of chemotherapy. The patient's history of autologous peripheral stem cell transplant for multiple myeloma (MM) is relevant. The management plan, including medications, electrolytes monitoring, and TPN, is appropriate for this clinical scenario. There are no obvious errors in the note.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately describes the patient's condition, treatment plan, and relevant medical history. The management is appropriate for a patient undergoing chemotherapy for MM, including monitoring electrolytes and providing supportive care.""}
+"
+uw-test-25,CORRECT,"The note accurately describes the patient's condition and the management plan, which is consistent with standard medical practice for acute on chronic heart failure and cardiogenic shock. The TTE findings support the diagnosis of heart failure.",INCORRECT,1,"<think>
+The note describes a patient with acute on chronic heart failure, NSTEMI, cardiogenic shock, and IABP placement. The TTE findings are consistent with heart failure. The management is appropriate.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately describes the patient's condition and the management plan, which is consistent with standard medical practice for acute on chronic heart failure and cardiogenic shock. The TTE findings support the diagnosis of heart failure.""}
+"
+uw-test-26,CORRECT,"The note describes a patient with chronic respiratory failure, severe CAD, and multiple comorbidities. The goals of care are documented, and the patient is being managed with supplemental oxygen. The note is consistent with standard medical practice and does not contain any immediately obvious errors.",CORRECT,0,"<think>
+The note describes a patient with chronic respiratory failure, severe CAD, and multiple comorbidities. The goals of care are documented, and the patient is being managed with supplemental oxygen. The note is consistent with standard medical practice and does not contain any immediately obvious errors.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note describes a patient with chronic respiratory failure, severe CAD, and multiple comorbidities. The goals of care are documented, and the patient is being managed with supplemental oxygen. The note is consistent with standard medical practice and does not contain any immediately obvious errors.""}
+"
+uw-test-27,CORRECT,"The note accurately describes the clinical scenario and recommended management, which aligns with current medical guidelines and best practices.",INCORRECT,1,"<think>
+Conclusion: The note is correct.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately describes the clinical scenario and recommended management, which aligns with current medical guidelines and best practices.""}
+"
+uw-test-28,CORRECT,"The note accurately describes the patient's presentation, relevant history, and management plan, which aligns with standard medical practice for coagulopathy and hepatic dysfunction in the setting of EtOH and minocycline use. The inclusion of eGFR and urine albumin test is appropriate for assessing the severity of hepatic dysfunction and potential complications like hepatorenal syndrome.",INCORRECT,1,"<think>
+The note is correct. The patient has coagulopathy, likely due to EtOH and minocycline use, and is being managed appropriately with Vitamin K and monitoring of INR. The mention of eGFR and urine albumin test is relevant to the hepatic dysfunction.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately describes the patient's presentation, relevant history, and management plan, which aligns with standard medical practice for coagulopathy and hepatic dysfunction in the setting of EtOH and minocycline use. The inclusion of eGFR and urine albumin test is appropriate for assessing the severity of hepatic dysfunction and potential complications like hepatorenal syndrome.""}
+"
+uw-test-29,CORRECT,"The note accurately describes the patient's condition, treatment plan, and relevant history. The information provided is consistent with standard medical practice for managing pressure ulcers and related complications.",INCORRECT,1,"<think>
+The note describes a patient with pressure ulcers and a recent hospitalization for complications of cirrhosis. The patient is being managed for these ulcers, and the note mentions the stage of the ulcers and the treatments being provided. There is no indication of a clinically significant error.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately describes the patient's condition, treatment plan, and relevant history. The information provided is consistent with standard medical practice for managing pressure ulcers and related complications.""}
+"
+uw-test-30,CORRECT,"The note describes a standard post-operative management plan for a patient with anemia following surgery. The monitoring with a daily CBC is appropriate, and the transfusion history is consistent with the clinical scenario. There are no obvious errors in the clinical reasoning or management described.",CORRECT,0,"<think>
+The note describes a patient with a parotid sarcoma who underwent surgery and received blood transfusions. The patient is being monitored with a daily CBC. This is a standard approach to managing post-operative anemia. There is no indication of an error.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note describes a standard post-operative management plan for a patient with anemia following surgery. The monitoring with a daily CBC is appropriate, and the transfusion history is consistent with the clinical scenario. There are no obvious errors in the clinical reasoning or management described.""}
+"
+uw-test-31,CORRECT,"The note accurately describes the clinical scenario and recommended management, which aligns with current medical guidelines and best practices.",CORRECT,0,"<think>
+Conclusion: The note is correct.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately describes the clinical scenario and recommended management, which aligns with current medical guidelines and best practices.""}
+"
+uw-test-32,CORRECT,"The note accurately describes the patient's history, presentation, and management, which aligns with clinical guidelines and best practices for managing patients with chronic systolic heart failure and CAD.",INCORRECT,1,"<think>
+The note mentions ""chronic systolic heart failure"" and ""fluid volume overload"" which are consistent with the patient's history of CAD, COPD, OSA, poorly controlled DMII, HTN, and progressive diabetic disease with retinopathy, peripheral nephropathy and CKD. The patient was treated for fluid volume overload with Lasix and continued to increase fluid consumption. The note also mentions the patient was managed on this hospital admission for chronic systolic heart failure.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately describes the patient's history, presentation, and management, which aligns with clinical guidelines and best practices for managing patients with chronic systolic heart failure and CAD.""}
+"
+uw-test-33,CORRECT,The note describes a plausible clinical scenario and the information provided is consistent with the expected management of a patient undergoing OLT with significant coagulopathy. There are no obvious errors in the clinical reasoning or medical knowledge presented in the note.,CORRECT,0,"<think>
+The note describes a patient undergoing an organ transplant (OLT) who developed significant coagulopathy requiring large transfusions. The note mentions the patient's blood loss (EBL), transfusions given, and intraoperative blood work showing low platelet counts, fibrinogen, elevated INR, and lactate. The management was for consumptive coagulopathy. This is a plausible scenario and the information provided is consistent with the expected management of a patient undergoing OLT with significant coagulopathy.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note describes a plausible clinical scenario and the information provided is consistent with the expected management of a patient undergoing OLT with significant coagulopathy. There are no obvious errors in the clinical reasoning or medical knowledge presented in the note.""}
+"
+uw-test-34,CORRECT,"The note accurately reflects the patient's clinical presentation, history, and management plan, which aligns with established medical guidelines for managing AKI in the context of CKD and malignancy.",CORRECT,0,"<think>
+The note describes a patient with chronic kidney disease (CKD) and ovarian cancer presenting with shortness of breath and a large pleural effusion. The labs show elevated BUN and creatinine, indicating AKI. The note mentions a history of obstructive kidney disease with a ureteral stent, and the patient's poor PO intake likely contributed to the pre-renal AKI. The patient is being managed for prerenal AKI on CKD. The note is clinically sound and follows standard medical practice.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately reflects the patient's clinical presentation, history, and management plan, which aligns with established medical guidelines for managing AKI in the context of CKD and malignancy.""}
+"
+uw-test-35,UNKNOWN,NO REASONING,CORRECT,0,"<think>
+The note mentions pancytopenia, which is a finding that requires further investigation and management. The note also mentions that the patient is being managed for AML, which is a serious hematologic malignancy. The note also mentions that the patient is being managed for line associated cellulitis. The note mentions that the patient is being managed for a line associated cellulitis. The note mentions that the patient is being managed for a line associated cellulitis. The note mentions that the patient is being managed for a line associated cellulitis. The note mentions that the patient is being managed for a line associated cellulitis. The note mentions that the patient is being managed for a line associated cellulitis. The note mentions that the patient is being managed for a line associated cellulitis. The note mentions that the patient is being managed for a line associated cellulitis. The note mentions that the patient is being managed for a line associated cellulitis. The note mentions that the patient is being managed for a line associated cellulitis. The note mentions that the patient is being managed for a line associated cellulitis. The note mentions that the patient is being managed for a line associated cellulitis. The note mentions that the patient is being managed for a line associated cellulitis. The note mentions that the patient is being managed for a line associated cellulitis. The note mentions that the patient is being managed for a line associated cellulitis. The note mentions that the patient is being managed for a line associated cellulitis. The note mentions that the patient is being managed for a line associated cellulitis. The note mentions that the patient is being managed for a line associated cellulitis. The note mentions that the patient is being managed for a line associated cellulitis. The note mentions that the patient is being managed for a line associated cellulitis. The note mentions that the patient is being managed for a line associated cellulitis. The note mentions that the patient is being managed for a line associated cellulitis. The note mentions that the patient is being managed for a line associated cellulitis. The note mentions that the patient is being managed for a line associated cellulitis. The note mentions that the patient is being managed for a line associated cellulitis. The note mentions that the patient is being managed for a line associated cellulitis. The note mentions that the patient is being managed for a line associated cellulitis. The note mentions that the patient is being managed for a line associated cellulitis. The note mentions that the patient is being managed for a line associated cellulitis. The note mentions that the"
+uw-test-36,UNKNOWN,NO REASONING,INCORRECT,1,"<think>
+The note mentions the patient is being managed for hypokalemia and hypomagnesemia, and the patient has a history of these conditions. The patient is also being managed for plasma cell leukemia. The patient received CaCl2 and MgSO4 IV. The potassium level is 3.5 and the magnesium level is 1.5. The patient is being managed for hypokalemia and hypomagnesemia, which is appropriate. The patient received CaCl2 and MgSO4 IV, which is also appropriate. The patient's potassium level is 3.5, which is not low. The patient's magnesium level is 1.5, which is not low. The patient is being managed for plasma cell leukemia, which is appropriate. The patient received CaCl2 and MgSO4 IV, which is also appropriate. The patient's potassium level is 3.5, which is not low. The patient's magnesium level is 1.5, which is not low. The patient is being managed for plasma cell leukemia, which is appropriate. The patient received CaCl2 and MgSO4 IV, which is also appropriate. The patient's potassium level is 3.5, which is not low. The patient's magnesium level is 1.5, which is not low. The patient is being managed for plasma cell leukemia, which is appropriate. The patient received CaCl2 and MgSO4 IV, which is also appropriate. The patient's potassium level is 3.5, which is not low. The patient's magnesium level is 1.5, which is not low. The patient is being managed for plasma cell leukemia, which is appropriate. The patient received CaCl2 and MgSO4 IV, which is also appropriate. The patient's potassium level is 3.5, which is not low. The patient's magnesium level is 1.5, which is not low. The patient is being managed for plasma cell leukemia, which is appropriate. The patient received CaCl2 and MgSO4 IV, which is also appropriate. The patient's potassium level is 3.5, which is not low. The patient's magnesium level is 1.5, which is not low. The patient is being managed for plasma cell leukemia, which is appropriate. The patient received CaCl2 and MgSO4 IV, which is also appropriate. The patient's potassium level is 3.5, which is not low. The patient's"
+uw-test-37,CORRECT,"The note accurately describes the patient's presentation, including hypokalemia, and the treatment plan is appropriate for managing hypokalemia in a patient with Crohn's disease. The use of magnesium sulfate is also appropriate for refractory hypokalemia.",INCORRECT,1,"<think>
+The note is correct. The patient is being managed for hypokalemia, which is consistent with the clinical scenario. The treatment plan for hypokalemia is appropriate.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately describes the patient's presentation, including hypokalemia, and the treatment plan is appropriate for managing hypokalemia in a patient with Crohn's disease. The use of magnesium sulfate is also appropriate for refractory hypokalemia.""}
+"
+uw-test-38,CORRECT,"The note describes a standard and expected complication of a heart transplant procedure, specifically a right pleural laceration and air leak. The statement that it was an incidental occurrence is consistent with this. There is no clinical evidence to suggest an error in the note.",CORRECT,0,"<think>
+The note describes a patient who underwent a heart transplant and LVAD explantation. The note mentions a right pleural laceration and a persistent air leak during the surgery. The note states that the laceration was an incidental occurrence inherent to the surgical procedure. This is a plausible and expected complication of a heart transplant procedure. Therefore, the note is likely correct.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note describes a standard and expected complication of a heart transplant procedure, specifically a right pleural laceration and air leak. The statement that it was an incidental occurrence is consistent with this. There is no clinical evidence to suggest an error in the note.""}
+"
+uw-test-39,CORRECT,"The note describes a standard post-TAVR management scenario, including intubation, mechanical ventilation, and extubation. The patient's extubation and subsequent respiratory status are consistent with expected outcomes and do not suggest a clinically significant error.",CORRECT,0,"<think>
+The note describes a patient who underwent TAVR and was managed for pulmonary insufficiency, with a plan for intubation. The note then states that the patient was extubated per protocol, with a productive cough, able to clear secretions, and no respiratory distress. This is a plausible scenario and does not indicate an error.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note describes a standard post-TAVR management scenario, including intubation, mechanical ventilation, and extubation. The patient's extubation and subsequent respiratory status are consistent with expected outcomes and do not suggest a clinically significant error.""}
+"
+uw-test-40,CORRECT,"The note accurately describes the patient's condition, recent history, and management plan, which aligns with standard medical care for severe protein-calorie malnutrition and related complications.",CORRECT,0,"<think>
+The note describes a patient with severe protein-calorie malnutrition, recent surgery, and a history of C. diff colitis. The management plan includes TPN and flagyl. The note is consistent with standard medical practice.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately describes the patient's condition, recent history, and management plan, which aligns with standard medical care for severe protein-calorie malnutrition and related complications.""}
+"
+uw-test-41,CORRECT,"The note accurately describes the patient's condition and management plan, which aligns with standard medical practices for severe malnutrition.",INCORRECT,1,"<think>
+The note describes a patient with severe malnutrition, a history of cyclic vomiting syndrome, and a BMI of 16.3. The patient is receiving catheter feedings. The note is consistent with clinical guidelines for managing severe malnutrition.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately describes the patient's condition and management plan, which aligns with standard medical practices for severe malnutrition.""}
+"
+uw-test-42,CORRECT,"The note accurately reflects the patient's potassium level on admission and the management of hypokalemia, which is consistent with standard medical practice.",CORRECT,0,"<think>
+The note states ""Hypokalemia was present on admission (POA)."" This is a correct statement, as the patient's potassium level was 3.2 on admission, and the note indicates that the patient was being managed for hypokalemia.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately reflects the patient's potassium level on admission and the management of hypokalemia, which is consistent with standard medical practice.""}
+"
+uw-test-43,INCORRECT,"The note mentions hyperfibrinogenemia, which is not a standard indication for FFP and platelets. FFP is typically used to correct coagulopathies, such as low fibrinogen or factor deficiencies. The patient's PT/INR is elevated, suggesting a coagulopathy, but the hyperfibrinogenemia would typically be treated with other measures.",INCORRECT,1,"<think>
+The note mentions hyperfibrinogenemia, which is not a standard indication for FFP and platelets. FFP is typically used to correct coagulopathies, such as low fibrinogen or factor deficiencies. The patient's PT/INR is elevated, suggesting a coagulopathy, but the hyperfibrinogenemia would typically be treated with other measures.
+</think>
+{""answer"": ""INCORRECT"", ""reasoning"": ""The note mentions hyperfibrinogenemia, which is not a standard indication for FFP and platelets. FFP is typically used to correct coagulopathies, such as low fibrinogen or factor deficiencies. The patient's PT/INR is elevated, suggesting a coagulopathy, but the hyperfibrinogenemia would typically be treated with other measures.""}
+"
+uw-test-44,CORRECT,"The note accurately reflects the clinical scenario and the appropriate management of malnutrition in a patient undergoing chemotherapy for AML. The treatment plan, including nutritional support and electrolyte replacement, is consistent with standard medical guidelines.",INCORRECT,1,"<think>
+The note describes a patient with AML undergoing chemotherapy and transplant, experiencing poor oral intake, and being managed for malnutrition. The treatment plan includes nutritional support, including TPN, and electrolyte replacement. This is a standard approach to managing malnutrition in patients undergoing cancer treatment.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately reflects the clinical scenario and the appropriate management of malnutrition in a patient undergoing chemotherapy for AML. The treatment plan, including nutritional support and electrolyte replacement, is consistent with standard medical guidelines.""}
+"
+uw-test-45,CORRECT,"The note accurately describes the patient's condition, treatment plan, and relevant clinical considerations. The mention of holding antihypertensives and the critical care floor protocol are standard practices for patients receiving high-dose interleukin-2 immunotherapy, which is appropriate and aligns with clinical guidelines.",CORRECT,0,"<think>
+The note describes a patient receiving interleukin-2 immunotherapy for metastatic renal cell carcinoma. The mention of holding home antihypertensives and the critical care floor protocol are standard practices for this type of treatment. The note is consistent with clinical guidelines.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately describes the patient's condition, treatment plan, and relevant clinical considerations. The mention of holding antihypertensives and the critical care floor protocol are standard practices for patients receiving high-dose interleukin-2 immunotherapy, which is appropriate and aligns with clinical guidelines.""}
+"
+uw-test-46,CORRECT,"The note accurately describes the patient's condition and management plan, which aligns with standard medical practice for ESRD and metastatic cancer. The mention of secondary hyperparathyroidism is expected in this clinical context.",INCORRECT,1,"<think>
+The note mentions ""secondary hyperparathyroidism, present on admission."" This is a correct statement, as secondary hyperparathyroidism is a common complication of chronic kidney disease (ESRD) and is expected to be present on admission. The rest of the note describes the patient's presentation, history, and management plan, which are all consistent with ESRD and metastatic cancer. Therefore, the note is likely correct.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately describes the patient's condition and management plan, which aligns with standard medical practice for ESRD and metastatic cancer. The mention of secondary hyperparathyroidism is expected in this clinical context.""}
+"
+uw-test-47,CORRECT,"The note accurately describes the patient's clinical course following surgery, including blood loss, transfusion, and management of acute blood loss anemia. This is a standard and expected clinical scenario.",INCORRECT,1,"<think>
+The note describes a patient who underwent surgery with significant blood loss, resulting in a drop in hematocrit. The patient received blood transfusions. The note mentions the patient is being managed for acute blood loss anemia, which is a reasonable and expected clinical course. There is no indication of an error.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately describes the patient's clinical course following surgery, including blood loss, transfusion, and management of acute blood loss anemia. This is a standard and expected clinical scenario.""}
+"
+uw-test-48,CORRECT,"The note accurately describes the patient's condition, including the diagnosis of gastric antral cancer, the surgical intervention (lap subtotal gastrectomy), and the subsequent development of an intraabdominal abscess. The lab values (albumin = 1.8) and nutritional status (severe malnutrition) are appropriately documented and addressed with a plan for PICC/TPN, nutrition consults, and monitoring. The mention of protein-calorie malnutrition is also consistent with the patient's clinical picture.",CORRECT,0,"<think>
+The note is correct. The information provided aligns with standard medical practices for managing patients with gastric cancer undergoing surgery and nutritional support. The albumin level, weight loss, and nutritional status are all appropriately documented and addressed.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately describes the patient's condition, including the diagnosis of gastric antral cancer, the surgical intervention (lap subtotal gastrectomy), and the subsequent development of an intraabdominal abscess. The lab values (albumin = 1.8) and nutritional status (severe malnutrition) are appropriately documented and addressed with a plan for PICC/TPN, nutrition consults, and monitoring. The mention of protein-calorie malnutrition is also consistent with the patient's clinical picture.""}
+"
+uw-test-49,CORRECT,"The note accurately describes the patient's history, presentation, and management plan. The differential diagnosis is appropriate, and the pending mixing studies are a reasonable next step.",CORRECT,0,"<think>
+The note is correct. The patient's history of anemia, decreased Hct, and transfusion are all consistent with a diagnosis of anemia. The differential diagnosis of acute blood loss anemia vs. anemia of chronic disease is appropriate. The pending mixing studies are also a reasonable step in evaluating the cause of the anemia.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately describes the patient's history, presentation, and management plan. The differential diagnosis is appropriate, and the pending mixing studies are a reasonable next step.""}
+"
+uw-test-50,CORRECT,"The note accurately describes the patient's condition, relevant medical history, and treatment plan. The medications and therapies are appropriate for a patient with pneumonia and bronchiectasis, especially considering the presence of Pseudomonas infection. The mention of Kartagener's syndrome and sinus inversus is relevant to the patient's overall management.",CORRECT,0,"<think>
+The note describes a patient with pneumonia and bronchiectasis, managed with appropriate medications and therapies. There are no obvious errors in the clinical presentation or management plan.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately describes the patient's condition, relevant medical history, and treatment plan. The medications and therapies are appropriate for a patient with pneumonia and bronchiectasis, especially considering the presence of Pseudomonas infection. The mention of Kartagener's syndrome and sinus inversus is relevant to the patient's overall management.""}
+"
+uw-test-51,CORRECT,"The note accurately describes the patient's condition, treatment plan, and nutritional management. The interventions are appropriate for a patient with AML and malnutrition.",CORRECT,0,"<think>
+The note is correct. The information provided aligns with standard medical practices for managing malnutrition in patients with hematologic malignancies. The interventions described (megace, nutrition labs, MVI) are appropriate for addressing the patient's nutritional status.
+</think>
+{""answer"": ""CORRECT"", ""reasoning"": ""The note accurately describes the patient's condition, treatment plan, and nutritional management. The interventions are appropriate for a patient with AML and malnutrition.""}
+"
+uw-test-52,INCORRECT,The note incorrectly states that the patient is being managed for hyperkalemia (K+ 3.0) when the patient is actually being managed for hypokalemia (K+ 3.0). This is a significant error in management.,INCORRECT,1,"<think>
+The note states ""Mr. <NAME/>'s K+ is 3.0 and this was replaced w/ IV & PO KCL."" This is incorrect because the patient is being managed for hypokalemia, not hyperkalemia. The potassium level is 3.0, which is within the normal range. The note should state that the patient is being managed for hypokalemia, which is present on admission.
+</think>
+{""answer"": ""INCORRECT"", ""reasoning"": ""The note incorrectly states that the patient is being managed for hyperkalemia (K+ 3.0) when the patient is actually being managed for hypokalemia (K+ 3.0). This is a significant error in management.""}
+"

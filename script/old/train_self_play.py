@@ -34,24 +34,24 @@ def get_rubric_based_reward(original_note: str, corrected_note: str, judge_model
     Uses a judge model to score the corrected note based on a rubric.
     """
     judge_prompt = f"""You are a medical expert evaluating an AI's attempt to correct a medical note.
-Compare the 'Corrected Note' to the 'Original Correct Note'.
-Score the 'Corrected Note' on a scale of 1 to 10 for each of the following metrics based on how well it matches the original's clinical accuracy and intent.
+                    Compare the 'Corrected Note' to the 'Original Correct Note'.
+                    Score the 'Corrected Note' on a scale of 1 to 10 for each of the following metrics based on how well it matches the original's clinical accuracy and intent.
 
-1. **Accuracy (1-10):** Includes only factually correct information supported by evidence.
-2. **Completeness (1-10):** Addresses all necessary clinical points from the original note.
-3. **Context Awareness (1-10):** The correction is appropriate given the clinical context.
+                    1. **Accuracy (1-10):** Includes only factually correct information supported by evidence.
+                    2. **Completeness (1-10):** Addresses all necessary clinical points from the original note.
+                    3. **Context Awareness (1-10):** The correction is appropriate given the clinical context.
 
-Respond ONLY with a JSON object containing the scores, like this:
-{{"accuracy": <score>, "completeness": <score>, "context_awareness": <score>}}
+                    Respond ONLY with a JSON object containing the scores, like this:
+                    {{"accuracy": <score>, "completeness": <score>, "context_awareness": <score>}}
 
-### Original Correct Note:
-{original_note}
+                    ### Original Correct Note:
+                    {original_note}
 
-### Corrected Note:
-{corrected_note}
+                    ### Corrected Note:
+                    {corrected_note}
 
-### Evaluation:
-"""
+                    ### Evaluation:
+                    """
     
     inputs = judge_tokenizer(judge_prompt, return_tensors="pt").to(judge_model.device)
     outputs = judge_model.generate(**inputs, max_new_tokens=100, pad_token_id=judge_tokenizer.eos_token_id)
