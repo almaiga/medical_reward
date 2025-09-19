@@ -139,18 +139,16 @@ def main():
     if dataset is None: return
 
     attacker_ppo_trainer = PPOTrainer(
-        args=ppo_config,
+        config=ppo_config,
         model=attacker_model,
-        ref_model=attacker_ref_model,  # The required reference model
-        #tokenizer=attacker_tokenizer,
+        ref_model=attacker_ref_model,
         dataset=dataset
     )
 
     defender_ppo_trainer = PPOTrainer(
-        args=ppo_config,
+        config=ppo_config,
         model=defender_model,
-        ref_model=defender_ref_model,  # The required reference model
-        #tokenizer=defender_tokenizer,
+        ref_model=defender_ref_model,
         dataset=dataset
     )
 
