@@ -283,8 +283,8 @@ def main():
         num_train_epochs=1,
         report_to="none",
         remove_unused_columns=False,
-        fp16=True,  # Add mixed precision training
-        gradient_checkpointing=True,  # Add gradient checkpointing
+        bf16=True,  # Changed from fp16=True to bf16=True to match model dtype
+        gradient_checkpointing=True,
     )
     
     for r in range(args.rounds):
