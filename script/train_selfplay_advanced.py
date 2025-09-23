@@ -3,6 +3,7 @@ import re
 import json
 import random
 import argparse
+import gc  # Add this import
 from datetime import datetime
 from copy import deepcopy
 
@@ -202,6 +203,9 @@ def main():
     parser.add_argument("--max_assessor_batch", type=int, default=64, help="New notes for the assessor each round.")
     args = parser.parse_args()
 
+    # Set memory optimization environment variable
+    os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
+
     device = get_device()
     policy_model, policy_tok = load_causal_lm(args.model_id, device)
     judge_model, judge_tok = load_causal_lm(args.judge_model_id, device)
@@ -263,10 +267,10 @@ def main():
             scores.append(reward)
         return scores
 
-    # --- Trainer Config ---
+    # --- Trainer Config with memory optimizations ---
     common_cfg = dict(
         num_generations=args.num_generations,
-        generation_batch_size=args.num_generations * 2, # Increase for efficiency
+        generation_batch_size=args.num_generations * 2,
         max_prompt_length=1536,
         max_completion_length=512,
         learning_rate=args.learning_rate,
@@ -279,6 +283,8 @@ def main():
         num_train_epochs=1,
         report_to="none",
         remove_unused_columns=False,
+        fp16=True,  # Add mixed precision training
+        gradient_checkpointing=True,  # Add gradient checkpointing
     )
     
     for r in range(args.rounds):
@@ -297,6 +303,9 @@ def main():
             reward_funcs=[attacker_reward_fn]
         )
         attacker_trainer.train()
+        
+        # Clear attacker trainer
+        del attacker_trainer
 
         print(f"--- Round {r+1}: Generating new dataset for Assessor ---")
         attacked_records = []
@@ -304,7 +313,6 @@ def main():
             sel = ds_originals.shuffle(seed=42 + r).select(range(min(args.max_assessor_batch, len(ds_originals))))
             for row in sel:
                 attacker_ds = build_attacker_prompts(Dataset.from_dict({"original": [row["original"]]}), ds_few_shot, policy_tok)
-                # Fix: Get the prompt from the dataset
                 prompt = attacker_ds[0]['prompt']
                 inputs = policy_tok(prompt, return_tensors="pt").to(device)
                 out_ids = policy_model.generate(**inputs, pad_token_id=policy_tok.eos_token_id)
@@ -323,8 +331,14 @@ def main():
         )
         assessor_trainer.train()
 
-        del snap
-        if device.type == "cuda": torch.cuda.empty_cache()
+        # Clear memory after each round - this is the key part!
+        del assessor_trainer, snap, ds_assessor_round
+        assessor_snapshot["model"] = None
+        
+        # Force memory cleanup
+        if device.type == "cuda":
+            torch.cuda.empty_cache()
+        gc.collect()  # Force garbage collection
 
     save_dir = f"models/{ts}_{args.model_id.replace('/', '_')}_grpo_assessor"
     policy_model.save_pretrained(save_dir)
