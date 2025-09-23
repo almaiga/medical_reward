@@ -248,7 +248,7 @@ def main():
             original = extract_from_prompt(p, "original")
             attacker_thought, attacked_note = parse_response(c)
 
-            assessor_ds = make_assessor_prompts([{"original": original, "attacked": attacked_note}])
+            assessor_ds = make_assessor_prompts([{"original": original, "attacked": attacked_note}], policy_tok)
             assessor_messages = assessor_ds[0]['messages']
             assessor_prompt = policy_tok.apply_chat_template(assessor_messages, tokenize=False, add_generation_prompt=True)
             
