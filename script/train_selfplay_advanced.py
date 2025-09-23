@@ -48,7 +48,6 @@ def load_causal_lm(model_id: str, device: torch.device):
     gc = model.generation_config
     gc.do_sample = True
     gc.temperature = 0.3
-    gc.top_p = 0.9
     gc.max_new_tokens = 512
     
     return model, tok
@@ -82,22 +81,6 @@ def parse_response(text: str):
         
     return thought.strip(), output.strip()
 
-
-def custom_data_collator(features):
-    """
-    A custom data collator that preserves the 'prompt' text while creating batches of tensors.
-    """
-    # Separate the raw text prompts from the tensorizable fields
-    prompts = [f["prompt"] for f in features]
-    
-    # Use the default collator for everything else (input_ids, attention_mask, etc.)
-    first = features[0]
-    tensor_keys = [k for k in first.keys() if k != "prompt"]
-    tensor_batch = {k: torch.stack([torch.tensor(f[k]) for f in features]) for k in tensor_keys}
-
-    # Add the raw prompts back into the final batch
-    tensor_batch["prompt"] = prompts
-    return tensor_batch
 
 def get_judge_assessment(original: str, attacked: str, assessor_label: str, judge_model, judge_tok, device):
     """Uses a judge model to get a ground-truth harm assessment."""
@@ -163,10 +146,16 @@ def build_attacker_prompts(ds: Dataset, few_shot_examples: Dataset, tokenizer, n
         user_prompt = f"{shot_str}\nNow, attack the following note:\n\n<original>{row['original']}</original>\n"
         messages = [{"role": "system", "content": system_prompt}, {"role": "user", "content": user_prompt}]
         
-        # --- THIS IS THE FIX ---
-        # Render the messages into a final string and return it under the 'prompt' key
+        # Render the messages into a final string
         prompt_string = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
-        return {"prompt": prompt_string}
+        
+        # Tokenize and return proper fields for GRPO
+        tokenized = tokenizer(prompt_string, truncation=True, max_length=1536)
+        return {
+            "input_ids": tokenized["input_ids"],
+            "attention_mask": tokenized["attention_mask"],
+            "prompt": prompt_string  # Keep raw text for reward function
+        }
         
     return ds.map(to_prompt, remove_columns=ds.column_names)
 
@@ -184,10 +173,15 @@ def make_assessor_prompts(records: list, tokenizer):
         user_prompt = f"Medical Note to Assess:\n{rec['attacked']}"
         messages = [{"role": "system", "content": system_prompt}, {"role": "user", "content": f"{hidden_data}\n{user_prompt}"}]
 
-        # --- THIS IS THE FIX ---
-        # Render the messages and append a dictionary with the 'prompt' key
+        # Render the messages and tokenize
         prompt_string = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
-        prompts.append({"prompt": prompt_string})
+        tokenized = tokenizer(prompt_string, truncation=True, max_length=1536)
+        
+        prompts.append({
+            "input_ids": tokenized["input_ids"],
+            "attention_mask": tokenized["attention_mask"],
+            "prompt": prompt_string
+        })
 
     return Dataset.from_list(prompts)
 
@@ -249,8 +243,8 @@ def main():
             attacker_thought, attacked_note = parse_response(c)
 
             assessor_ds = make_assessor_prompts([{"original": original, "attacked": attacked_note}], policy_tok)
-            assessor_messages = assessor_ds[0]['messages']
-            assessor_prompt = policy_tok.apply_chat_template(assessor_messages, tokenize=False, add_generation_prompt=True)
+            # Fix: Get the prompt from the dataset
+            assessor_prompt = assessor_ds[0]['prompt']
             
             with torch.no_grad():
                 inputs = policy_tok(assessor_prompt, return_tensors="pt").to(device)
@@ -296,8 +290,11 @@ def main():
 
         print(f"--- Round {r+1}: Training Attacker ---")
         attacker_trainer = GRPOTrainer(
-            model=policy_model, args=GRPOConfig(**common_cfg), processing_class=policy_tok,
-            train_dataset=ds_attacker, reward_funcs=[attacker_reward_fn],# data_collator=custom_data_collator
+            model=policy_model, 
+            args=GRPOConfig(**common_cfg), 
+            processing_class=policy_tok,
+            train_dataset=ds_attacker, 
+            reward_funcs=[attacker_reward_fn]
         )
         attacker_trainer.train()
 
@@ -306,20 +303,23 @@ def main():
         with torch.no_grad():
             sel = ds_originals.shuffle(seed=42 + r).select(range(min(args.max_assessor_batch, len(ds_originals))))
             for row in sel:
-                attacker_ds = build_attacker_prompts(Dataset.from_dict({"original": [row["original"]]}), ds_few_shot)
-                messages = attacker_ds[0]['messages']
-                prompt = policy_tok.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
+                attacker_ds = build_attacker_prompts(Dataset.from_dict({"original": [row["original"]]}), ds_few_shot, policy_tok)
+                # Fix: Get the prompt from the dataset
+                prompt = attacker_ds[0]['prompt']
                 inputs = policy_tok(prompt, return_tensors="pt").to(device)
                 out_ids = policy_model.generate(**inputs, pad_token_id=policy_tok.eos_token_id)
                 completion = policy_tok.decode(out_ids[0, inputs.input_ids.shape[1]:], skip_special_tokens=True)
                 _, attacked_note = parse_response(completion)
                 attacked_records.append({"original": row["original"], "attacked": attacked_note})
-        ds_assessor_round = make_assessor_prompts(attacked_records)
+        ds_assessor_round = make_assessor_prompts(attacked_records, policy_tok)
 
         print(f"--- Round {r+1}: Training Assessor ---")
         assessor_trainer = GRPOTrainer(
-            model=policy_model, args=GRPOConfig(**common_cfg), processing_class=policy_tok,
-            train_dataset=ds_assessor_round, reward_funcs=[assessor_reward_fn], #data_collator=custom_data_collator
+            model=policy_model, 
+            args=GRPOConfig(**common_cfg), 
+            processing_class=policy_tok,
+            train_dataset=ds_assessor_round, 
+            reward_funcs=[assessor_reward_fn]
         )
         assessor_trainer.train()
 
