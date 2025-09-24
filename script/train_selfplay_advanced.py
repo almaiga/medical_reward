@@ -419,10 +419,10 @@ def main():
     # from save_training_results import save_training_results
     # save_training_results(policy_model, policy_tok, log_path, args, state, device)
     
-    save_dir = f"models/{ts}_{args.model_id.replace('/', '_')}_grpo_assessor"
-    policy_model.save_pretrained(save_dir)
-    policy_tok.save_pretrained(save_dir)
-    print(f"\n✅ Final self-play policy saved to {save_dir}")
+    #save_dir = f"models/{ts}_{args.model_id.replace('/', '_')}_grpo_assessor"
+    #policy_model.save_pretrained(save_dir)
+    #policy_tok.save_pretrained(save_dir)
+    #print(f"\n✅ Final self-play policy saved to {save_dir}")
     print(f"📄 JSONL log written to {log_path}")
     print(f"📄 Interaction log written to {log_path.replace('.jsonl', '_interactions.jsonl')}")
 
