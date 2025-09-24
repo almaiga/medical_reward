@@ -418,6 +418,10 @@ def main():
         })
 
         snap = deepcopy(policy_model).eval()
+        # Restore generation config that gets lost in deepcopy
+        snap.generation_config.do_sample = True
+        snap.generation_config.temperature = 0.3
+        snap.generation_config.max_new_tokens = 512
         assessor_snapshot["model"] = snap
 
         print(f"--- Round {r+1}: Training Attacker ---")
