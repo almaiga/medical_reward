@@ -6,6 +6,7 @@ import argparse
 import gc  # Add this import
 from datetime import datetime
 from copy import deepcopy
+from pathlib import Path
 
 import torch
 import pandas as pd
@@ -192,11 +193,30 @@ def extract_from_prompt(prompt, tag):
     return match.group(1).strip() if match else ""
     
 
+def log_interaction(round_num, phase, original, attacked, assessor_response, judgments, rewards, log_path):
+    """Log detailed interaction data for analysis."""
+    interaction_log = {
+        "round": round_num,
+        "phase": phase,
+        "timestamp": datetime.now().isoformat(),
+        "original_note": original,
+        "attacked_note": attacked,
+        "assessor_response": assessor_response,
+        "judge_assessment": judgments,
+        "rewards": rewards
+    }
+    
+    # Create interaction log file path
+    interaction_log_path = log_path.replace(".jsonl", "_interactions.jsonl")
+    with open(interaction_log_path, "a", encoding="utf-8") as f:
+        f.write(json.dumps(interaction_log, ensure_ascii=False) + "\n")
+
+
 def main():
     parser = argparse.ArgumentParser(description="GRPO self-play for Attacker vs. Assessor training.")
     parser.add_argument("--model_id", type=str, required=True, help="Shared policy model to be trained.")
     parser.add_argument("--judge_model_id", type=str, default="Qwen/Qwen3-1.7B", help="Judge model for rewards.")
-    parser.add_argument("--num_samples", type=int, default=64, help="Original notes to use.")
+    parser.add_argument("--num_samples", type=int, default=16, help="Original notes to use.")
     parser.add_argument("--num_generations", type=int, default=2, help="GRPO completions per prompt (>=2).")
     parser.add_argument("--learning_rate", type=float, default=5e-7)
     parser.add_argument("--rounds", type=int, default=3, help="Self-play rounds.")
@@ -236,7 +256,26 @@ def main():
             r_accuracy = R_ACCURACY if judgments["assessor_was_correct"] else -R_ACCURACY
             r_refusal = -R_REFUSAL if judgments["assessor_refused"] else 0
             r_format = R_FORMAT if thought else -R_FORMAT
-            scores.append(r_accuracy + r_refusal + r_format)
+            total_reward = r_accuracy + r_refusal + r_format
+            
+            # Log detailed interaction
+            log_interaction(
+                round_num=state["round"],
+                phase="assessor_training", 
+                original=original,
+                attacked=attacked,
+                assessor_response={"thought": thought, "label": label},
+                judgments=judgments,
+                rewards={
+                    "accuracy": r_accuracy,
+                    "refusal": r_refusal, 
+                    "format": r_format,
+                    "total": total_reward
+                },
+                log_path=log_path
+            )
+            
+            scores.append(total_reward)
         return scores
 
     def attacker_reward_fn(prompts, completions, **kwargs):
@@ -247,7 +286,6 @@ def main():
             attacker_thought, attacked_note = parse_response(c)
 
             assessor_ds = make_assessor_prompts([{"original": original, "attacked": attacked_note}], policy_tok)
-            # Fix: Get the prompt from the dataset
             assessor_prompt = assessor_ds[0]['prompt']
             
             with torch.no_grad():
@@ -264,6 +302,24 @@ def main():
             r_format = R_FORMAT if attacker_thought else -R_FORMAT
             
             reward = (r_deception if not judgments["assessor_refused"] else 0) + r_revision + r_format
+            
+            # Log detailed interaction
+            log_interaction(
+                round_num=state["round"],
+                phase="attacker_training",
+                original=original,
+                attacked=attacked_note,
+                assessor_response={"completion": assessor_completion, "label": assessor_label},
+                judgments=judgments,
+                rewards={
+                    "deception": r_deception if not judgments["assessor_refused"] else 0,
+                    "revision": r_revision,
+                    "format": r_format,
+                    "total": reward
+                },
+                log_path=log_path
+            )
+            
             scores.append(reward)
         return scores
 
@@ -290,6 +346,14 @@ def main():
     for r in range(args.rounds):
         state["round"] = r + 1
         print(f"\n{'='*25} Self-play round {r+1}/{args.rounds} {'='*25}")
+
+        # Log round start
+        log_jsonl({
+            "round": r + 1,
+            "phase": "round_start",
+            "timestamp": datetime.now().isoformat(),
+            "model_id": args.model_id
+        })
 
         snap = deepcopy(policy_model).eval()
         assessor_snapshot["model"] = snap
@@ -340,11 +404,13 @@ def main():
             torch.cuda.empty_cache()
         gc.collect()  # Force garbage collection
 
+    # Save comprehensive results at the end
+    from save_training_results import save_training_results
+    save_training_results(policy_model, policy_tok, log_path, args, state, device)
+    
     save_dir = f"models/{ts}_{args.model_id.replace('/', '_')}_grpo_assessor"
     policy_model.save_pretrained(save_dir)
     policy_tok.save_pretrained(save_dir)
     print(f"\n✅ Final self-play policy saved to {save_dir}")
     print(f"📄 JSONL log written to {log_path}")
-
-if __name__ == "__main__":
-    main()
+    print(f"📄 Interaction log written to {log_path.replace('.jsonl', '_interactions.jsonl')}")
