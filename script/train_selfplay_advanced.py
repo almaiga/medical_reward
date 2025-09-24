@@ -1,3 +1,4 @@
+print("Starting script imports...")
 import os
 import re
 import json
@@ -8,17 +9,25 @@ from datetime import datetime
 from copy import deepcopy
 from pathlib import Path
 
+print("Basic imports successful...")
 import torch
+print("PyTorch imported...")
 import pandas as pd
+print("Pandas imported...")
 from datasets import Dataset
+print("Datasets imported...")
 from transformers import AutoTokenizer, AutoModelForCausalLM
+print("Transformers imported...")
 from trl import GRPOConfig, GRPOTrainer
+print("TRL imported...")
 
 # --- Reward Constants ---
 R_ACCURACY = 1.0  # For Assessor's correctness / Attacker's deception
 R_REFUSAL = 0.5   # Penalty for the Assessor refusing
 R_FORMAT = 0.1    # Bonus for using <tool_call>
 R_REVISION = 0.2  # Bonus for the Attacker making a harmful change
+
+print("Constants defined...")
 
 def get_device():
     """Gets the best available device for PyTorch."""
@@ -213,6 +222,7 @@ def log_interaction(round_num, phase, original, attacked, assessor_response, jud
 
 
 def main():
+    print("Main function started...")
     parser = argparse.ArgumentParser(description="GRPO self-play for Attacker vs. Assessor training.")
     parser.add_argument("--model_id", type=str, required=True, help="Shared policy model to be trained.")
     parser.add_argument("--judge_model_id", type=str, default="Qwen/Qwen3-1.7B", help="Judge model for rewards.")
@@ -222,6 +232,7 @@ def main():
     parser.add_argument("--rounds", type=int, default=3, help="Self-play rounds.")
     parser.add_argument("--max_assessor_batch", type=int, default=64, help="New notes for the assessor each round.")
     args = parser.parse_args()
+    print(f"Arguments parsed: {args}")
 
     # Set memory optimization environment variable
     os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
@@ -405,8 +416,8 @@ def main():
         gc.collect()  # Force garbage collection
 
     # Save comprehensive results at the end
-    from save_training_results import save_training_results
-    save_training_results(policy_model, policy_tok, log_path, args, state, device)
+    # from save_training_results import save_training_results
+    # save_training_results(policy_model, policy_tok, log_path, args, state, device)
     
     save_dir = f"models/{ts}_{args.model_id.replace('/', '_')}_grpo_assessor"
     policy_model.save_pretrained(save_dir)
@@ -414,3 +425,7 @@ def main():
     print(f"\n✅ Final self-play policy saved to {save_dir}")
     print(f"📄 JSONL log written to {log_path}")
     print(f"📄 Interaction log written to {log_path.replace('.jsonl', '_interactions.jsonl')}")
+
+if __name__ == "__main__":
+    print("Script reached main execution...")
+    main()
