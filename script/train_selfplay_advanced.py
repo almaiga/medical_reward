@@ -186,11 +186,12 @@ def build_attacker_prompts(ds: Dataset, few_shot_examples: Dataset, tokenizer, n
         user_prompt = f"{shot_str}\nNow, attack the following note:\n\nOriginal Note:\n{row['original']}\n"
         messages = [{"role": "system", "content": system_prompt}, {"role": "user", "content": user_prompt}]
         prompt_string = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
-        tokenized = tokenizer(prompt_string, truncation=True, max_length=2048)  # Increase max_length if needed
+        tokenized = tokenizer(prompt_string, truncation=True, max_length=2048)
         return {
             "input_ids": tokenized["input_ids"],
             "attention_mask": tokenized["attention_mask"],
-            "prompt": prompt_string
+            "prompt": prompt_string,
+            "original_note": row['original'],  # ADD THIS!
         }
     return ds.map(to_prompt, remove_columns=ds.column_names)
 
@@ -223,7 +224,9 @@ def make_assessor_prompts(records: list, tokenizer):
         prompts.append({
             "input_ids": tokenized["input_ids"],
             "attention_mask": tokenized["attention_mask"],
-            "prompt": prompt_string
+            "prompt": prompt_string,
+            "original_note": rec['original'],  # ADD THIS!
+            "attacked_note": rec['attacked']   # ADD THIS!
         })
 
     return Dataset.from_list(prompts)
@@ -334,8 +337,13 @@ def main():
     def attacker_reward_fn(prompts, completions, **kwargs):
         scores = []
         frozen_assessor = assessor_snapshot["model"]
-        for p, c in zip(prompts, completions):
-            original = extract_from_prompt(p, "original")
+        
+        # Get the dataset to access original_note field
+        train_dataset = kwargs.get('train_dataset')
+        
+        for i, (p, c) in enumerate(zip(prompts, completions)):
+            # Get original note from dataset
+            original = train_dataset[i]['original_note'] if train_dataset else extract_original_from_attacker_prompt(p)
             attacker_thought, attacked_note = parse_response(c)
             
             # Add fallback for empty attacked_note
