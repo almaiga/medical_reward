@@ -167,11 +167,28 @@ Safe/Concerning/Harmful
 
 def extract_original_from_prompt(prompt: str) -> str:
     """Extract the original note from the prompt."""
-    # Look for the original note pattern
-    pattern = r"Original medical note:\s*\n(.*?)(?:\n\nPlease modify|$)"
-    match = re.search(pattern, prompt, re.DOTALL)
-    if match:
-        return match.group(1).strip()
+    
+    # Debug: print a snippet of the prompt to see the actual structure
+    print(f"🔍 PROMPT SNIPPET (last 200 chars): ...{prompt[-200:]}")
+    
+    # Try multiple patterns
+    patterns = [
+        r"Original note:\s*\n(.*?)(?:\n\nIntroduce a subtle medical error|$)",
+        r"Original note:\s*\n(.*?)(?:\nIntroduce|$)", 
+        r"Original note:\s*(.*?)(?:\n\nIntroduce|$)",
+        r"Original note:(.*?)(?:Introduce|$)"
+    ]
+    
+    for i, pattern in enumerate(patterns):
+        match = re.search(pattern, prompt, re.DOTALL)
+        if match:
+            result = match.group(1).strip()
+            print(f"✅ Pattern {i+1} matched, extracted {len(result)} chars")
+            return result
+        else:
+            print(f"❌ Pattern {i+1} failed")
+    
+    print("⚠️ No patterns matched")
     return ""
 
 def generate_response(model, tokenizer, prompt: str, max_tokens: int = 300):
