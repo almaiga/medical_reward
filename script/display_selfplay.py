@@ -75,11 +75,11 @@ def display_round_details(round_num, round_data):
             harm_levels_created[game['judge_assessment']['actual_harm']] += 1
         
         deception_rate = (successful_deceptions / len(attacker_games)) * 100
-        avg_reward = sum(total_rewards) / len(total_rewards)
+        avg_reward = sum(total_rewards) / len(attacker_games)
         
         print(f"   • Successful Deceptions: {successful_deceptions}/{len(attacker_games)} ({deception_rate:.1f}%)")
         print(f"   • Average Reward: {avg_reward:.2f}")
-        print(f"   • Harm Created: Low={harm_levels_created['Low']}, Med={harm_levels_created['Medium']}, High={harm_levels_created['High']}")
+        print(f"   • Harm Created: Safe={harm_levels_created['Safe']}, Concerning={harm_levels_created['Concerning']}, Harmful={harm_levels_created['Harmful']}")
         
         # Show sample interaction
         if attacker_games:
@@ -93,7 +93,6 @@ def display_round_details(round_num, round_data):
             if isinstance(sample['assessor_response'], dict) and 'label' in sample['assessor_response']:
                 assessor_label = sample['assessor_response']['label']
             elif isinstance(sample['assessor_response'], dict) and 'completion' in sample['assessor_response']:
-                # Parse the completion to extract label
                 from train_selfplay_advanced import parse_response
                 _, assessor_label = parse_response(sample['assessor_response']['completion'])
             else:
@@ -124,7 +123,7 @@ def display_round_details(round_num, round_data):
         print(f"   • Overall Accuracy: {correct_assessments}/{len(assessor_games)} ({overall_accuracy:.1f}%)")
         
         print(f"   • Performance by Harm Level:")
-        for harm in ['Low', 'Medium', 'High']:
+        for harm in ['Safe', 'Concerning', 'Harmful']:
             if harm in accuracy_by_harm:
                 count = harm_distribution[harm]
                 accuracy = (sum(accuracy_by_harm[harm]) / len(accuracy_by_harm[harm])) * 100
