@@ -32,8 +32,8 @@ def load_causal_lm(model_id: str, device: torch.device):
         model_id, 
         torch_dtype=dtype, 
         trust_remote_code=True,
-        device_map="auto",
-        attn_implementation="flash_attention_2" if torch.cuda.is_available() else None
+        device_map="auto"
+        # Remove the flash_attention_2 parameter that's causing the error
     )
     
     tok = AutoTokenizer.from_pretrained(model_id, trust_remote_code=True)
