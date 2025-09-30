@@ -353,7 +353,7 @@ def main():
                 inputs = policy_tok(assessor_prompt, return_tensors="pt").to(device)
                 out_ids = frozen_assessor.generate(
                     **inputs, 
-                    max_new_tokens=512,
+                    max_new_tokens=1024,
                     do_sample=True,
                     temperature=0.3,
                     pad_token_id=policy_tok.eos_token_id,
