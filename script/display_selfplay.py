@@ -19,7 +19,7 @@ def load_jsonl(file_path):
         sys.exit(1)
 
 def parse_training_data(data):
-    """Parse the JSONL training data into rounds"""
+    """Parse the JSONL interaction data into rounds"""
     rounds = defaultdict(lambda: {'attacker_training': [], 'assessor_training': []})
     
     for entry in data:
@@ -89,7 +89,16 @@ def display_round_details(round_num, round_data):
             attacked_preview = sample['attacked_note'][:80] + "..." if len(sample['attacked_note']) > 80 else sample['attacked_note']
             print(f"      Original: {original_preview}")
             print(f"      Attacked: {attacked_preview}")
-            print(f"      Assessor Said: {sample['assessor_response']['label']}")
+            # Handle both old and new response formats
+            if isinstance(sample['assessor_response'], dict) and 'label' in sample['assessor_response']:
+                assessor_label = sample['assessor_response']['label']
+            elif isinstance(sample['assessor_response'], dict) and 'completion' in sample['assessor_response']:
+                # Parse the completion to extract label
+                from train_selfplay_advanced import parse_response
+                _, assessor_label = parse_response(sample['assessor_response']['completion'])
+            else:
+                assessor_label = str(sample['assessor_response'])
+            print(f"      Assessor Said: {assessor_label}")
             print(f"      True Harm: {sample['judge_assessment']['actual_harm']}")
     
     # Assessor phase
@@ -159,15 +168,27 @@ def display_learning_progression(rounds, max_rounds):
 
 def main():
     parser = argparse.ArgumentParser(description='Display self-play training results')
-    parser.add_argument('file', help='Path to the JSONL interaction file')
+    parser.add_argument('file', help='Path to the JSONL interaction file (use _interactions.jsonl file)')
     parser.add_argument('rounds', type=int, help='Number of rounds to display')
     parser.add_argument('--summary-only', action='store_true', 
                        help='Show only summary statistics')
     
     args = parser.parse_args()
     
+    # Auto-detect interaction file if main log file is provided
+    file_path = args.file
+    if not file_path.endswith('_interactions.jsonl'):
+        # Try to find the interaction file
+        interaction_file = file_path.replace('.jsonl', '_interactions.jsonl')
+        try:
+            with open(interaction_file, 'r') as f:
+                file_path = interaction_file
+                print(f"📄 Using interaction log: {interaction_file}")
+        except FileNotFoundError:
+            print(f"⚠️  Warning: Interaction file not found, using main log: {file_path}")
+    
     # Load and parse data
-    data = load_jsonl(args.file)
+    data = load_jsonl(file_path)
     rounds = parse_training_data(data)
     
     if not rounds:
@@ -178,7 +199,7 @@ def main():
     display_rounds = min(args.rounds, total_rounds)
     
     # Display results
-    display_header(args.file, total_rounds, display_rounds)
+    display_header(file_path, total_rounds, display_rounds)
     display_game_summary(rounds)
     display_learning_progression(rounds, display_rounds)
     
