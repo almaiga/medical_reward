@@ -58,7 +58,10 @@ def load_causal_lm(model_id: str, device: torch.device):
     gc = model.generation_config
     gc.do_sample = True
     gc.temperature = 0.3
-    gc.max_new_tokens = 512
+    gc.max_new_tokens = 1024
+    # Add these parameters to prevent early stopping
+    gc.eos_token_id = None  # Disable EOS token stopping
+    gc.pad_token_id = tok.eos_token_id
     
     return model, tok
 
@@ -339,12 +342,25 @@ def main():
         for p, c in zip(prompts, completions):
             original = extract_from_prompt(p, "original")
             attacker_thought, attacked_note = parse_response(c)
+            
+            # Add fallback for empty attacked_note
+            if not attacked_note.strip():
+                attacked_note = c.strip()
+                
             assessor_ds = make_assessor_prompts([{"original": original, "attacked": attacked_note}], policy_tok)
             assessor_prompt = assessor_ds[0]['prompt']
             with torch.no_grad():
                 inputs = policy_tok(assessor_prompt, return_tensors="pt").to(device)
-                out_ids = frozen_assessor.generate(**inputs, pad_token_id=policy_tok.eos_token_id)
-                _, assessor_label = parse_response(policy_tok.decode(out_ids[0, inputs.input_ids.shape[1]:], skip_special_tokens=True))
+                out_ids = frozen_assessor.generate(
+                    **inputs, 
+                    max_new_tokens=512,
+                    do_sample=True,
+                    temperature=0.3,
+                    pad_token_id=policy_tok.eos_token_id,
+                    eos_token_id=99999,  # Prevent early stopping
+                )
+                assessor_completion = policy_tok.decode(out_ids[0, inputs.input_ids.shape[1]:], skip_special_tokens=True)
+                _, assessor_label = parse_response(assessor_completion)
             judgments = get_judge_assessment(original, attacked_note, assessor_label, judge_model, judge_tok, device)
             harm_multipliers = {"Safe": 0.5, "Concerning": 1.0, "Harmful": 2.0}
             multiplier = harm_multipliers.get(judgments["actual_harm"], 1.0)
@@ -418,7 +434,7 @@ def main():
         # Restore generation config that gets lost in deepcopy
         snap.generation_config.do_sample = True
         snap.generation_config.temperature = 0.3
-        snap.generation_config.max_new_tokens = 512
+        snap.generation_config.max_new_tokens = 1024
         assessor_snapshot["model"] = snap
 
         print(f"--- Round {r+1}: Training Attacker ---")
@@ -442,9 +458,22 @@ def main():
                 attacker_ds = build_attacker_prompts(Dataset.from_dict({"original": [row["original"]]}), ds_few_shot, policy_tok)
                 prompt = attacker_ds[0]['prompt']
                 inputs = policy_tok(prompt, return_tensors="pt").to(device)
-                out_ids = policy_model.generate(**inputs, pad_token_id=policy_tok.eos_token_id)
+                out_ids = policy_model.generate(
+                    **inputs, 
+                    max_new_tokens=1024,
+                    do_sample=True,
+                    temperature=0.3,
+                    pad_token_id=policy_tok.eos_token_id,
+                    eos_token_id=99999,  # Set to impossible token ID to prevent early stopping
+                )
                 completion = policy_tok.decode(out_ids[0, inputs.input_ids.shape[1]:], skip_special_tokens=True)
                 _, attacked_note = parse_response(completion)
+                
+                # Add fallback for empty attacked_note
+                if not attacked_note.strip():
+                    print("WARNING: Attacker did not produce an <output> block. Using full completion as attacked note.")
+                    attacked_note = completion.strip()
+                    
                 attacked_records.append({"original": row["original"], "attacked": attacked_note})
         ds_assessor_round = make_assessor_prompts(attacked_records, policy_tok)
 
