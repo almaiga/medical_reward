@@ -46,7 +46,6 @@ def load_causal_lm(model_id: str, device: torch.device):
     
     model = AutoModelForCausalLM.from_pretrained(
         model_id, torch_dtype=dtype, trust_remote_code=True,
-        # attn_implementation="flash_attention_2" # Uncomment for faster training on supported GPUs
     ).to(device)
     
     tok = AutoTokenizer.from_pretrained(model_id, trust_remote_code=True)
@@ -55,13 +54,9 @@ def load_causal_lm(model_id: str, device: torch.device):
         tok.pad_token = tok.eos_token
     model.config.pad_token_id = tok.eos_token_id
     
-    gc = model.generation_config
-    gc.do_sample = True
-    gc.temperature = 0.3
-    gc.max_new_tokens = 1024
-    # Add these parameters to prevent early stopping
-    gc.eos_token_id = None  # Disable EOS token stopping
-    gc.pad_token_id = tok.eos_token_id
+    # Print actual token IDs for debugging
+    print(f"Actual EOS token ID: {tok.eos_token_id}")
+    print(f"Actual PAD token ID: {tok.pad_token_id}")
     
     return model, tok
 
@@ -354,10 +349,12 @@ def main():
                 out_ids = frozen_assessor.generate(
                     **inputs, 
                     max_new_tokens=1024,
+                    min_new_tokens=100,  # Force longer generation
                     do_sample=True,
-                    temperature=0.3,
-                    pad_token_id=policy_tok.eos_token_id,
-                    eos_token_id=99999,  # Prevent early stopping
+                    temperature=0.5,  # As you requested
+                    pad_token_id=policy_tok.pad_token_id,
+                    eos_token_id=policy_tok.eos_token_id,  # Use actual EOS token
+                    # Remove the forced eos_token_id override
                 )
                 assessor_completion = policy_tok.decode(out_ids[0, inputs.input_ids.shape[1]:], skip_special_tokens=True)
                 _, assessor_label = parse_response(assessor_completion)
@@ -403,7 +400,7 @@ def main():
         num_generations=args.num_generations,
         generation_batch_size=args.num_generations * 2,
         max_prompt_length=1536,
-        max_completion_length=512,
+        max_completion_length=1024,  # Increased from 512
         learning_rate=args.learning_rate,
         per_device_train_batch_size=1,
         gradient_accumulation_steps=4,
@@ -414,7 +411,7 @@ def main():
         num_train_epochs=1,
         report_to="none",
         remove_unused_columns=False,
-        bf16=True,  # Changed from fp16=True to bf16=True to match model dtype
+        bf16=True,
         gradient_checkpointing=True,
     )
     
