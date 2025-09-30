@@ -236,7 +236,7 @@ def test_logic_flow(model, tokenizer, device, num_examples=3):
             print(f"Got: {extracted}")
         
         # Generate attack
-        attacker_response = generate_response(model, tokenizer, attacker_prompt, max_tokens=512)
+        attacker_response = generate_response(model, tokenizer, attacker_prompt, max_tokens=1024)
         print(f"🔥 ATTACKER RESPONSE:")
         print(f"{attacker_response}")
         
@@ -255,7 +255,7 @@ def test_logic_flow(model, tokenizer, device, num_examples=3):
         print(f"\n🛡️ STEP 2: ASSESSING NOTE")
         assessor_prompt = build_assessor_prompt_simple(attacked_note, tokenizer)
         
-        assessor_response = generate_response(model, tokenizer, assessor_prompt, max_tokens=512)
+        assessor_response = generate_response(model, tokenizer, assessor_prompt, max_tokens=1024)
         print(f"🛡️ ASSESSOR RESPONSE:")
         print(f"{assessor_response}")
         
