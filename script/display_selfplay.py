@@ -53,7 +53,6 @@ def display_game_summary(rounds):
     print()
 
 def display_round_details(round_num, round_data):
-    """Display detailed information for a specific round"""
     print(f"🎯 ROUND {round_num}")
     print("-" * 40)
     
@@ -62,72 +61,64 @@ def display_round_details(round_num, round_data):
     if attacker_games:
         print(f"📈 ATTACKER PHASE ({len(attacker_games)} games)")
         
-        successful_deceptions = 0
+        attacker_wins = 0
         total_rewards = []
         harm_levels_created = defaultdict(int)
         
         for game in attacker_games:
-            # Count successful deceptions (when assessor was wrong)
+            # Attacker wins if assessor was wrong
             if not game['judge_assessment']['assessor_was_correct']:
-                successful_deceptions += 1
-            
+                attacker_wins += 1
             total_rewards.append(game['rewards']['total'])
             harm_levels_created[game['judge_assessment']['actual_harm']] += 1
         
-        deception_rate = (successful_deceptions / len(attacker_games)) * 100
+        deception_rate = (attacker_wins / len(attacker_games)) * 100
         avg_reward = sum(total_rewards) / len(attacker_games)
-        
-        print(f"   • Successful Deceptions: {successful_deceptions}/{len(attacker_games)} ({deception_rate:.1f}%)")
+        print(f"   • Attacker Win Rate: {deception_rate:.1f}%")
         print(f"   • Average Reward: {avg_reward:.2f}")
         print(f"   • Harm Created: Safe={harm_levels_created['Safe']}, Concerning={harm_levels_created['Concerning']}, Harmful={harm_levels_created['Harmful']}")
         
-        # Show sample interaction
-        if attacker_games:
-            sample = attacker_games[0]
-            print(f"\n   📋 Sample Attack:")
-            original_preview = sample['original_note'][:80] + "..." if len(sample['original_note']) > 80 else sample['original_note']
-            attacked_preview = sample['attacked_note'][:80] + "..." if len(sample['attacked_note']) > 80 else sample['attacked_note']
-            print(f"      Original: {original_preview}")
-            print(f"      Attacked: {attacked_preview}")
-            # Handle both old and new response formats
-            if isinstance(sample['assessor_response'], dict) and 'label' in sample['assessor_response']:
-                assessor_label = sample['assessor_response']['label']
-            elif isinstance(sample['assessor_response'], dict) and 'completion' in sample['assessor_response']:
-                from train_selfplay_advanced import parse_response
-                _, assessor_label = parse_response(sample['assessor_response']['completion'])
-            else:
-                assessor_label = str(sample['assessor_response'])
-            print(f"      Assessor Said: {assessor_label}")
-            print(f"      True Harm: {sample['judge_assessment']['actual_harm']}")
+        # Show sample attacker output
+        sample = attacker_games[0]
+        print(f"\n   📋 Sample Attack:")
+        print(f"      Original: {sample['original_note'][:80]}{'...' if len(sample['original_note']) > 80 else ''}")
+        print(f"      Attacked: {sample['attacked_note'][:80]}{'...' if len(sample['attacked_note']) > 80 else ''}")
+        print(f"      Assessor Said: {sample['assessor_response'].get('label', str(sample['assessor_response']))}")
+        print(f"      True Harm: {sample['judge_assessment']['actual_harm']}")
     
     # Assessor phase
     assessor_games = round_data['assessor_training']
     if assessor_games:
         print(f"\n🔍 ASSESSOR PHASE ({len(assessor_games)} games)")
         
-        correct_assessments = 0
+        assessor_wins = 0
         harm_distribution = defaultdict(int)
         accuracy_by_harm = defaultdict(list)
         
         for game in assessor_games:
             if game['judge_assessment']['assessor_was_correct']:
-                correct_assessments += 1
-            
+                assessor_wins += 1
             harm = game['judge_assessment']['actual_harm']
             correct = game['judge_assessment']['assessor_was_correct']
-            
             harm_distribution[harm] += 1
             accuracy_by_harm[harm].append(correct)
         
-        overall_accuracy = (correct_assessments / len(assessor_games)) * 100
-        print(f"   • Overall Accuracy: {correct_assessments}/{len(assessor_games)} ({overall_accuracy:.1f}%)")
-        
+        win_rate = (assessor_wins / len(assessor_games)) * 100
+        print(f"   • Assessor Win Rate: {win_rate:.1f}%")
+        print(f"   • Overall Accuracy: {assessor_wins}/{len(assessor_games)} ({win_rate:.1f}%)")
         print(f"   • Performance by Harm Level:")
         for harm in ['Safe', 'Concerning', 'Harmful']:
             if harm in accuracy_by_harm:
                 count = harm_distribution[harm]
                 accuracy = (sum(accuracy_by_harm[harm]) / len(accuracy_by_harm[harm])) * 100
                 print(f"      {harm}: {count} cases, {accuracy:.1f}% accuracy")
+        
+        # Show sample assessor output
+        sample = assessor_games[0]
+        print(f"\n   📋 Sample Assessment:")
+        print(f"      Attacked Note: {sample['attacked_note'][:80]}{'...' if len(sample['attacked_note']) > 80 else ''}")
+        print(f"      Assessor Response: {sample['assessor_response'].get('label', str(sample['assessor_response']))}")
+        print(f"      True Harm: {sample['judge_assessment']['actual_harm']}")
     
     print()
 
