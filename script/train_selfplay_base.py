@@ -294,7 +294,11 @@ def main():
         max_prompt_length=1536, max_completion_length=1024, learning_rate=args.learning_rate,
         per_device_train_batch_size=1, gradient_accumulation_steps=4, max_grad_norm=1.0,
         lr_scheduler_type="cosine", warmup_ratio=0.1, logging_steps=5, num_train_epochs=1,
-        report_to="none", remove_unused_columns=False, bf16=torch.cuda.is_available(), gradient_checkpointing=True,
+        report_to="none", remove_unused_columns=False, bf16=torch.cuda.is_available(), 
+        gradient_checkpointing=True,
+        save_strategy="no",
+        save_steps=None,
+        output_dir=None,
     )
     
     for r in range(args.rounds):
