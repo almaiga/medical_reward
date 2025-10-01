@@ -163,7 +163,7 @@ def test_logic_flow(model, tokenizer, num_examples=3):
         # Step 1: Attack the note
         print("🔥 STEP 1: ATTACKING NOTE")
         attacker_prompt = build_attacker_prompt_simple(original_note, tokenizer)
-        input_ids, attacker_output_ids = generate_response(model, tokenizer, attacker_prompt, max_tokens=len(original_note) + 150)
+        input_ids, attacker_output_ids = generate_response(model, tokenizer, attacker_prompt, max_tokens=len(original_note) + 512)
         attack_thought, attacked_note = parse_qwen3_response(tokenizer, input_ids, attacker_output_ids)
         
         print(f"\n🎯 PARSED ATTACK:")
@@ -177,7 +177,7 @@ def test_logic_flow(model, tokenizer, num_examples=3):
         # Step 2: Assess the attacked note
         print("🛡️ STEP 2: ASSESSING NOTE")
         assessor_prompt = build_assessor_prompt_simple(attacked_note, tokenizer)
-        input_ids, assessor_output_ids = generate_response(model, tokenizer, assessor_prompt, max_tokens=128)
+        input_ids, assessor_output_ids = generate_response(model, tokenizer, assessor_prompt, max_tokens=512)
         assess_thought, assess_label = parse_qwen3_response(tokenizer, input_ids, assessor_output_ids)
         
         print(f"\n📊 PARSED ASSESSMENT:")
