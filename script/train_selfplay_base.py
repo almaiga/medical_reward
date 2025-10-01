@@ -124,6 +124,7 @@ def build_attacker_prompts(ds: Dataset, tokenizer):
         user_content = f"Original note:\n{row['original']}"
         messages = [{"role": "system", "content": system_content}, {"role": "user", "content": user_content}]
         final_prompt_for_model = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True, enable_thinking=True)
+        # Pack metadata into a JSON string to pass to the reward function
         packed_data = {"final_prompt": final_prompt_for_model, "original_note": row['original']}
         tokenized = tokenizer(final_prompt_for_model, truncation=True, max_length=2048)
         return {"input_ids": tokenized["input_ids"], "attention_mask": tokenized["attention_mask"], "prompt": json.dumps(packed_data)}
@@ -137,6 +138,7 @@ def make_assessor_prompts(records: list, tokenizer):
         user_content = f"Assess this note:\n{rec['attacked']}"
         messages = [{"role": "system", "content": system_content}, {"role": "user", "content": user_content}]
         final_prompt_for_model = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True, enable_thinking=True)
+        # Pack metadata for the reward function
         packed_data = {"final_prompt": final_prompt_for_model, "original_note": rec['original'], "attacked_note": rec['attacked']}
         tokenized = tokenizer(final_prompt_for_model, truncation=True, max_length=2048)
         prompts.append({"input_ids": tokenized["input_ids"], "attention_mask": tokenized["attention_mask"], "prompt": json.dumps(packed_data)})
@@ -220,7 +222,7 @@ def main():
             original = packed_data['original_note']
             _, attacked_note = parse_attacker_response(policy_tok, c)
             if not attacked_note.strip() or attacked_note.strip() == original.strip():
-                total_reward = -1.0
+                total_reward = -1.0 # Failed attack is an easy win for the assessor
                 assessor_label = "N/A (Attack Failed)"
                 judgments = {"info": "Attacker failed to modify note."}
             else:
@@ -259,14 +261,21 @@ def main():
         print(f"--- Round {r+1}: Generating new dataset for Assessor ---")
         attacked_records = []
         sel = ds_originals.shuffle(seed=42 + r).select(range(min(args.max_assessor_batch, len(ds_originals))))
-        for row in sel:
-            attacker_ds_single = build_attacker_prompts(Dataset.from_dict({"original": [row["original"]]}), policy_tok)
-            prompt_json = attacker_ds_single[0]['prompt']
-            prompt_unpacked = json.loads(prompt_json)['final_prompt']
-            completion = generate_with_thinking_budget(policy_model, policy_tok, prompt_unpacked, max_new_tokens=512)
+        
+        # Build all attacker prompts for the selected batch at once
+        attacker_prompts_ds = build_attacker_prompts(sel, policy_tok)
+
+        for item in attacker_prompts_ds:
+            prompt_json = item['prompt']
+            unpacked_data = json.loads(prompt_json)
+            prompt_for_model = unpacked_data['final_prompt']
+            original_note_for_row = unpacked_data['original_note']
+            
+            completion = generate_with_thinking_budget(policy_model, policy_tok, prompt_for_model, max_new_tokens=1024)
             _, attacked_note = parse_attacker_response(policy_tok, completion)
-            if attacked_note.strip() and attacked_note.strip() != row["original"].strip():
-                attacked_records.append({"original": row["original"], "attacked": attacked_note})
+            
+            if attacked_note.strip() and attacked_note.strip() != original_note_for_row.strip():
+                attacked_records.append({"original": original_note_for_row, "attacked": attacked_note})
                 
         if len(attacked_records) > 0:
             ds_assessor_round = make_assessor_prompts(attacked_records, policy_tok)
