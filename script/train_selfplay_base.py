@@ -174,7 +174,7 @@ def main():
     print("Main function started...")
     parser = argparse.ArgumentParser(description="GRPO self-play for Attacker vs. Assessor training.")
     parser.add_argument("--model_id", type=str, required=True, help="Shared policy model to be trained.")
-    parser.add_argument("--judge_model_id", type=str, default="Qwen/Qwen3-1.7B-Instruct", help="Judge model for rewards.")
+    parser.add_argument("--judge_model_id", type=str, default="Qwen/Qwen3-1.7B", help="Judge model for rewards.")
     parser.add_argument("--num_samples", type=int, default=16, help="Original notes to use for attacking.")
     parser.add_argument("--num_generations", type=int, default=2, help="GRPO completions per prompt (>=2).")
     parser.add_argument("--learning_rate", type=float, default=5e-7)
