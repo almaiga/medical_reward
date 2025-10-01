@@ -263,7 +263,7 @@ def main():
             attacker_ds_single = build_attacker_prompts(Dataset.from_dict({"original": [row["original"]]}), policy_tok)
             prompt_json = attacker_ds_single[0]['prompt']
             prompt_unpacked = json.loads(prompt_json)['final_prompt']
-            completion = generate_with_thinking_budget(policy_model, policy_tok, prompt_unpacked, max_new_tokens=1024)
+            completion = generate_with_thinking_budget(policy_model, policy_tok, prompt_unpacked, max_new_tokens=512)
             _, attacked_note = parse_attacker_response(policy_tok, completion)
             if attacked_note.strip() and attacked_note.strip() != row["original"].strip():
                 attacked_records.append({"original": row["original"], "attacked": attacked_note})
