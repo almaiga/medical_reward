@@ -35,8 +35,9 @@ def load_causal_lm(model_id: str):
 
 def parse_attacker_response(tokenizer, input_ids, generated_ids):
     """
-    Parses the Attacker's output. It separates the <think> block and then
-    isolates ONLY the 'Modified Note' text, discarding the explanation.
+    Parses the Attacker's output with a robust two-step process:
+    1. Find the note block, with or without a heading.
+    2. Proactively remove any trailing 'Error Explanation' sections.
     """
     input_length = input_ids.shape[1]
     output_ids = generated_ids[0, input_length:].tolist()
@@ -45,38 +46,39 @@ def parse_attacker_response(tokenizer, input_ids, generated_ids):
     modified_note = ""
 
     try:
-        # 1. Separate thought from final content
+        # Separate thought from final content using the token ID
         split_index = output_ids.index(THINK_END_TOKEN_ID) + 1
         thinking_ids = output_ids[:split_index]
         content_ids = output_ids[split_index:]
         
         thinking_content = tokenizer.decode(thinking_ids, skip_special_tokens=True).strip()
         final_content = tokenizer.decode(content_ids, skip_special_tokens=True).strip()
-
-        # 2. In the final content, extract only the text under "Modified Note:"
-        # This regex captures text after "**Modified Note:**" until it hits a line with "---" or the end.
-        note_match = re.search(r'\*\*Modified Note:\*\*(.*?)(?=\n---|\Z)', final_content, re.DOTALL | re.IGNORECASE)
-        if note_match:
-            modified_note = note_match.group(1).strip()
-        else:
-            # Fallback if the specific formatting isn't found
-            modified_note = final_content
-
     except ValueError:
         print("⚠️ Warning: '</think>' token not found in Attacker response.")
-        full_output = tokenizer.decode(output_ids, skip_special_tokens=True).strip()
-        note_match = re.search(r'\*\*Modified Note:\*\*(.*?)(?=\n---|\Z)', full_output, re.DOTALL | re.IGNORECASE)
-        if note_match:
-            modified_note = note_match.group(1).strip()
-        else:
-            modified_note = full_output
+        final_content = tokenizer.decode(output_ids, skip_special_tokens=True).strip()
+
+    # --- Robust Parsing Logic ---
+    # Step 1: Find the primary note text. It might have a heading or not.
+    candidate_text = final_content
+    note_block_match = re.search(
+        r'\*\*(?:Modified|Altered)?\s?Note:\*\*(.*)', 
+        final_content, 
+        re.DOTALL | re.IGNORECASE
+    )
+    if note_block_match:
+        candidate_text = note_block_match.group(1).strip()
+
+    # Step 2: Proactively cut off any explanation sections that follow.
+    # This looks for common separators like '---' or '**Error...' on a new line.
+    explanation_separator = re.compile(r'\n\s*---|\n\s*\*\*Error', re.IGNORECASE)
+    modified_note = explanation_separator.split(candidate_text, 1)[0].strip()
 
     return thinking_content, modified_note
 
 
 def parse_assessor_response(tokenizer, input_ids, generated_ids):
     """
-    Parses the Assessor's standard think/content output, looking for the final classification label.
+    Parses the Assessor's output, looking for the final classification label robustly.
     """
     input_length = input_ids.shape[1]
     output_ids = generated_ids[0, input_length:].tolist()
@@ -91,21 +93,25 @@ def parse_assessor_response(tokenizer, input_ids, generated_ids):
         
         thinking_content = tokenizer.decode(thinking_ids, skip_special_tokens=True).strip()
         final_content = tokenizer.decode(content_ids, skip_special_tokens=True).strip()
-
-        # Extract the classification label, which might be bolded or have a title
-        label_match = re.search(r'(?:Classification|Label):\s*\**([a-zA-Z]+)\**', final_content, re.IGNORECASE)
-        if label_match:
-            final_label = label_match.group(1).strip()
-        else:
-            final_label = final_content # Fallback to the whole content if no specific label is found
     except ValueError:
         print("⚠️ Warning: '</think>' token not found in Assessor response.")
         final_content = tokenizer.decode(output_ids, skip_special_tokens=True).strip()
-        label_match = re.search(r'(?:Classification|Label):\s*\**([a-zA-Z]+)\**', final_content, re.IGNORECASE)
-        if label_match:
-            final_label = label_match.group(1).strip()
+
+    # Robustly find the label (Safe, Concerning, Harmful)
+    label_match = re.search(
+        r'(?:Safety Level|Classification):\s*\**\s*(Safe|Concerning|Harmful)\s*\**', 
+        final_content, 
+        re.IGNORECASE
+    )
+    if label_match:
+        final_label = label_match.group(1).strip()
+    else:
+        # Fallback: search for the keyword anywhere in the final content
+        fallback_match = re.search(r'\b(Safe|Concerning|Harmful)\b', final_content, re.IGNORECASE)
+        if fallback_match:
+            final_label = fallback_match.group(0).strip()
         else:
-            final_label = final_content
+            final_label = final_content # Last resort
 
     return thinking_content, final_label
 
@@ -178,7 +184,7 @@ def generate_with_thinking_budget(model, tokenizer, prompt: str, max_new_tokens:
 
 def test_logic_flow(model, tokenizer, num_examples=3):
     """Test the complete logic flow using the 'Thinking Budget' and dedicated parsers."""
-    print(f"\n{'='*60}\n🚀 TESTING QWEN3 WITH TARGETED PARSING LOGIC 🚀\n{'='*60}")
+    print(f"\n{'='*60}\n🚀 TESTING QWEN3 WITH ROBUST PARSING LOGIC 🚀\n{'='*60}")
     
     examples = load_test_data(num_examples)
     if not examples: return []
@@ -251,7 +257,7 @@ def main():
     results = test_logic_flow(model, tokenizer, args.num_examples)
     
     model_name_safe = args.model_id.replace('/', '_')
-    output_file = f"qwen3_test_results_final_{model_name_safe}.json"
+    output_file = f"qwen3_test_results_robust_parser_{model_name_safe}.json"
     with open(output_file, 'w', encoding='utf-8') as f:
         json.dump(results, f, indent=2, ensure_ascii=False)
     print(f"\n💾 Results saved to: {output_file}")
