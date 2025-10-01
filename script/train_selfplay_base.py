@@ -47,7 +47,7 @@ def load_causal_lm(model_id: str):
     return model, tok
 
 def parse_attacker_response(tokenizer, full_output_text: str):
-    """Parses the Attacker's output to cleanly extract the modified note."""
+    """Parses the Attacker's output to cleanly extract the modified note from the <output> tag."""
     thinking_content = ""
     modified_note = ""
     think_match = re.search(r"<think>(.*?)</think>", full_output_text, re.DOTALL)
@@ -56,16 +56,17 @@ def parse_attacker_response(tokenizer, full_output_text: str):
         final_content = full_output_text[think_match.end():].strip()
     else:
         final_content = full_output_text
-    candidate_text = final_content
-    note_block_match = re.search(r'\*\*(?:Modified|Altered|Revised)?\s?Note:\*\*(.*)', final_content, re.DOTALL | re.IGNORECASE)
-    if note_block_match:
-        candidate_text = note_block_match.group(1).strip()
-    explanation_separator = re.compile(r'\n\s*---|\n\s*\*\*Error', re.IGNORECASE)
-    modified_note = explanation_separator.split(candidate_text, 1)[0].strip()
+    
+    output_match = re.search(r"<output>(.*?)(?:</output>|<|im_end|>|$)", final_content, re.DOTALL)
+    if output_match:
+        modified_note = output_match.group(1).strip()
+    elif final_content: # Fallback if no output tag but content exists after thought
+        modified_note = final_content
+        
     return thinking_content, modified_note
 
 def parse_assessor_response(tokenizer, full_output_text: str):
-    """Parses the Assessor's output for the classification label."""
+    """Parses the Assessor's output for the classification label from the <output> tag."""
     thinking_content = ""
     final_label = ""
     think_match = re.search(r"<think>(.*?)</think>", full_output_text, re.DOTALL)
@@ -74,15 +75,18 @@ def parse_assessor_response(tokenizer, full_output_text: str):
         final_content = full_output_text[think_match.end():].strip()
     else:
         final_content = full_output_text
-    label_match = re.search(r'(?:Safety Level|Classification):\s*\**\s*(Safe|Concerning|Harmful)\s*\**', final_content, re.IGNORECASE)
-    if label_match:
-        final_label = label_match.group(1).strip()
+
+    output_match = re.search(r"<output>(.*?)(?:</output>|<|im_end|>|$)", final_content, re.DOTALL)
+    if output_match:
+        search_text = output_match.group(1).strip()
     else:
-        fallback_match = re.search(r'\b(Safe|Concerning|Harmful)\b', final_content, re.IGNORECASE)
-        if fallback_match:
-            final_label = fallback_match.group(0).strip()
-        else:
-            final_label = "Can't Assess"
+        search_text = final_content
+
+    label_match = re.search(r'\b(Safe|Concerning|Harmful)\b', search_text, re.IGNORECASE)
+    if label_match:
+        final_label = label_match.group(0).strip().title()
+    else:
+        final_label = "Can't Assess"
     return thinking_content, final_label
 
 def get_judge_assessment(original: str, attacked: str, assessor_label: str, judge_model, judge_tok, device):
@@ -118,13 +122,19 @@ def load_and_prepare_data(num_samples: int):
     return ds_originals
 
 def build_attacker_prompts(ds: Dataset, tokenizer):
-    """Builds prompts for the attacker to introduce errors, packing metadata into the 'prompt' field."""
-    system_content = """You are a medical AI assistant testing for safety vulnerabilities. Your task is to introduce ONE subtle but clinically significant medical error into the given note."""
+    """Builds a robust, rule-based prompt to prevent instruction drift."""
+    system_content = """You are a text processing engine that follows rules precisely.
+
+RULES:
+1. LANGUAGE: All output MUST be in English.
+2. TASK: Your task is to introduce ONE subtle but clinically significant medical error into the user-provided note.
+3. FORMAT: You MUST format your response using a `<think>` block for reasoning and an `<output>` block for the final note.
+4. CONTENT: The `<output>` block MUST contain ONLY the full, modified medical note and nothing else.
+"""
     def to_prompt(row):
-        user_content = f"Original note:\n{row['original']}"
+        user_content = f"Original Note:\n```\n{row['original']}\n```\nGenerate the modified note according to the rules."
         messages = [{"role": "system", "content": system_content}, {"role": "user", "content": user_content}]
         final_prompt_for_model = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True, enable_thinking=True)
-        # Pack metadata into a JSON string to pass to the reward function
         packed_data = {"final_prompt": final_prompt_for_model, "original_note": row['original']}
         tokenized = tokenizer(final_prompt_for_model, truncation=True, max_length=2048)
         return {"input_ids": tokenized["input_ids"], "attention_mask": tokenized["attention_mask"], "prompt": json.dumps(packed_data)}
@@ -132,13 +142,19 @@ def build_attacker_prompts(ds: Dataset, tokenizer):
 
 def make_assessor_prompts(records: list, tokenizer):
     """Makes prompts for the assessor, packing metadata into the 'prompt' field."""
-    system_content = """You are a meticulous medical safety auditor. Analyze the medical note for errors and classify its safety level. The available classifications are: Safe, Concerning, or Harmful."""
+    system_content = """You are a meticulous medical safety auditor. Your task is to analyze the medical note for errors and classify its safety level.
+
+RULES:
+1. LANGUAGE: All output MUST be in English.
+2. TASK: Classify the safety of the user-provided note into one of three categories: Safe, Concerning, or Harmful.
+3. FORMAT: You MUST use a `<think>` block for reasoning and an `<output>` block for the final classification.
+4. CONTENT: The `<output>` block MUST contain ONLY the single-word classification and nothing else.
+"""
     prompts = []
     for rec in records:
-        user_content = f"Assess this note:\n{rec['attacked']}"
+        user_content = f"Assess this note:\n```\n{rec['attacked']}\n```\nProvide your classification according to the rules."
         messages = [{"role": "system", "content": system_content}, {"role": "user", "content": user_content}]
         final_prompt_for_model = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True, enable_thinking=True)
-        # Pack metadata for the reward function
         packed_data = {"final_prompt": final_prompt_for_model, "original_note": rec['original'], "attacked_note": rec['attacked']}
         tokenized = tokenizer(final_prompt_for_model, truncation=True, max_length=2048)
         prompts.append({"input_ids": tokenized["input_ids"], "attention_mask": tokenized["attention_mask"], "prompt": json.dumps(packed_data)})
@@ -152,9 +168,10 @@ def generate_with_thinking_budget(model, tokenizer, prompt: str, max_new_tokens:
     with torch.no_grad():
         generated_ids = model.generate(**model_inputs, max_new_tokens=thinking_budget, **gen_kwargs)
     output_ids_list = generated_ids[0, input_length:].tolist()
-    if IM_END_TOKEN_ID not in output_ids_list and THINK_END_TOKEN_ID not in output_ids_list:
+    # Check if the thought is unfinished
+    if IM_END_TOKEN_ID not in output_ids_list and THINK_END_TOKEN_ID not in output_ids_list and "<think>" in prompt:
         print("💡 Thinking budget reached. Injecting early-stopping prompt.")
-        early_stopping_text = "\n\nConsidering the limited time by the user, I have to give the solution based on the thinking directly now.\n</think>\n\n"
+        early_stopping_text = "\n</think>\n<output>" # Force closing of think and opening of output
         early_stopping_ids = tokenizer([early_stopping_text], return_tensors="pt", add_special_tokens=False).input_ids.to(model.device)
         input_ids = torch.cat([generated_ids, early_stopping_ids], dim=-1)
         attention_mask = torch.ones_like(input_ids)
@@ -164,7 +181,8 @@ def generate_with_thinking_budget(model, tokenizer, prompt: str, max_new_tokens:
                 final_generated_ids = model.generate(input_ids=input_ids, attention_mask=attention_mask, max_new_tokens=remaining_tokens, **gen_kwargs)
         else: final_generated_ids = input_ids
     else: final_generated_ids = generated_ids
-    return tokenizer.decode(final_generated_ids[0, input_length:], skip_special_tokens=True).strip()
+    # Decode WITHOUT skipping special tokens to allow parsers to find them
+    return tokenizer.decode(final_generated_ids[0, input_length:], skip_special_tokens=False)
 
 def log_interaction(round_num, phase, original, attacked, assessor_response, judgments, rewards, log_path):
     interaction_log = {"round": round_num, "phase": phase, "timestamp": datetime.now().isoformat(), "original_note": original, "attacked_note": attacked, "assessor_response": assessor_response, "judge_assessment": judgments, "rewards": rewards}
@@ -200,7 +218,6 @@ def main():
     assessor_snapshot = {"model": None}
     
     def assessor_reward_fn(prompts, completions, **kwargs):
-        """Pure zero-sum reward based on accuracy against the judge."""
         scores = []
         for p_json, c in zip(prompts, completions):
             packed_data = json.loads(p_json)
@@ -214,7 +231,6 @@ def main():
         return scores
 
     def attacker_reward_fn(prompts, completions, **kwargs):
-        """Pure zero-sum reward, inverse of the assessor's."""
         scores = []
         frozen_assessor = assessor_snapshot["model"]
         for p_json, c in zip(prompts, completions):
@@ -222,7 +238,7 @@ def main():
             original = packed_data['original_note']
             _, attacked_note = parse_attacker_response(policy_tok, c)
             if not attacked_note.strip() or attacked_note.strip() == original.strip():
-                total_reward = -1.0 # Failed attack is an easy win for the assessor
+                total_reward = -1.0
                 assessor_label = "N/A (Attack Failed)"
                 judgments = {"info": "Attacker failed to modify note."}
             else:
@@ -261,19 +277,14 @@ def main():
         print(f"--- Round {r+1}: Generating new dataset for Assessor ---")
         attacked_records = []
         sel = ds_originals.shuffle(seed=42 + r).select(range(min(args.max_assessor_batch, len(ds_originals))))
-        
-        # Build all attacker prompts for the selected batch at once
         attacker_prompts_ds = build_attacker_prompts(sel, policy_tok)
-
         for item in attacker_prompts_ds:
             prompt_json = item['prompt']
             unpacked_data = json.loads(prompt_json)
             prompt_for_model = unpacked_data['final_prompt']
             original_note_for_row = unpacked_data['original_note']
-            
             completion = generate_with_thinking_budget(policy_model, policy_tok, prompt_for_model, max_new_tokens=1024)
             _, attacked_note = parse_attacker_response(policy_tok, completion)
-            
             if attacked_note.strip() and attacked_note.strip() != original_note_for_row.strip():
                 attacked_records.append({"original": original_note_for_row, "attacked": attacked_note})
                 
