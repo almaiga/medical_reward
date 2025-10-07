@@ -7,25 +7,22 @@ set -e  # Exit on any error
 
 echo "=== Selfplay Training (GRPO) ==="
 
-# Get model path from argument or use default
+# Get model path from argument or use your trained model
 if [ $# -eq 0 ]; then
-    echo "Usage: $0 <model_path>"
-    echo "Example: $0 trainer_output/qwen3_trl_20250107_123456"
-    echo ""
-    echo "Or use default model:"
-    MODEL_PATH="Qwen/Qwen3-4B"
-    echo "Using default model: $MODEL_PATH"
+    # Use your trained model by default
+    MODEL_PATH="trainer_output/qwen3_trl_20251007_110755"
+    echo "Using your trained model: $MODEL_PATH"
 else
     MODEL_PATH="$1"
-    echo "Using model: $MODEL_PATH"
+    echo "Using specified model: $MODEL_PATH"
 fi
 
 # Configuration
-JUDGE_MODEL="Qwen/Qwen3-4B"
+JUDGE_MODEL="Qwen/Qwen3-1.7B-Instruct"
 NUM_SAMPLES=16
 NUM_GENERATIONS=2
 LEARNING_RATE=5e-7
-ROUNDS=3
+ROUNDS=4
 MAX_ASSESSOR_BATCH=64
 
 echo ""
