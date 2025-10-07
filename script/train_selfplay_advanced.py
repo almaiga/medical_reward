@@ -404,9 +404,12 @@ def main():
     # --- Reward Functions ---
     def assessor_reward_fn(prompts, completions, **kwargs):
         scores = []
-        for p, c in zip(prompts, completions):
-            # Extract using the proper function
-            original = extract_original_from_attacker_prompt(p)  # This should work now
+        # Get the dataset to access original_note field
+        train_dataset = kwargs.get("train_dataset")
+
+        for i, (p, c) in enumerate(zip(prompts, completions)):
+            # Get original note from dataset (assessor prompts don't contain original notes)
+            original = train_dataset[i]["original_note"] if train_dataset else ""
             attacked = extract_attacked_from_assessor_prompt(p)
 
             thought, label = parse_response(c)
