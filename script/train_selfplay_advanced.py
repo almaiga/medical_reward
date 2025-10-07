@@ -193,7 +193,7 @@ def load_and_prepare_data(num_samples: int):
 def build_attacker_prompts(
     ds: Dataset, few_shot_examples: Dataset, tokenizer, num_shots=2
 ):
-    """Build attacker prompts for GRPO - returns RAW text that GRPO will template."""
+    """Build attacker prompts - Fixed for Qwen3 format compliance."""
 
     # Much more explicit about format requirements
     system_content = """You are a medical editor. Add one subtle error to medical notes.
@@ -215,10 +215,19 @@ Remember: Use EXACTLY this format:
 <think>brief reason</think>
 <output>modified note</output>"""
 
-        # Store as raw text - GRPO will template it
+        messages = [
+            {"role": "system", "content": system_content},
+            {"role": "user", "content": user_content},
+        ]
+
+        prompt_string = tokenizer.apply_chat_template(
+            messages, tokenize=False, add_generation_prompt=True
+        )
+        tokenized = tokenizer(prompt_string, truncation=True, max_length=2048)
         return {
-            "prompt": user_content,  # Raw text, not templated
-            "system": system_content,  # Store system separately if needed
+            "input_ids": tokenized["input_ids"],
+            "attention_mask": tokenized["attention_mask"],
+            "prompt": prompt_string,
             "original_note": row["original"],
         }
 
@@ -472,6 +481,7 @@ def main():
             if not attacked_note.strip():
                 attacked_note = c.strip()
 
+            # Create assessor prompt with raw text (make_assessor_prompts returns raw text now)
             assessor_ds = make_assessor_prompts(
                 [{"original": original, "attacked": attacked_note}], policy_tok
             )
