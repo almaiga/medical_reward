@@ -18,7 +18,7 @@ else
 fi
 
 # Configuration
-JUDGE_MODEL="Qwen/Qwen3-1.7B"
+JUDGE_MODEL="mlabonne/Qwen3-4B-abliterated"
 NUM_SAMPLES=16
 NUM_GENERATIONS=2
 LEARNING_RATE=5e-7

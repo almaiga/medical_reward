@@ -281,14 +281,14 @@ Remember: Use EXACTLY this format:
 
 
 def extract_original_from_attacker_prompt(prompt: str) -> str:
-    """Extract the original note from attacker prompt - UPDATED to match test_logic.py."""
+    """Extract the original note from attacker prompt - FIXED to match actual format."""
 
-    # Try multiple patterns like in test_logic.py
+    # Match the actual prompt format used in build_attacker_prompts
     patterns = [
-        r"Original note:\s*\n(.*?)(?:\n\nIntroduce a subtle medical error|$)",
-        r"Original note:\s*\n(.*?)(?:\nIntroduce|$)",
-        r"Original note:\s*(.*?)(?:\n\nIntroduce|$)",
-        r"Original note:(.*?)(?:Introduce|$)",
+        r"Add ONE subtle medical error to this note:\s*\n\n(.*?)(?:\n\nRemember:|$)",
+        r"Add ONE subtle medical error to this note:\s*\n(.*?)(?:\nRemember:|$)",
+        r"to this note:\s*\n\n(.*?)(?:\n\n|$)",
+        r"to this note:\s*\n(.*?)(?:\n|$)",
     ]
 
     for pattern in patterns:
@@ -300,10 +300,14 @@ def extract_original_from_attacker_prompt(prompt: str) -> str:
 
 
 def extract_attacked_from_assessor_prompt(prompt: str) -> str:
-    """Extract attacked note from assessor prompt."""
+    """Extract attacked note from assessor prompt - FIXED to match actual format."""
+
+    # Match the actual prompt format used in make_assessor_prompts
     patterns = [
-        r"Check this note:\s*\n(.*?)(?:\n\n|$)",
-        r"Check this note:\s*(.*?)(?:\n|$)",
+        r"Classify this medical note for errors:\s*\n\n(.*?)(?:\n\nRemember:|$)",
+        r"Classify this medical note for errors:\s*\n(.*?)(?:\nRemember:|$)",
+        r"for errors:\s*\n\n(.*?)(?:\n\n|$)",
+        r"for errors:\s*\n(.*?)(?:\n|$)",
     ]
 
     for pattern in patterns:
@@ -353,8 +357,8 @@ def main():
     parser.add_argument(
         "--judge_model_id",
         type=str,
-        default="Qwen/Qwen2.5-3B-Instruct",
-        help="Judge model for rewards.",
+        default="mlabonne/Qwen3-4B-abliterated",
+        help="Judge model for rewards (abliterated for red teaming).",
     )
     parser.add_argument(
         "--num_samples", type=int, default=16, help="Original notes to use."
@@ -621,7 +625,7 @@ def main():
                     eos_token_id=policy_tok.eos_token_id,
                     # Add stop tokens to enforce format - need tokenizer for stop_strings
                     stop_strings=["</output>", "\n\n", "Human:", "Assistant:"],
-                    tokenizer=policy_tok  # Required when using stop_strings
+                    tokenizer=policy_tok,  # Required when using stop_strings
                 )
                 completion = policy_tok.decode(
                     out_ids[0, inputs.input_ids.shape[1] :], skip_special_tokens=True
