@@ -288,8 +288,8 @@ def main():
     
     # Model and data
     parser.add_argument("--model_id", type=str, 
-                       default="Qwen/Qwen2.5-3B-Instruct", 
-                       help="Model to fine-tune")
+                       default="mlabonne/Qwen3-4B-abliterated", 
+                       help="Model to fine-tune (abliterated for red teaming)")
     parser.add_argument("--data_path", type=str, required=True,
                        help="Path to SFT training data (JSONL)")
     

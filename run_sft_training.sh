@@ -8,7 +8,7 @@ set -e  # Exit on any error
 echo "=== Qwen SFT Training with TRL ==="
 
 # Configuration
-MODEL_ID="Qwen/Qwen3-4B"
+MODEL_ID="mlabonne/Qwen3-4B-abliterated"
 DATA_PATH="data/sft_training/20251006_175835_openai_gpt-5_sft_fixed.jsonl"
 OUTPUT_DIR="trainer_output/qwen3_trl"
 
