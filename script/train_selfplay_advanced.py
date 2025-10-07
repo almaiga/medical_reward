@@ -193,7 +193,7 @@ def load_and_prepare_data(num_samples: int):
 def build_attacker_prompts(
     ds: Dataset, few_shot_examples: Dataset, tokenizer, num_shots=2
 ):
-    """Build attacker prompts - Fixed for Qwen3 format compliance."""
+    """Build attacker prompts for GRPO - returns RAW text that GRPO will template."""
 
     # Much more explicit about format requirements
     system_content = """You are a medical editor. Add one subtle error to medical notes.
@@ -215,19 +215,10 @@ Remember: Use EXACTLY this format:
 <think>brief reason</think>
 <output>modified note</output>"""
 
-        messages = [
-            {"role": "system", "content": system_content},
-            {"role": "user", "content": user_content},
-        ]
-
-        prompt_string = tokenizer.apply_chat_template(
-            messages, tokenize=False, add_generation_prompt=True
-        )
-        tokenized = tokenizer(prompt_string, truncation=True, max_length=2048)
+        # Store as raw text - GRPO will template it
         return {
-            "input_ids": tokenized["input_ids"],
-            "attention_mask": tokenized["attention_mask"],
-            "prompt": prompt_string,
+            "prompt": user_content,  # Raw text, not templated
+            "system": system_content,  # Store system separately if needed
             "original_note": row["original"],
         }
 
@@ -235,7 +226,7 @@ Remember: Use EXACTLY this format:
 
 
 def make_assessor_prompts(records: list, tokenizer):
-    """Make assessor prompts - Fixed for Qwen3 format compliance."""
+    """Make assessor prompts for GRPO - returns RAW text that GRPO will template."""
 
     # Much more explicit
     system_content = """You classify medical notes for safety errors.
@@ -250,6 +241,8 @@ Example:
 
     prompts = []
     for rec in records:
+        # CRITICAL: Pass only the attacked note as raw text
+        # GRPO will apply chat template itself during training
         user_content = f"""Classify this medical note for errors:
 
 {rec['attacked']}
@@ -258,20 +251,11 @@ Remember: Use EXACTLY this format:
 <think>analysis</think>
 <output>Safe/Concerning/Harmful</output>"""
 
-        messages = [
-            {"role": "system", "content": system_content},
-            {"role": "user", "content": user_content},
-        ]
-
-        prompt_string = tokenizer.apply_chat_template(
-            messages, tokenize=False, add_generation_prompt=True
-        )
-        tokenized = tokenizer(prompt_string, truncation=True, max_length=2048)
+        # Store as raw text - GRPO will template it
         prompts.append(
             {
-                "input_ids": tokenized["input_ids"],
-                "attention_mask": tokenized["attention_mask"],
-                "prompt": prompt_string,
+                "prompt": user_content,  # Raw text, not templated
+                "system": system_content,  # Store system separately if needed
                 "original_note": rec["original"],
                 "attacked_note": rec["attacked"],
             }
@@ -408,33 +392,15 @@ def main():
         train_dataset = kwargs.get("train_dataset")
 
         for i, (p, c) in enumerate(zip(prompts, completions)):
-            # DEBUG: Print what we're getting during assessor training
-            print(f"DEBUG assessor_reward_fn prompt {i}:")
-            print(f"  Type: {type(p)}")
-            print(f"  Content preview: {repr(str(p)[:300])}")
-            print(f"  Full length: {len(str(p))}")
-
-            # Get original note from dataset
-            original = (
-                train_dataset[i]["original_note"]
-                if train_dataset and i < len(train_dataset)
-                else ""
-            )
-
-            # Try to get attacked note from dataset first, then extract from prompt
-            if (
-                train_dataset
-                and i < len(train_dataset)
-                and "attacked_note" in train_dataset[i]
-            ):
+            # Get original and attacked notes from dataset
+            # The dataset was created by make_assessor_prompts and contains both
+            if train_dataset and i < len(train_dataset):
+                original = train_dataset[i]["original_note"]
                 attacked = train_dataset[i]["attacked_note"]
-                print(f"  Got attacked from dataset: {repr(attacked[:100])}")
             else:
-                # Extract attacked note from assessor prompt (this should contain the attacker's output)
-                attacked = extract_attacked_from_assessor_prompt(str(p))
-                print(f"  Extracted attacked from prompt: {repr(attacked[:100])}")
-
-            print(f"  Original from dataset: {repr(original[:100])}")
+                print(f"WARNING: No dataset entry for index {i}, skipping")
+                scores.append(0.0)
+                continue
 
             thought, label = parse_response(c)
             judgments = get_judge_assessment(
@@ -509,7 +475,15 @@ def main():
             assessor_ds = make_assessor_prompts(
                 [{"original": original, "attacked": attacked_note}], policy_tok
             )
-            assessor_prompt = assessor_ds[0]["prompt"]
+            
+            # Template the prompt manually for generation (not for GRPO training)
+            messages = [
+                {"role": "system", "content": assessor_ds[0]["system"]},
+                {"role": "user", "content": assessor_ds[0]["prompt"]},
+            ]
+            assessor_prompt = policy_tok.apply_chat_template(
+                messages, tokenize=False, add_generation_prompt=True
+            )
 
             with torch.no_grad():
                 inputs = policy_tok(assessor_prompt, return_tensors="pt").to(device)
@@ -612,13 +586,17 @@ def main():
         snap = deepcopy(policy_model).eval()
         assessor_snapshot["model"] = snap
 
+        # Create a closure that captures the dataset
+        def attacker_reward_fn_with_data(prompts, completions, **kwargs):
+            return attacker_reward_fn(prompts, completions, train_dataset=ds_attacker, **kwargs)
+
         print(f"--- Round {r+1}: Training Attacker ---")
         attacker_trainer = GRPOTrainer(
             model=policy_model,
             args=GRPOConfig(**common_cfg),
             processing_class=policy_tok,
             train_dataset=ds_attacker,
-            reward_funcs=[attacker_reward_fn],
+            reward_funcs=[attacker_reward_fn_with_data],
         )
         attacker_trainer.train()
 
@@ -672,13 +650,17 @@ def main():
 
         ds_assessor_round = make_assessor_prompts(attacked_records, policy_tok)
 
+        # Create a closure that captures the dataset
+        def assessor_reward_fn_with_data(prompts, completions, **kwargs):
+            return assessor_reward_fn(prompts, completions, train_dataset=ds_assessor_round, **kwargs)
+
         print(f"--- Round {r+1}: Training Assessor ---")
         assessor_trainer = GRPOTrainer(
             model=policy_model,
             args=GRPOConfig(**common_cfg),
             processing_class=policy_tok,
             train_dataset=ds_assessor_round,
-            reward_funcs=[assessor_reward_fn],
+            reward_funcs=[assessor_reward_fn_with_data],
         )
         assessor_trainer.train()
 
