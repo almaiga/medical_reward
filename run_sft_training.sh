@@ -42,6 +42,12 @@ python3 script/test_trl_compatibility.py "$DATA_PATH"
 
 echo ""
 echo "🚀 Starting SFT training..."
+echo "💡 TIP: Open another terminal and run this to monitor progress:"
+echo "   python3 script/monitor_training.py --training_dir $OUTPUT_DIR"
+echo ""
+echo "🔄 Training will show detailed progress with time estimates..."
+echo ""
+
 python3 script/train_qwen3_trl.py \
     --model_id "$MODEL_ID" \
     --data_path "$DATA_PATH" \
