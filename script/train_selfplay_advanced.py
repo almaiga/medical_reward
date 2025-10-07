@@ -619,8 +619,9 @@ def main():
                     repetition_penalty=1.05,  # Lighter penalty
                     pad_token_id=policy_tok.eos_token_id,
                     eos_token_id=policy_tok.eos_token_id,
-                    # Add stop tokens to enforce format
+                    # Add stop tokens to enforce format - need tokenizer for stop_strings
                     stop_strings=["</output>", "\n\n", "Human:", "Assistant:"],
+                    tokenizer=policy_tok  # Required when using stop_strings
                 )
                 completion = policy_tok.decode(
                     out_ids[0, inputs.input_ids.shape[1] :], skip_special_tokens=True
