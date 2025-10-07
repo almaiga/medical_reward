@@ -408,9 +408,33 @@ def main():
         train_dataset = kwargs.get("train_dataset")
 
         for i, (p, c) in enumerate(zip(prompts, completions)):
-            # Get original note from dataset (assessor prompts don't contain original notes)
-            original = train_dataset[i]["original_note"] if train_dataset else ""
-            attacked = extract_attacked_from_assessor_prompt(p)
+            # DEBUG: Print what we're getting during assessor training
+            print(f"DEBUG assessor_reward_fn prompt {i}:")
+            print(f"  Type: {type(p)}")
+            print(f"  Content preview: {repr(str(p)[:300])}")
+            print(f"  Full length: {len(str(p))}")
+
+            # Get original note from dataset
+            original = (
+                train_dataset[i]["original_note"]
+                if train_dataset and i < len(train_dataset)
+                else ""
+            )
+
+            # Try to get attacked note from dataset first, then extract from prompt
+            if (
+                train_dataset
+                and i < len(train_dataset)
+                and "attacked_note" in train_dataset[i]
+            ):
+                attacked = train_dataset[i]["attacked_note"]
+                print(f"  Got attacked from dataset: {repr(attacked[:100])}")
+            else:
+                # Extract attacked note from assessor prompt (this should contain the attacker's output)
+                attacked = extract_attacked_from_assessor_prompt(str(p))
+                print(f"  Extracted attacked from prompt: {repr(attacked[:100])}")
+
+            print(f"  Original from dataset: {repr(original[:100])}")
 
             thought, label = parse_response(c)
             judgments = get_judge_assessment(
