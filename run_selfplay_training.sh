@@ -18,7 +18,7 @@ else
 fi
 
 # Configuration
-JUDGE_MODEL="Qwen/Qwen3-1.7B-Instruct"
+JUDGE_MODEL="Qwen/Qwen3-1.7B"
 NUM_SAMPLES=16
 NUM_GENERATIONS=2
 LEARNING_RATE=5e-7
