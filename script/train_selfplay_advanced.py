@@ -659,8 +659,6 @@ def main():
         remove_unused_columns=False,
         bf16=True,
         gradient_checkpointing=True,
-        # CRITICAL: Tell GRPO not to apply chat template (we already did it)
-        apply_chat_template=False,
         **vllm_params,  # Add vLLM params if available
     )
 

@@ -103,22 +103,16 @@ def build_attacker_prompts(ds, tokenizer):
     return ds.map(to_prompt)
 ```
 
-### 5. Set apply_chat_template=False in config
-```python
-common_cfg = dict(
-    # ... other config ...
-    apply_chat_template=False,  # We already applied it
-)
-```
+### 5. Note on Chat Template Handling
+Since we pre-template the prompts in step 4, GRPO receives already-formatted strings. The `TokenizerWrapper` ensures special tokens are preserved during GRPO's internal tokenization.
 
 ## Files Changed
 - `script/train_selfplay_advanced.py`:
   - **Added `TokenizerWrapper` class** (PRIMARY FIX)
   - Wrapped `policy_tok` with `TokenizerWrapper` before passing to GRPO
-  - Added vLLM sampling params with proper EOS token handling
+  - Added vLLM sampling params with proper EOS token handling (if vLLM available)
   - Modified `build_attacker_prompts()` to return pre-templated strings
   - Modified `make_assessor_prompts()` to return pre-templated strings
-  - Added `apply_chat_template=False` to `common_cfg`
   - Removed redundant `apply_chat_template()` calls in generation loops
 
 ## Testing
