@@ -723,27 +723,17 @@ def main():
         return scores
 
     # --- Trainer Config with memory optimizations ---
-    # Try to use vLLM sampling params for better EOS handling
+    # Check if vLLM is available
     try:
-        from vllm import SamplingParams
+        import vllm
 
-        vllm_sampling_params = SamplingParams(
-            temperature=1.0,
-            min_p=0.1,
-            top_p=1.0,
-            top_k=-1,
-            seed=3407,
-            # CRITICAL: Include EOS token in stop list for Qwen
-            stop=[policy_tok.eos_token, "<|im_end|>"],
-            # CRITICAL: Include stop string so model learns to generate it
-            include_stop_str_in_output=True,
-            max_tokens=1024,
-        )
-        print("✅ Using vLLM sampling params with proper EOS handling")
-        vllm_params = {"vllm_sampling_params": vllm_sampling_params}
+        print("✅ vLLM is installed and available")
+        # Note: vLLM integration with GRPO may require specific TRL version
+        # For now, we rely on model.generation_config set above
     except ImportError:
-        print("⚠️ vLLM not available, using standard generation")
-        vllm_params = {}
+        print(
+            "⚠️ vLLM not available, using model.generation_config for generation parameters"
+        )
 
     # CRITICAL: Configure generation parameters for GRPO
     # Set model's generation config directly (GRPO will use this)
@@ -789,7 +779,6 @@ def main():
         remove_unused_columns=False,
         bf16=True,
         gradient_checkpointing=True,
-        **vllm_params,  # Add vLLM params if available
     )
 
     for r in range(args.rounds):
