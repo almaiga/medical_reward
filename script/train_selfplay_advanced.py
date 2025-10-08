@@ -34,6 +34,31 @@ R_FORMAT = 0.1  # CoT formatting reward
 print("Constants defined...")
 
 
+class TokenizerWrapper:
+    """Wrapper to force add_special_tokens=True for GRPO training.
+    
+    CRITICAL FIX: GRPOTrainer calls tokenizer with add_special_tokens=False
+    which removes BOS tokens that Qwen models require, causing garbage output.
+    This wrapper intercepts those calls and forces add_special_tokens=True.
+    
+    Reference: https://github.com/huggingface/trl/issues/3520
+    """
+
+    def __init__(self, tokenizer):
+        self._wrapped = tokenizer
+
+    def __call__(self, *args, add_special_tokens=True, **kwargs):
+        # Override any False values to True
+        if not add_special_tokens:
+            print("DEBUG: Intercepted add_special_tokens=False, forcing True")
+            add_special_tokens = True
+        return self._wrapped(*args, add_special_tokens=add_special_tokens, **kwargs)
+
+    def __getattr__(self, name):
+        # Delegate all other attributes to wrapped tokenizer
+        return getattr(self._wrapped, name)
+
+
 def get_device():
     """Gets the best available device for PyTorch."""
     if torch.cuda.is_available():
@@ -404,8 +429,19 @@ def main():
     os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
 
     device = get_device()
-    policy_model, policy_tok = load_causal_lm(args.model_id, device)
+    policy_model, policy_tok_raw = load_causal_lm(args.model_id, device)
     judge_model, judge_tok = load_causal_lm(args.judge_model_id, device)
+
+    # CRITICAL: Wrap tokenizer to fix GRPO garbage output issue
+    # Qwen models require BOS tokens, but GRPO sets add_special_tokens=False
+    policy_tok = TokenizerWrapper(policy_tok_raw)
+    print("✅ Tokenizer wrapped to force add_special_tokens=True")
+
+    # Verify special tokens are configured
+    print(f"EOS token: {policy_tok.eos_token} (ID: {policy_tok.eos_token_id})")
+    print(f"PAD token: {policy_tok.pad_token} (ID: {policy_tok.pad_token_id})")
+    if hasattr(policy_tok, "bos_token") and policy_tok.bos_token:
+        print(f"BOS token: {policy_tok.bos_token} (ID: {policy_tok.bos_token_id})")
 
     ds_originals, ds_few_shot = load_and_prepare_data(args.num_samples)
     ds_attacker = build_attacker_prompts(ds_originals, ds_few_shot, policy_tok)
@@ -584,6 +620,28 @@ def main():
         return scores
 
     # --- Trainer Config with memory optimizations ---
+    # Try to use vLLM sampling params for better EOS handling
+    try:
+        from vllm import SamplingParams
+
+        vllm_sampling_params = SamplingParams(
+            temperature=1.0,
+            min_p=0.1,
+            top_p=1.0,
+            top_k=-1,
+            seed=3407,
+            # CRITICAL: Include EOS token in stop list for Qwen
+            stop=[policy_tok.eos_token, "<|im_end|>"],
+            # CRITICAL: Include stop string so model learns to generate it
+            include_stop_str_in_output=True,
+            max_tokens=1024,
+        )
+        print("✅ Using vLLM sampling params with proper EOS handling")
+        vllm_params = {"vllm_sampling_params": vllm_sampling_params}
+    except ImportError:
+        print("⚠️ vLLM not available, using standard generation")
+        vllm_params = {}
+
     common_cfg = dict(
         num_generations=args.num_generations,
         generation_batch_size=args.num_generations * 2,
@@ -603,6 +661,7 @@ def main():
         gradient_checkpointing=True,
         # CRITICAL: Tell GRPO not to apply chat template (we already did it)
         apply_chat_template=False,
+        **vllm_params,  # Add vLLM params if available
     )
 
     for r in range(args.rounds):
