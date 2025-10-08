@@ -842,19 +842,19 @@ def main():
                 prompt_string = attacker_ds[0]["prompt"]
                 inputs = policy_tok(prompt_string, return_tensors="pt").to(device)
 
-                # Qwen-optimized generation parameters
+                # CRITICAL: Use EXACT same parameters as generation_config
+                # Must explicitly pass them - generate() doesn't always
+                # use the model's generation_config automatically
                 out_ids = policy_model.generate(
                     **inputs,
-                    max_new_tokens=512,  # Reduced to prevent over-generation
-                    do_sample=True,
-                    temperature=0.7,  # Qwen works better with slightly higher temp
-                    top_p=0.9,  # More focused sampling
-                    repetition_penalty=1.2,  # Lighter penalty
-                    pad_token_id=policy_tok.eos_token_id,
-                    eos_token_id=policy_tok.eos_token_id,
-                    # Add stop tokens to enforce format - need tokenizer for stop_strings
-                    stop_strings=["</output>", "\n\n", "Human:", "Assistant:"],
-                    tokenizer=policy_tok,  # Required when using stop_strings
+                    max_new_tokens=512,
+                    do_sample=policy_model.generation_config.do_sample,
+                    temperature=policy_model.generation_config.temperature,
+                    top_p=policy_model.generation_config.top_p,
+                    top_k=policy_model.generation_config.top_k,
+                    repetition_penalty=policy_model.generation_config.repetition_penalty,  # CRITICAL!
+                    pad_token_id=policy_model.generation_config.pad_token_id,
+                    eos_token_id=policy_model.generation_config.eos_token_id,
                 )
                 completion = policy_tok.decode(
                     out_ids[0, inputs.input_ids.shape[1] :], skip_special_tokens=True
