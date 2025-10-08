@@ -558,7 +558,7 @@ def main():
                     **inputs,
                     max_new_tokens=1024,
                     do_sample=True,
-                    temperature=0.3,  # Match test_logic.py
+                    temperature=0.6,  # Match test_logic.py
                     top_p=0.9,
                     repetition_penalty=1.1,
                     pad_token_id=policy_tok.eos_token_id,
@@ -711,7 +711,7 @@ def main():
                     max_new_tokens=512,  # Reduced to prevent over-generation
                     do_sample=True,
                     temperature=0.7,  # Qwen works better with slightly higher temp
-                    top_p=0.8,  # More focused sampling
+                    top_p=0.9,  # More focused sampling
                     repetition_penalty=1.2,  # Lighter penalty
                     pad_token_id=policy_tok.eos_token_id,
                     eos_token_id=policy_tok.eos_token_id,
