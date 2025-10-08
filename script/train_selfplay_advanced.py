@@ -560,7 +560,7 @@ def main():
             print(f"Prompt preview (first 200 chars): {str(p)[:200]}...")
             print(f"Completion preview (first 200 chars): {c[:200]}...")
             print(f"Attacked note preview (first 200 chars): {attacked[:200]}...")
-            
+
             thought, label = parse_response(c)
             print(f"Parsed - Thought: {thought[:100] if thought else 'None'}...")
             print(f"Parsed - Label: {label}")
@@ -636,13 +636,15 @@ def main():
                     print(f"WARNING: No original note for index {i}")
                     scores.append(0.0)
                     continue
-            
+
             # DEBUG: Show what attacker generates
             print(f"Prompt preview (first 200 chars): {str(p)[:200]}...")
             print(f"Completion preview (first 200 chars): {c[:200]}...")
-            
+
             attacker_thought, attacked_note = parse_response(c)
-            print(f"Parsed - Thought: {attacker_thought[:100] if attacker_thought else 'None'}...")
+            print(
+                f"Parsed - Thought: {attacker_thought[:100] if attacker_thought else 'None'}..."
+            )
             print(f"Parsed - Attacked note: {attacked_note[:200]}...")
 
             # Add fallback for empty attacked_note
@@ -744,26 +746,30 @@ def main():
         vllm_params = {}
 
     # CRITICAL: Configure generation parameters for GRPO
-    # Without vLLM, we need to set these explicitly
-    generation_config = {
-        "max_new_tokens": 1024,
-        "do_sample": True,
-        "temperature": 0.7,
-        "top_p": 0.9,
-        "top_k": 50,
-        "repetition_penalty": 1.15,  # Higher to prevent repetition
-        "pad_token_id": policy_tok.pad_token_id,
-        "eos_token_id": policy_tok.eos_token_id,
-        "bos_token_id": (
-            policy_tok.bos_token_id if hasattr(policy_tok, "bos_token_id") else None
-        ),
-    }
+    # Set model's generation config directly (GRPO will use this)
+    policy_model.generation_config.max_new_tokens = 1024
+    policy_model.generation_config.do_sample = True
+    policy_model.generation_config.temperature = 0.7
+    policy_model.generation_config.top_p = 0.9
+    policy_model.generation_config.top_k = 50
+    policy_model.generation_config.repetition_penalty = (
+        1.15  # CRITICAL: Prevents "useruseruser"
+    )
+    policy_model.generation_config.pad_token_id = policy_tok.pad_token_id
+    policy_model.generation_config.eos_token_id = policy_tok.eos_token_id
+    if hasattr(policy_tok, "bos_token_id") and policy_tok.bos_token_id:
+        policy_model.generation_config.bos_token_id = policy_tok.bos_token_id
 
     print(f"\n{'='*60}")
-    print("GRPO GENERATION CONFIG")
+    print("MODEL GENERATION CONFIG")
     print(f"{'='*60}")
-    for k, v in generation_config.items():
-        print(f"  {k}: {v}")
+    print(f"  max_new_tokens: {policy_model.generation_config.max_new_tokens}")
+    print(f"  temperature: {policy_model.generation_config.temperature}")
+    print(f"  top_p: {policy_model.generation_config.top_p}")
+    print(f"  top_k: {policy_model.generation_config.top_k}")
+    print(f"  repetition_penalty: {policy_model.generation_config.repetition_penalty}")
+    print(f"  pad_token_id: {policy_model.generation_config.pad_token_id}")
+    print(f"  eos_token_id: {policy_model.generation_config.eos_token_id}")
     print(f"{'='*60}\n")
 
     common_cfg = dict(
@@ -783,8 +789,6 @@ def main():
         remove_unused_columns=False,
         bf16=True,
         gradient_checkpointing=True,
-        # CRITICAL: Pass generation config to GRPO
-        generation_config=generation_config,
         **vllm_params,  # Add vLLM params if available
     )
 
@@ -809,7 +813,7 @@ def main():
         print(f"Attacker dataset size: {len(ds_attacker)}")
         print(f"Sample attacker prompt (first 300 chars):")
         print(f"{ds_attacker[0]['prompt'][:300]}...")
-        
+
         attacker_trainer = GRPOTrainer(
             model=policy_model,
             args=GRPOConfig(**common_cfg),
@@ -817,13 +821,13 @@ def main():
             train_dataset=ds_attacker,
             reward_funcs=[attacker_reward_fn],
         )
-        
+
         print(f"\n{'='*60}")
         print("STARTING ATTACKER TRAINING")
         print("Watch for 'ATTACKER REWARD FUNCTION' output below")
         print("This will show what GRPO generates")
         print(f"{'='*60}\n")
-        
+
         attacker_trainer.train()
 
         print(f"\n{'='*60}")
@@ -880,17 +884,23 @@ def main():
                 )
 
         ds_assessor_round = make_assessor_prompts(attacked_records, policy_tok)
-        
+
         # DEBUG: Show what's in the assessor dataset
         print(f"\n{'='*60}")
         print(f"ASSESSOR DATASET CREATED - {len(ds_assessor_round)} items")
         print(f"{'='*60}")
         if len(ds_assessor_round) > 0:
             print(f"Sample item 0:")
-            print(f"  - Prompt (first 300 chars): {ds_assessor_round[0]['prompt'][:300]}...")
-            print(f"  - Original note (first 200 chars): {ds_assessor_round[0]['original_note'][:200]}...")
-            print(f"  - Attacked note (first 200 chars): {ds_assessor_round[0]['attacked_note'][:200]}...")
-            if ds_assessor_round[0]['attacked_note'].startswith('<think>user'):
+            print(
+                f"  - Prompt (first 300 chars): {ds_assessor_round[0]['prompt'][:300]}..."
+            )
+            print(
+                f"  - Original note (first 200 chars): {ds_assessor_round[0]['original_note'][:200]}..."
+            )
+            print(
+                f"  - Attacked note (first 200 chars): {ds_assessor_round[0]['attacked_note'][:200]}..."
+            )
+            if ds_assessor_round[0]["attacked_note"].startswith("<think>user"):
                 print("  ⚠️ WARNING: Attacked note contains garbage!")
             else:
                 print("  ✅ Attacked note looks clean")

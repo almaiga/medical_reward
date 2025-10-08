@@ -5,4 +5,4 @@ accelerate
 bitsandbytes
 trl
 scikit-learn
-vllm
+# vllm  # Optional: Uncomment if you have CUDA GPU on Linux
