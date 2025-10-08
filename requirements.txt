@@ -5,3 +5,4 @@ accelerate
 bitsandbytes
 trl
 scikit-learn
+vllm

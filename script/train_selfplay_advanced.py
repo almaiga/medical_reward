@@ -39,20 +39,74 @@ def patch_tokenizer_for_grpo(tokenizer):
 
     CRITICAL FIX: GRPOTrainer calls tokenizer with add_special_tokens=False
     which removes BOS tokens that Qwen models require, causing garbage output.
-    This patches the tokenizer's __call__ method to force add_special_tokens=True.
+    This patches multiple tokenizer methods to force add_special_tokens=True.
 
     Reference: https://github.com/huggingface/trl/issues/3520
     """
+    # Patch __call__
     original_call = tokenizer.__call__
 
     def patched_call(*args, add_special_tokens=True, **kwargs):
-        # Override any False values to True
         if not add_special_tokens:
-            print("DEBUG: Intercepted add_special_tokens=False, forcing True")
+            print(
+                "DEBUG: Intercepted __call__ with add_special_tokens=False, forcing True"
+            )
             add_special_tokens = True
         return original_call(*args, add_special_tokens=add_special_tokens, **kwargs)
 
     tokenizer.__call__ = patched_call
+
+    # Patch encode (GRPO might use this directly)
+    if hasattr(tokenizer, "encode"):
+        original_encode = tokenizer.encode
+
+        def patched_encode(*args, add_special_tokens=True, **kwargs):
+            if not add_special_tokens:
+                print(
+                    "DEBUG: Intercepted encode with add_special_tokens=False, forcing True"
+                )
+                add_special_tokens = True
+            return original_encode(
+                *args, add_special_tokens=add_special_tokens, **kwargs
+            )
+
+        tokenizer.encode = patched_encode
+
+    # Patch encode_plus (another method GRPO might use)
+    if hasattr(tokenizer, "encode_plus"):
+        original_encode_plus = tokenizer.encode_plus
+
+        def patched_encode_plus(*args, add_special_tokens=True, **kwargs):
+            if not add_special_tokens:
+                print(
+                    "DEBUG: Intercepted encode_plus with add_special_tokens=False, forcing True"
+                )
+                add_special_tokens = True
+            return original_encode_plus(
+                *args, add_special_tokens=add_special_tokens, **kwargs
+            )
+
+        tokenizer.encode_plus = patched_encode_plus
+
+    # Patch batch_encode_plus (for batch processing)
+    if hasattr(tokenizer, "batch_encode_plus"):
+        original_batch_encode_plus = tokenizer.batch_encode_plus
+
+        def patched_batch_encode_plus(*args, add_special_tokens=True, **kwargs):
+            if not add_special_tokens:
+                print(
+                    "DEBUG: Intercepted batch_encode_plus with add_special_tokens=False, forcing True"
+                )
+                add_special_tokens = True
+            return original_batch_encode_plus(
+                *args, add_special_tokens=add_special_tokens, **kwargs
+            )
+
+        tokenizer.batch_encode_plus = patched_batch_encode_plus
+
+    print(
+        "✅ Patched tokenizer methods: __call__, encode, encode_plus, batch_encode_plus"
+    )
     return tokenizer
 
 
@@ -265,6 +319,11 @@ Remember: Use EXACTLY this format:
             messages, tokenize=False, add_generation_prompt=True
         )
 
+        # DEBUG: Verify prompt has proper tokens
+        if "<|im_start|>" not in prompt_string:
+            print(f"WARNING: Prompt missing <|im_start|> token!")
+            print(f"Prompt preview: {prompt_string[:200]}")
+
         return {
             "prompt": prompt_string,  # Pre-templated string
             "original_note": row["original"],
@@ -432,16 +491,36 @@ def main():
     # CRITICAL: Patch tokenizer to fix GRPO garbage output issue
     # Qwen models require BOS tokens, but GRPO sets add_special_tokens=False
     policy_tok = patch_tokenizer_for_grpo(policy_tok)
-    print("✅ Tokenizer patched to force add_special_tokens=True")
 
     # Verify special tokens are configured
+    print(f"\n{'='*60}")
+    print("TOKENIZER CONFIGURATION")
+    print(f"{'='*60}")
     print(f"EOS token: {policy_tok.eos_token} (ID: {policy_tok.eos_token_id})")
     print(f"PAD token: {policy_tok.pad_token} (ID: {policy_tok.pad_token_id})")
     if hasattr(policy_tok, "bos_token") and policy_tok.bos_token:
         print(f"BOS token: {policy_tok.bos_token} (ID: {policy_tok.bos_token_id})")
 
+    # Test the patch is working
+    print(f"\n{'='*60}")
+    print("TESTING TOKENIZER PATCH")
+    print(f"{'='*60}")
+    test_text = "Hello world"
+    print(f"Test 1: Calling with add_special_tokens=False")
+    test_result = policy_tok(test_text, add_special_tokens=False, return_tensors="pt")
+    print(f"Result IDs: {test_result.input_ids[0].tolist()[:10]}...")
+    print(f"If you see 'DEBUG: Intercepted' above, the patch is working!")
+    print(f"{'='*60}\n")
+
     ds_originals, ds_few_shot = load_and_prepare_data(args.num_samples)
     ds_attacker = build_attacker_prompts(ds_originals, ds_few_shot, policy_tok)
+
+    # DEBUG: Check what the prompts look like
+    print(f"\n{'='*60}")
+    print("SAMPLE ATTACKER PROMPT (first 500 chars)")
+    print(f"{'='*60}")
+    print(ds_attacker[0]["prompt"][:500])
+    print(f"{'='*60}\n")
 
     ts = datetime.now().strftime("%Y%m%d_%H%M%S")
     log_path = f"results/{ts}_{args.model_id.replace('/', '_')}_grpo_assessor.jsonl"
@@ -639,6 +718,29 @@ def main():
         print("⚠️ vLLM not available, using standard generation")
         vllm_params = {}
 
+    # CRITICAL: Configure generation parameters for GRPO
+    # Without vLLM, we need to set these explicitly
+    generation_config = {
+        "max_new_tokens": 1024,
+        "do_sample": True,
+        "temperature": 0.7,
+        "top_p": 0.9,
+        "top_k": 50,
+        "repetition_penalty": 1.15,  # Higher to prevent repetition
+        "pad_token_id": policy_tok.pad_token_id,
+        "eos_token_id": policy_tok.eos_token_id,
+        "bos_token_id": (
+            policy_tok.bos_token_id if hasattr(policy_tok, "bos_token_id") else None
+        ),
+    }
+
+    print(f"\n{'='*60}")
+    print("GRPO GENERATION CONFIG")
+    print(f"{'='*60}")
+    for k, v in generation_config.items():
+        print(f"  {k}: {v}")
+    print(f"{'='*60}\n")
+
     common_cfg = dict(
         num_generations=args.num_generations,
         generation_batch_size=args.num_generations * 2,
@@ -656,6 +758,8 @@ def main():
         remove_unused_columns=False,
         bf16=True,
         gradient_checkpointing=True,
+        # CRITICAL: Pass generation config to GRPO
+        generation_config=generation_config,
         **vllm_params,  # Add vLLM params if available
     )
 
