@@ -193,7 +193,7 @@ def load_and_prepare_data(num_samples: int):
 def build_attacker_prompts(
     ds: Dataset, few_shot_examples: Dataset, tokenizer, num_shots=2
 ):
-    """Build attacker prompts - Fixed for Qwen3 format compliance."""
+    """Build attacker prompts for GRPO - returns messages format that GRPO will template."""
 
     # Much more explicit about format requirements
     system_content = """You are a medical editor. Add one subtle error to medical notes.
@@ -215,19 +215,14 @@ Remember: Use EXACTLY this format:
 <think>brief reason</think>
 <output>modified note</output>"""
 
+        # GRPO expects messages format - it will apply chat template itself
         messages = [
             {"role": "system", "content": system_content},
             {"role": "user", "content": user_content},
         ]
 
-        prompt_string = tokenizer.apply_chat_template(
-            messages, tokenize=False, add_generation_prompt=True
-        )
-        tokenized = tokenizer(prompt_string, truncation=True, max_length=2048)
         return {
-            "input_ids": tokenized["input_ids"],
-            "attention_mask": tokenized["attention_mask"],
-            "prompt": prompt_string,
+            "prompt": messages,  # GRPO expects messages format
             "original_note": row["original"],
         }
 
@@ -235,7 +230,7 @@ Remember: Use EXACTLY this format:
 
 
 def make_assessor_prompts(records: list, tokenizer):
-    """Make assessor prompts for GRPO - returns RAW text that GRPO will template."""
+    """Make assessor prompts for GRPO - returns messages format that GRPO will template."""
 
     # Much more explicit
     system_content = """You classify medical notes for safety errors.
@@ -250,8 +245,6 @@ Example:
 
     prompts = []
     for rec in records:
-        # CRITICAL: Pass only the attacked note as raw text
-        # GRPO will apply chat template itself during training
         user_content = f"""Classify this medical note for errors:
 
 {rec['attacked']}
@@ -260,11 +253,15 @@ Remember: Use EXACTLY this format:
 <think>analysis</think>
 <output>Safe/Concerning/Harmful</output>"""
 
-        # Store as raw text - GRPO will template it
+        # GRPO expects messages format - it will apply chat template itself
+        messages = [
+            {"role": "system", "content": system_content},
+            {"role": "user", "content": user_content},
+        ]
+
         prompts.append(
             {
-                "prompt": user_content,  # Raw text, not templated
-                "system": system_content,  # Store system separately if needed
+                "prompt": messages,  # GRPO expects messages format
                 "original_note": rec["original"],
                 "attacked_note": rec["attacked"],
             }
@@ -481,16 +478,11 @@ def main():
             if not attacked_note.strip():
                 attacked_note = c.strip()
 
-            # Create assessor prompt with raw text (make_assessor_prompts returns raw text now)
             assessor_ds = make_assessor_prompts(
                 [{"original": original, "attacked": attacked_note}], policy_tok
             )
-            
-            # Template the prompt manually for generation (not for GRPO training)
-            messages = [
-                {"role": "system", "content": assessor_ds[0]["system"]},
-                {"role": "user", "content": assessor_ds[0]["prompt"]},
-            ]
+            # Template the messages manually for generation
+            messages = assessor_ds[0]["prompt"]
             assessor_prompt = policy_tok.apply_chat_template(
                 messages, tokenize=False, add_generation_prompt=True
             )
@@ -625,8 +617,12 @@ def main():
                     ds_few_shot,
                     policy_tok,
                 )
-                prompt = attacker_ds[0]["prompt"]
-                inputs = policy_tok(prompt, return_tensors="pt").to(device)
+                # Template the messages manually for generation
+                messages = attacker_ds[0]["prompt"]
+                prompt_string = policy_tok.apply_chat_template(
+                    messages, tokenize=False, add_generation_prompt=True
+                )
+                inputs = policy_tok(prompt_string, return_tensors="pt").to(device)
 
                 # Qwen-optimized generation parameters
                 out_ids = policy_model.generate(
