@@ -34,29 +34,26 @@ R_FORMAT = 0.1  # CoT formatting reward
 print("Constants defined...")
 
 
-class TokenizerWrapper:
-    """Wrapper to force add_special_tokens=True for GRPO training.
+def patch_tokenizer_for_grpo(tokenizer):
+    """Monkey-patch tokenizer to force add_special_tokens=True for GRPO training.
     
     CRITICAL FIX: GRPOTrainer calls tokenizer with add_special_tokens=False
     which removes BOS tokens that Qwen models require, causing garbage output.
-    This wrapper intercepts those calls and forces add_special_tokens=True.
+    This patches the tokenizer's __call__ method to force add_special_tokens=True.
     
     Reference: https://github.com/huggingface/trl/issues/3520
     """
-
-    def __init__(self, tokenizer):
-        self._wrapped = tokenizer
-
-    def __call__(self, *args, add_special_tokens=True, **kwargs):
+    original_call = tokenizer.__call__
+    
+    def patched_call(*args, add_special_tokens=True, **kwargs):
         # Override any False values to True
         if not add_special_tokens:
             print("DEBUG: Intercepted add_special_tokens=False, forcing True")
             add_special_tokens = True
-        return self._wrapped(*args, add_special_tokens=add_special_tokens, **kwargs)
-
-    def __getattr__(self, name):
-        # Delegate all other attributes to wrapped tokenizer
-        return getattr(self._wrapped, name)
+        return original_call(*args, add_special_tokens=add_special_tokens, **kwargs)
+    
+    tokenizer.__call__ = patched_call
+    return tokenizer
 
 
 def get_device():
@@ -429,13 +426,13 @@ def main():
     os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
 
     device = get_device()
-    policy_model, policy_tok_raw = load_causal_lm(args.model_id, device)
+    policy_model, policy_tok = load_causal_lm(args.model_id, device)
     judge_model, judge_tok = load_causal_lm(args.judge_model_id, device)
 
-    # CRITICAL: Wrap tokenizer to fix GRPO garbage output issue
+    # CRITICAL: Patch tokenizer to fix GRPO garbage output issue
     # Qwen models require BOS tokens, but GRPO sets add_special_tokens=False
-    policy_tok = TokenizerWrapper(policy_tok_raw)
-    print("✅ Tokenizer wrapped to force add_special_tokens=True")
+    policy_tok = patch_tokenizer_for_grpo(policy_tok)
+    print("✅ Tokenizer patched to force add_special_tokens=True")
 
     # Verify special tokens are configured
     print(f"EOS token: {policy_tok.eos_token} (ID: {policy_tok.eos_token_id})")

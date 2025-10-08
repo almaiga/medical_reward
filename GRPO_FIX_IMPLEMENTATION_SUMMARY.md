@@ -19,43 +19,40 @@ After comprehensive research across multiple sources (TRL GitHub issues, Unsloth
 
 ## Solution Implemented
 
-### 1. TokenizerWrapper Class (PRIMARY FIX)
-Created a wrapper class that intercepts tokenizer calls and forces `add_special_tokens=True`:
+### 1. Tokenizer Monkey-Patch (PRIMARY FIX)
+Created a function that monkey-patches the tokenizer's `__call__` method to force `add_special_tokens=True`:
 
 ```python
-class TokenizerWrapper:
-    """Wrapper to force add_special_tokens=True for GRPO training.
+def patch_tokenizer_for_grpo(tokenizer):
+    """Monkey-patch tokenizer to force add_special_tokens=True for GRPO training.
     
     CRITICAL FIX: GRPOTrainer calls tokenizer with add_special_tokens=False
     which removes BOS tokens that Qwen models require, causing garbage output.
-    This wrapper intercepts those calls and forces add_special_tokens=True.
+    This patches the tokenizer's __call__ method to force add_special_tokens=True.
     
     Reference: https://github.com/huggingface/trl/issues/3520
     """
+    original_call = tokenizer.__call__
     
-    def __init__(self, tokenizer):
-        self._wrapped = tokenizer
-    
-    def __call__(self, *args, add_special_tokens=True, **kwargs):
+    def patched_call(*args, add_special_tokens=True, **kwargs):
         # Override any False values to True
         if not add_special_tokens:
             print("DEBUG: Intercepted add_special_tokens=False, forcing True")
             add_special_tokens = True
-        return self._wrapped(*args, add_special_tokens=add_special_tokens, **kwargs)
+        return original_call(*args, add_special_tokens=add_special_tokens, **kwargs)
     
-    def __getattr__(self, name):
-        # Delegate all other attributes to wrapped tokenizer
-        return getattr(self._wrapped, name)
+    tokenizer.__call__ = patched_call
+    return tokenizer
 ```
 
-### 2. Tokenizer Wrapping in Main Function
+### 2. Tokenizer Patching in Main Function
 ```python
 # Load tokenizer normally
-policy_model, policy_tok_raw = load_causal_lm(args.model_id, device)
+policy_model, policy_tok = load_causal_lm(args.model_id, device)
 
-# CRITICAL: Wrap tokenizer to fix GRPO garbage output issue
-policy_tok = TokenizerWrapper(policy_tok_raw)
-print("✅ Tokenizer wrapped to force add_special_tokens=True")
+# CRITICAL: Patch tokenizer to fix GRPO garbage output issue
+policy_tok = patch_tokenizer_for_grpo(policy_tok)
+print("✅ Tokenizer patched to force add_special_tokens=True")
 
 # Verify special tokens are configured
 print(f"EOS token: {policy_tok.eos_token} (ID: {policy_tok.eos_token_id})")
@@ -168,8 +165,8 @@ Based on research from multiple sources:
 ## Files Modified
 
 - `script/train_selfplay_advanced.py`:
-  - Added `TokenizerWrapper` class (PRIMARY FIX)
-  - Wrapped `policy_tok` with `TokenizerWrapper` before passing to GRPO
+  - Added `patch_tokenizer_for_grpo()` function (PRIMARY FIX)
+  - Patched `policy_tok` before passing to GRPO
   - Added vLLM sampling params with proper EOS token handling (if vLLM available)
   - Modified `build_attacker_prompts()` to return pre-templated strings
   - Modified `make_assessor_prompts()` to return pre-templated strings
@@ -183,11 +180,12 @@ Based on research from multiple sources:
 
 ## Key Takeaways
 
-1. **TokenizerWrapper is ESSENTIAL for Qwen models with GRPO** - Without it, you'll get garbage output 100% of the time
+1. **Tokenizer patching is ESSENTIAL for Qwen models with GRPO** - Without it, you'll get garbage output 100% of the time
 2. This is a **known bug in TRL's GRPO implementation**, not a problem with your code
-3. The fix is a clean workaround that doesn't require modifying TRL source code
-4. Qwen models are particularly affected due to their reliance on specific chat tokens and BOS tokens
-5. The "user" repetition is the chat template string being repeated without proper token framing
+3. The fix uses monkey-patching to intercept `add_special_tokens=False` calls
+4. Monkey-patching is simpler than wrapping because it preserves the tokenizer's type for isinstance checks
+5. Qwen models are particularly affected due to their reliance on specific chat tokens and BOS tokens
+6. The "user" repetition is the chat template string being repeated without proper token framing
 
 ## Next Steps
 
