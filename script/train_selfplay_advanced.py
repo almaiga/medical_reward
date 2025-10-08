@@ -532,6 +532,10 @@ def main():
             f.write(json.dumps(entry, ensure_ascii=False) + "\n")
 
     assessor_snapshot = {"model": None}
+    
+    # Storage for attacked notes generated during attacker training
+    # This avoids redundant manual generation
+    attacked_notes_from_training = []
 
     # --- Reward Functions ---
     def assessor_reward_fn(prompts, completions, **kwargs):
@@ -651,6 +655,13 @@ def main():
             if not attacked_note.strip():
                 print("WARNING: Empty attacked_note, using full completion")
                 attacked_note = c.strip()
+            
+            # CRITICAL: Save this attacked note for assessor training
+            # This avoids redundant manual generation that produces garbage
+            attacked_notes_from_training.append({
+                'original': original,
+                'attacked': attacked_note
+            })
 
             assessor_ds = make_assessor_prompts(
                 [{"original": original, "attacked": attacked_note}], policy_tok
@@ -826,51 +837,17 @@ def main():
         # Clear attacker trainer
         del attacker_trainer
 
-        print(f"--- Round {r+1}: Generating new dataset for Assessor ---")
-        attacked_records = []
-        with torch.no_grad():
-            sel = ds_originals.shuffle(seed=42 + r).select(
-                range(min(args.max_assessor_batch, len(ds_originals)))
-            )
-            for row in sel:
-                attacker_ds = build_attacker_prompts(
-                    Dataset.from_dict({"original": [row["original"]]}),
-                    ds_few_shot,
-                    policy_tok,
-                )
-                # Prompt is already templated
-                prompt_string = attacker_ds[0]["prompt"]
-                inputs = policy_tok(prompt_string, return_tensors="pt").to(device)
-
-                # CRITICAL: Use EXACT same parameters as generation_config
-                # Must explicitly pass them - generate() doesn't always
-                # use the model's generation_config automatically
-                out_ids = policy_model.generate(
-                    **inputs,
-                    max_new_tokens=512,
-                    do_sample=policy_model.generation_config.do_sample,
-                    temperature=policy_model.generation_config.temperature,
-                    top_p=policy_model.generation_config.top_p,
-                    top_k=policy_model.generation_config.top_k,
-                    repetition_penalty=policy_model.generation_config.repetition_penalty,  # CRITICAL!
-                    pad_token_id=policy_model.generation_config.pad_token_id,
-                    eos_token_id=policy_model.generation_config.eos_token_id,
-                )
-                completion = policy_tok.decode(
-                    out_ids[0, inputs.input_ids.shape[1] :], skip_special_tokens=True
-                )
-                _, attacked_note = parse_response(completion)
-
-                # Add fallback for empty attacked_note
-                if not attacked_note.strip():
-                    print(
-                        "WARNING: Attacker did not produce an <output> block. Using full completion as attacked note."
-                    )
-                    attacked_note = completion.strip()
-
-                attacked_records.append(
-                    {"original": row["original"], "attacked": attacked_note}
-                )
+        print(f"--- Round {r+1}: Using attacked notes from attacker training ---")
+        print(f"Collected {len(attacked_notes_from_training)} attacked notes from GRPO")
+        
+        # Use the attacked notes that GRPO generated during training
+        # These are clean and don't require manual generation
+        # Limit to max_assessor_batch if we have more than needed
+        num_to_use = min(args.max_assessor_batch, len(attacked_notes_from_training))
+        attacked_records = attacked_notes_from_training[:num_to_use]
+        
+        # Clear for next round
+        attacked_notes_from_training.clear()
 
         ds_assessor_round = make_assessor_prompts(attacked_records, policy_tok)
 
