@@ -69,8 +69,22 @@ def load_causal_lm(model_id: str, device: torch.device):
     return model, tok
 
 
-def parse_response(text: str):
+def parse_response(text):
     """Improved parsing specifically for Qwen3 behavior."""
+
+    # Handle conversational format (list of messages)
+    if isinstance(text, list):
+        # Extract the assistant's response from the last message
+        if text and isinstance(text[-1], dict) and "content" in text[-1]:
+            text = text[-1]["content"]
+        else:
+            print(f"WARNING: Unexpected message format: {text}")
+            return "", ""
+
+    # Ensure text is a string
+    if not isinstance(text, str):
+        print(f"WARNING: Expected string, got {type(text)}: {text}")
+        return "", ""
 
     print(f"DEBUG: Raw text length: {len(text)}")
     print(f"DEBUG: Contains <output>: {'<output>' in text.lower()}")
@@ -193,7 +207,10 @@ def load_and_prepare_data(num_samples: int):
 def build_attacker_prompts(
     ds: Dataset, few_shot_examples: Dataset, tokenizer, num_shots=2
 ):
-    """Build attacker prompts for GRPO - returns messages format that GRPO will template."""
+    """Build attacker prompts for GRPO.
+
+    Returns messages format that GRPO will template.
+    """
 
     # Much more explicit about format requirements
     system_content = """You are a medical editor. Add one subtle error to medical notes.
@@ -230,7 +247,10 @@ Remember: Use EXACTLY this format:
 
 
 def make_assessor_prompts(records: list, tokenizer):
-    """Make assessor prompts for GRPO - returns messages format that GRPO will template."""
+    """Make assessor prompts for GRPO.
+
+    Returns messages format that GRPO will template.
+    """
 
     # Much more explicit
     system_content = """You classify medical notes for safety errors.
@@ -394,17 +414,18 @@ def main():
     # --- Reward Functions ---
     def assessor_reward_fn(prompts, completions, **kwargs):
         scores = []
-        # Get the dataset to access original_note field
-        train_dataset = kwargs.get("train_dataset")
+
+        # Get dataset columns passed via kwargs
+        original_notes = kwargs.get("original_note", [])
+        attacked_notes = kwargs.get("attacked_note", [])
 
         for i, (p, c) in enumerate(zip(prompts, completions)):
-            # Get original and attacked notes from dataset
-            # The dataset was created by make_assessor_prompts and contains both
-            if train_dataset and i < len(train_dataset):
-                original = train_dataset[i]["original_note"]
-                attacked = train_dataset[i]["attacked_note"]
+            # Get original and attacked notes from kwargs (dataset columns)
+            if i < len(original_notes) and i < len(attacked_notes):
+                original = original_notes[i]
+                attacked = attacked_notes[i]
             else:
-                print(f"WARNING: No dataset entry for index {i}, skipping")
+                print(f"WARNING: No data for index {i}, skipping")
                 scores.append(0.0)
                 continue
 
@@ -462,16 +483,20 @@ def main():
         scores = []
         frozen_assessor = assessor_snapshot["model"]
 
-        # Get the dataset to access original_note field
-        train_dataset = kwargs.get("train_dataset")
+        # Get dataset columns passed via kwargs
+        original_notes = kwargs.get("original_note", [])
 
         for i, (p, c) in enumerate(zip(prompts, completions)):
-            # Get original note from dataset or extract from prompt
-            original = (
-                train_dataset[i]["original_note"]
-                if train_dataset
-                else extract_original_from_attacker_prompt(p)
-            )
+            # Get original note from kwargs (dataset column)
+            if i < len(original_notes):
+                original = original_notes[i]
+            else:
+                # Fallback: try to extract from prompt
+                original = extract_original_from_attacker_prompt(str(p))
+                if not original:
+                    print(f"WARNING: No original note for index {i}")
+                    scores.append(0.0)
+                    continue
             attacker_thought, attacked_note = parse_response(c)
 
             # Add fallback for empty attacked_note
@@ -588,17 +613,13 @@ def main():
         snap = deepcopy(policy_model).eval()
         assessor_snapshot["model"] = snap
 
-        # Create a closure that captures the dataset
-        def attacker_reward_fn_with_data(prompts, completions, **kwargs):
-            return attacker_reward_fn(prompts, completions, train_dataset=ds_attacker, **kwargs)
-
         print(f"--- Round {r+1}: Training Attacker ---")
         attacker_trainer = GRPOTrainer(
             model=policy_model,
             args=GRPOConfig(**common_cfg),
             processing_class=policy_tok,
             train_dataset=ds_attacker,
-            reward_funcs=[attacker_reward_fn_with_data],
+            reward_funcs=[attacker_reward_fn],
         )
         attacker_trainer.train()
 
@@ -656,17 +677,13 @@ def main():
 
         ds_assessor_round = make_assessor_prompts(attacked_records, policy_tok)
 
-        # Create a closure that captures the dataset
-        def assessor_reward_fn_with_data(prompts, completions, **kwargs):
-            return assessor_reward_fn(prompts, completions, train_dataset=ds_assessor_round, **kwargs)
-
         print(f"--- Round {r+1}: Training Assessor ---")
         assessor_trainer = GRPOTrainer(
             model=policy_model,
             args=GRPOConfig(**common_cfg),
             processing_class=policy_tok,
             train_dataset=ds_assessor_round,
-            reward_funcs=[assessor_reward_fn_with_data],
+            reward_funcs=[assessor_reward_fn],
         )
         assessor_trainer.train()
 
