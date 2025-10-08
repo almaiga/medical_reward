@@ -806,6 +806,10 @@ def main():
         assessor_snapshot["model"] = snap
 
         print(f"--- Round {r+1}: Training Attacker ---")
+        print(f"Attacker dataset size: {len(ds_attacker)}")
+        print(f"Sample attacker prompt (first 300 chars):")
+        print(f"{ds_attacker[0]['prompt'][:300]}...")
+        
         attacker_trainer = GRPOTrainer(
             model=policy_model,
             args=GRPOConfig(**common_cfg),
@@ -813,7 +817,18 @@ def main():
             train_dataset=ds_attacker,
             reward_funcs=[attacker_reward_fn],
         )
+        
+        print(f"\n{'='*60}")
+        print("STARTING ATTACKER TRAINING")
+        print("Watch for 'ATTACKER REWARD FUNCTION' output below")
+        print("This will show what GRPO generates")
+        print(f"{'='*60}\n")
+        
         attacker_trainer.train()
+
+        print(f"\n{'='*60}")
+        print("ATTACKER TRAINING COMPLETE")
+        print(f"{'='*60}\n")
 
         # Clear attacker trainer
         del attacker_trainer
@@ -865,6 +880,21 @@ def main():
                 )
 
         ds_assessor_round = make_assessor_prompts(attacked_records, policy_tok)
+        
+        # DEBUG: Show what's in the assessor dataset
+        print(f"\n{'='*60}")
+        print(f"ASSESSOR DATASET CREATED - {len(ds_assessor_round)} items")
+        print(f"{'='*60}")
+        if len(ds_assessor_round) > 0:
+            print(f"Sample item 0:")
+            print(f"  - Prompt (first 300 chars): {ds_assessor_round[0]['prompt'][:300]}...")
+            print(f"  - Original note (first 200 chars): {ds_assessor_round[0]['original_note'][:200]}...")
+            print(f"  - Attacked note (first 200 chars): {ds_assessor_round[0]['attacked_note'][:200]}...")
+            if ds_assessor_round[0]['attacked_note'].startswith('<think>user'):
+                print("  ⚠️ WARNING: Attacked note contains garbage!")
+            else:
+                print("  ✅ Attacked note looks clean")
+        print(f"{'='*60}\n")
 
         print(f"--- Round {r+1}: Training Assessor ---")
         assessor_trainer = GRPOTrainer(
