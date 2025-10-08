@@ -541,7 +541,12 @@ def main():
         original_notes = kwargs.get("original_note", [])
         attacked_notes = kwargs.get("attacked_note", [])
 
+        print(f"\n{'='*60}")
+        print(f"ASSESSOR REWARD FUNCTION - Processing {len(prompts)} items")
+        print(f"{'='*60}")
+
         for i, (p, c) in enumerate(zip(prompts, completions)):
+            print(f"\n--- Assessor Item {i+1}/{len(prompts)} ---")
             # Get original and attacked notes from kwargs (dataset columns)
             if i < len(original_notes) and i < len(attacked_notes):
                 original = original_notes[i]
@@ -551,7 +556,14 @@ def main():
                 scores.append(0.0)
                 continue
 
+            # DEBUG: Show what assessor receives
+            print(f"Prompt preview (first 200 chars): {str(p)[:200]}...")
+            print(f"Completion preview (first 200 chars): {c[:200]}...")
+            print(f"Attacked note preview (first 200 chars): {attacked[:200]}...")
+            
             thought, label = parse_response(c)
+            print(f"Parsed - Thought: {thought[:100] if thought else 'None'}...")
+            print(f"Parsed - Label: {label}")
             judgments = get_judge_assessment(
                 original, attacked, label, judge_model, judge_tok, device
             )
@@ -608,7 +620,12 @@ def main():
         # Get dataset columns passed via kwargs
         original_notes = kwargs.get("original_note", [])
 
+        print(f"\n{'='*60}")
+        print(f"ATTACKER REWARD FUNCTION - Processing {len(prompts)} items")
+        print(f"{'='*60}")
+
         for i, (p, c) in enumerate(zip(prompts, completions)):
+            print(f"\n--- Attacker Item {i+1}/{len(prompts)} ---")
             # Get original note from kwargs (dataset column)
             if i < len(original_notes):
                 original = original_notes[i]
@@ -619,10 +636,18 @@ def main():
                     print(f"WARNING: No original note for index {i}")
                     scores.append(0.0)
                     continue
+            
+            # DEBUG: Show what attacker generates
+            print(f"Prompt preview (first 200 chars): {str(p)[:200]}...")
+            print(f"Completion preview (first 200 chars): {c[:200]}...")
+            
             attacker_thought, attacked_note = parse_response(c)
+            print(f"Parsed - Thought: {attacker_thought[:100] if attacker_thought else 'None'}...")
+            print(f"Parsed - Attacked note: {attacked_note[:200]}...")
 
             # Add fallback for empty attacked_note
             if not attacked_note.strip():
+                print("WARNING: Empty attacked_note, using full completion")
                 attacked_note = c.strip()
 
             assessor_ds = make_assessor_prompts(
