@@ -209,7 +209,8 @@ def build_attacker_prompts(
 ):
     """Build attacker prompts for GRPO.
 
-    Returns messages format that GRPO will template.
+    CRITICAL: Returns pre-templated strings, NOT messages.
+    GRPO should NOT apply chat template again.
     """
 
     # Much more explicit about format requirements
@@ -232,14 +233,18 @@ Remember: Use EXACTLY this format:
 <think>brief reason</think>
 <output>modified note</output>"""
 
-        # GRPO expects messages format - it will apply chat template itself
+        # Apply chat template ONCE here, return string
         messages = [
             {"role": "system", "content": system_content},
             {"role": "user", "content": user_content},
         ]
 
+        prompt_string = tokenizer.apply_chat_template(
+            messages, tokenize=False, add_generation_prompt=True
+        )
+
         return {
-            "prompt": messages,  # GRPO expects messages format
+            "prompt": prompt_string,  # Pre-templated string
             "original_note": row["original"],
         }
 
@@ -249,7 +254,8 @@ Remember: Use EXACTLY this format:
 def make_assessor_prompts(records: list, tokenizer):
     """Make assessor prompts for GRPO.
 
-    Returns messages format that GRPO will template.
+    CRITICAL: Returns pre-templated strings, NOT messages.
+    GRPO should NOT apply chat template again.
     """
 
     # Much more explicit
@@ -273,15 +279,19 @@ Remember: Use EXACTLY this format:
 <think>analysis</think>
 <output>Safe/Concerning/Harmful</output>"""
 
-        # GRPO expects messages format - it will apply chat template itself
+        # Apply chat template ONCE here, return string
         messages = [
             {"role": "system", "content": system_content},
             {"role": "user", "content": user_content},
         ]
 
+        prompt_string = tokenizer.apply_chat_template(
+            messages, tokenize=False, add_generation_prompt=True
+        )
+
         prompts.append(
             {
-                "prompt": messages,  # GRPO expects messages format
+                "prompt": prompt_string,  # Pre-templated string
                 "original_note": rec["original"],
                 "attacked_note": rec["attacked"],
             }
@@ -506,11 +516,8 @@ def main():
             assessor_ds = make_assessor_prompts(
                 [{"original": original, "attacked": attacked_note}], policy_tok
             )
-            # Template the messages manually for generation
-            messages = assessor_ds[0]["prompt"]
-            assessor_prompt = policy_tok.apply_chat_template(
-                messages, tokenize=False, add_generation_prompt=True
-            )
+            # Prompt is already templated
+            assessor_prompt = assessor_ds[0]["prompt"]
 
             with torch.no_grad():
                 inputs = policy_tok(assessor_prompt, return_tensors="pt").to(device)
@@ -594,6 +601,8 @@ def main():
         remove_unused_columns=False,
         bf16=True,
         gradient_checkpointing=True,
+        # CRITICAL: Tell GRPO not to apply chat template (we already did it)
+        apply_chat_template=False,
     )
 
     for r in range(args.rounds):
@@ -638,11 +647,8 @@ def main():
                     ds_few_shot,
                     policy_tok,
                 )
-                # Template the messages manually for generation
-                messages = attacker_ds[0]["prompt"]
-                prompt_string = policy_tok.apply_chat_template(
-                    messages, tokenize=False, add_generation_prompt=True
-                )
+                # Prompt is already templated
+                prompt_string = attacker_ds[0]["prompt"]
                 inputs = policy_tok(prompt_string, return_tensors="pt").to(device)
 
                 # Qwen-optimized generation parameters
