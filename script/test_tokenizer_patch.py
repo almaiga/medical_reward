@@ -1,26 +1,24 @@
-"""Test script to verify TokenizerWrapper fixes add_special_tokens."""
+"""Test script to verify tokenizer patching fixes the add_special_tokens issue."""
 
-from transformers import AutoTokenizer
+from transformers import AutoTokenizer, PreTrainedTokenizerBase
 
 
-class TokenizerWrapper:
-    """Wrapper to force add_special_tokens=True for GRPO training."""
-
-    def __init__(self, tokenizer):
-        self._wrapped = tokenizer
-
-    def __call__(self, *args, add_special_tokens=True, **kwargs):
+def patch_tokenizer_for_grpo(tokenizer):
+    """Monkey-patch tokenizer to force add_special_tokens=True for GRPO training."""
+    original_call = tokenizer.__call__
+    
+    def patched_call(*args, add_special_tokens=True, **kwargs):
         if not add_special_tokens:
             print("✅ Intercepted add_special_tokens=False, forcing True")
             add_special_tokens = True
-        return self._wrapped(*args, add_special_tokens=add_special_tokens, **kwargs)
+        return original_call(*args, add_special_tokens=add_special_tokens, **kwargs)
+    
+    tokenizer.__call__ = patched_call
+    return tokenizer
 
-    def __getattr__(self, name):
-        return getattr(self._wrapped, name)
 
-
-def test_tokenizer_wrapper():
-    """Test that the wrapper correctly intercepts add_special_tokens=False."""
+def test_tokenizer_patch():
+    """Test that the patch correctly intercepts add_special_tokens=False."""
     print("Loading Qwen tokenizer...")
     tokenizer = AutoTokenizer.from_pretrained(
         "Qwen/Qwen2.5-3B-Instruct", trust_remote_code=True
@@ -102,13 +100,13 @@ def test_tokenizer_wrapper():
     print("\n" + "=" * 60)
     print("TEST 6: Verify isinstance check (critical for GRPO)")
     print("=" * 60)
-    from transformers import PreTrainedTokenizerBase
     print(f"isinstance(patched, PreTrainedTokenizerBase): {isinstance(patched, PreTrainedTokenizerBase)}")
     if isinstance(patched, PreTrainedTokenizerBase):
-        print("✅ Patched tokenizer passes isinstance check")
+        print("✅ SUCCESS: Patched tokenizer passes isinstance check")
+        print("   This means GRPO will accept it!")
     else:
         print("❌ FAILURE: Patched tokenizer fails isinstance check")
 
 
 if __name__ == "__main__":
-    test_tokenizer_wrapper()
+    test_tokenizer_patch()

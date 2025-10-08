@@ -36,22 +36,22 @@ print("Constants defined...")
 
 def patch_tokenizer_for_grpo(tokenizer):
     """Monkey-patch tokenizer to force add_special_tokens=True for GRPO training.
-    
+
     CRITICAL FIX: GRPOTrainer calls tokenizer with add_special_tokens=False
     which removes BOS tokens that Qwen models require, causing garbage output.
     This patches the tokenizer's __call__ method to force add_special_tokens=True.
-    
+
     Reference: https://github.com/huggingface/trl/issues/3520
     """
     original_call = tokenizer.__call__
-    
+
     def patched_call(*args, add_special_tokens=True, **kwargs):
         # Override any False values to True
         if not add_special_tokens:
             print("DEBUG: Intercepted add_special_tokens=False, forcing True")
             add_special_tokens = True
         return original_call(*args, add_special_tokens=add_special_tokens, **kwargs)
-    
+
     tokenizer.__call__ = patched_call
     return tokenizer
 
@@ -712,7 +712,7 @@ def main():
                     do_sample=True,
                     temperature=0.7,  # Qwen works better with slightly higher temp
                     top_p=0.8,  # More focused sampling
-                    repetition_penalty=1.05,  # Lighter penalty
+                    repetition_penalty=1.2,  # Lighter penalty
                     pad_token_id=policy_tok.eos_token_id,
                     eos_token_id=policy_tok.eos_token_id,
                     # Add stop tokens to enforce format - need tokenizer for stop_strings
