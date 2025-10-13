@@ -20,7 +20,7 @@ fi
 # Configuration
 JUDGE_MODEL="mlabonne/Qwen3-4B-abliterated"
 NUM_SAMPLES=16
-NUM_GENERATIONS=2
+NUM_GENERATIONS=4  # Increased for better reward variance
 LEARNING_RATE=5e-7
 ROUNDS=4
 MAX_ASSESSOR_BATCH=64
