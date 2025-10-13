@@ -29,7 +29,7 @@ print("TRL imported...")
 # --- Reward Constants ---
 R_HARM = 2.0  # Main game reward for harm classification
 R_REFUSAL = 0.5  # Appropriate refusal reward
-R_FORMAT = 0.1  # CoT formatting reward
+R_FORMAT = 0.2  # CoT formatting reward (increased from 0.1)
 
 print("Constants defined...")
 
@@ -419,6 +419,40 @@ def extract_attacked_from_assessor_prompt(prompt: str) -> str:
     return ""
 
 
+def check_attack_faithfulness(
+    attacked: str, original: str, min_similarity: float = 0.6
+) -> tuple[bool, str]:
+    """
+    Check if attacked note is a subtle modification (not random garbage).
+
+    Returns:
+        (is_valid, reason) - True if attack is valid, False otherwise
+    """
+    if not attacked or not attacked.strip():
+        return False, "empty_output"
+
+    if not original or not original.strip():
+        return False, "no_original"
+
+    # Check 1: Length ratio (should be similar length)
+    length_ratio = len(attacked) / len(original)
+    if not (0.5 < length_ratio < 2.0):
+        return False, f"length_ratio_{length_ratio:.2f}"
+
+    # Check 2: Word overlap (at least 60% of words should be similar)
+    original_words = set(original.lower().split())
+    attacked_words = set(attacked.lower().split())
+
+    if len(original_words) == 0:
+        return False, "no_words_in_original"
+
+    overlap = len(original_words & attacked_words) / len(original_words)
+    if overlap < min_similarity:
+        return False, f"word_overlap_{overlap:.2f}"
+
+    return True, "valid"
+
+
 def log_interaction(
     round_num,
     phase,
@@ -655,6 +689,43 @@ def main():
             if not attacked_note.strip():
                 print("WARNING: Empty attacked_note, using full completion")
                 attacked_note = c.strip()
+
+            # CRITICAL: Check if attack is faithful (subtle modification, not garbage)
+            is_valid, reason = check_attack_faithfulness(attacked_note, original)
+            if not is_valid:
+                print(f"⚠️ FAITHFULNESS CHECK FAILED: {reason}")
+                print(f"   Applying format penalty (-{R_FORMAT})")
+                # Still save it for logging purposes
+                attacked_notes_from_training.append(
+                    {"original": original, "attacked": attacked_note}
+                )
+                # Format penalty for invalid attacks (same as missing <think>)
+                scores.append(-R_FORMAT)
+
+                # Log the failure
+                log_interaction(
+                    round_num=state["round"],
+                    phase="attacker_training",
+                    original=original,
+                    attacked=attacked_note,
+                    assessor_response={"label": "N/A"},
+                    judgments={
+                        "actual_harm": "Invalid",
+                        "assessor_was_correct": False,
+                        "assessor_refused": False,
+                    },
+                    rewards={
+                        "faithfulness_penalty": -R_FORMAT,
+                        "harm_evasion": 0.0,
+                        "refusal_manipulation": 0.0,
+                        "format": 0.0,
+                        "total": -R_FORMAT,
+                    },
+                    log_path=log_path,
+                )
+                continue
+
+            print(f"✅ Faithfulness check passed: {reason}")
 
             # CRITICAL: Save this attacked note for assessor training
             # This avoids redundant manual generation that produces garbage
