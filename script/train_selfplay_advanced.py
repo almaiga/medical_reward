@@ -532,7 +532,7 @@ def main():
             f.write(json.dumps(entry, ensure_ascii=False) + "\n")
 
     assessor_snapshot = {"model": None}
-    
+
     # Storage for attacked notes generated during attacker training
     # This avoids redundant manual generation
     attacked_notes_from_training = []
@@ -655,13 +655,12 @@ def main():
             if not attacked_note.strip():
                 print("WARNING: Empty attacked_note, using full completion")
                 attacked_note = c.strip()
-            
+
             # CRITICAL: Save this attacked note for assessor training
             # This avoids redundant manual generation that produces garbage
-            attacked_notes_from_training.append({
-                'original': original,
-                'attacked': attacked_note
-            })
+            attacked_notes_from_training.append(
+                {"original": original, "attacked": attacked_note}
+            )
 
             assessor_ds = make_assessor_prompts(
                 [{"original": original, "attacked": attacked_note}], policy_tok
@@ -790,6 +789,10 @@ def main():
         remove_unused_columns=False,
         bf16=True,
         gradient_checkpointing=True,
+        # Disable checkpointing to save disk space
+        save_strategy="no",
+        save_steps=999999,
+        save_total_limit=0,
     )
 
     for r in range(args.rounds):
@@ -839,13 +842,13 @@ def main():
 
         print(f"--- Round {r+1}: Using attacked notes from attacker training ---")
         print(f"Collected {len(attacked_notes_from_training)} attacked notes from GRPO")
-        
+
         # Use the attacked notes that GRPO generated during training
         # These are clean and don't require manual generation
         # Limit to max_assessor_batch if we have more than needed
         num_to_use = min(args.max_assessor_batch, len(attacked_notes_from_training))
         attacked_records = attacked_notes_from_training[:num_to_use]
-        
+
         # Clear for next round
         attacked_notes_from_training.clear()
 
