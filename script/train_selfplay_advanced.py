@@ -590,6 +590,11 @@ def log_interaction(
         "assessor_response": assessor_response,  # Includes thought + label
         "judge_assessment": judgments,
         "rewards": rewards,
+        "metadata": {
+            "game_type": rewards.get("game_type", "unknown"),
+            "actual_harm": judgments.get("actual_harm", "unknown"),
+            "assessor_was_correct": judgments.get("assessor_was_correct", False),
+        },
     }
 
     # Create interaction log file path
