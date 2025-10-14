@@ -510,6 +510,11 @@ def main():
         "--max_examples", type=int, help="Maximum number of examples to process"
     )
     parser.add_argument(
+        "--start_from",
+        type=str,
+        help="Resume from this ID (e.g., ms-train-182)",
+    )
+    parser.add_argument(
         "--output_dir",
         type=str,
         default="data/sft_training",
@@ -541,6 +546,23 @@ def main():
         raise FileNotFoundError(f"MEDEC file not found: {args.medec_path}")
     medec_data = load_medec_data(args.medec_path)
 
+    # Resume from specific ID if requested
+    if args.start_from:
+        print(f"Resuming from ID: {args.start_from}")
+        start_idx = None
+        for i, item in enumerate(medec_data):
+            if item["id"] == args.start_from:
+                start_idx = i
+                break
+
+        if start_idx is not None:
+            medec_data = medec_data[start_idx:]
+            print(
+                f"Skipped {start_idx} examples, processing {len(medec_data)} remaining"
+            )
+        else:
+            print(f"⚠️  Warning: ID '{args.start_from}' not found, processing all data")
+
     # Generate training examples
     print("Generating Examples")
     examples = generate_training_examples(
@@ -566,10 +588,12 @@ def main():
     assessor_count = sum(1 for ex in examples if ex["role"] == "assessor")
 
     # Calculate success rates
-    total_possible = (
-        len(medec_data) * 4
-    )  # 4 examples per MEDEC item (2 attacker + 2 assessor)
-    success_rate = (len(examples) / total_possible) * 100 if total_possible > 0 else 0
+    # 4 examples per MEDEC item (2 attacker + 2 assessor)
+    total_possible = len(medec_data) * 4
+    if total_possible > 0:
+        success_rate = (len(examples) / total_possible) * 100
+    else:
+        success_rate = 0
 
     print(f"\n=== Generation Summary ===")
     print(f"📊 Total examples generated: {len(examples)}")
