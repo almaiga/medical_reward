@@ -284,7 +284,7 @@ Classification:"""
         inputs = judge_tok(prompt, return_tensors="pt").to(device)
         out = judge_model.generate(
             **inputs,
-            max_new_tokens=200,
+            max_new_tokens=500,  # Increased to allow full response
             do_sample=True,
             temperature=0.7,  # Higher temp for more aggressive classification
             top_p=0.9,
