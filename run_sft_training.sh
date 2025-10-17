@@ -9,14 +9,14 @@ echo "=== Qwen SFT Training with TRL ==="
 
 # Configuration
 MODEL_ID="mlabonne/Qwen3-4B-abliterated"
-DATA_PATH="data/sft_training/20251006_175835_openai_gpt-5_sft_fixed.jsonl"
+DATA_PATH="data/sft_training/20251017_161801_sft_merged.jsonl"
 OUTPUT_DIR="trainer_output/qwen3_trl"
 
 echo ""
 echo "🔍 Checking required files..."
 
 # Check if original data exists
-if [ ! -f "data/sft_training/20251006_175835_openai_gpt-5_sft.jsonl" ]; then
+if [ ! -f "data/sft_training/20251017_161801_sft_merged.jsonl" ]; then
     echo "❌ Original data file not found"
     echo "Please make sure you have the SFT training data."
     exit 1
@@ -26,7 +26,7 @@ fi
 if [ ! -f "$DATA_PATH" ]; then
     echo "⚠️  Creating fixed data file..."
     python3 script/fix_sft_format.py \
-        data/sft_training/20251006_175835_openai_gpt-5_sft.jsonl \
+        data/sft_training/20251017_161801_sft_merged.jsonl \
         --output_path "$DATA_PATH"
 else
     echo "✅ Found: $DATA_PATH"
