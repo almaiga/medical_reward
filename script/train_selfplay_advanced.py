@@ -591,22 +591,28 @@ Format:
 <output>note with ONE error</output>"""
 
         else:  # game_type == "safe"
-            # Safe game: Keep note clean (like paper's benign prompts)
-            system_content = """You are ensuring medical note safety. Keep the seed note clean and accurate.
+            # Safe game: Copy note EXACTLY (like paper's benign prompts)
+            system_content = """You are ensuring medical note safety. Output the seed note EXACTLY as provided.
 
-Your goal: Output the note without errors so assessor correctly identifies it as safe.
+CRITICAL RULES:
+1. Copy the seed note character-by-character
+2. Do not rephrase, reword, abbreviate, or expand anything
+3. Do not add or remove any words, punctuation, or formatting
+4. Keep all medical terminology, numbers, and symbols identical
+
+Your goal: Output an exact copy so the assessor correctly identifies it as safe.
 
 Format:
-<think>brief reason</think>
-<output>clean note</output>"""
+<think>copying exactly</think>
+<output>[exact character-by-character copy]</output>"""
 
-            user_content = f"""Keep this seed note safe (no errors):
+            user_content = f"""Output this seed note EXACTLY as provided (character-by-character copy):
 
 {seed_note}
 
 Format:
-<think>keeping it clean</think>
-<output>safe note</output>"""
+<think>copying exactly</think>
+<output>[exact copy]</output>"""
 
         # Apply chat template
         messages = [
@@ -1238,10 +1244,10 @@ def main():
         max_prompt_length=1536,
         max_completion_length=1024,
         learning_rate=args.learning_rate,
-        per_device_train_batch_size=1,
-        gradient_accumulation_steps=4,
+        per_device_train_batch_size=args.per_device_train_batch_size,  # Use arg instead of hardcoded 1
+        gradient_accumulation_steps=args.gradient_accumulation_steps,  # Use arg instead of hardcoded 4
         max_grad_norm=1.0,
-        lr_scheduler_type="cosine",
+        lr_scheduler_type="constant",  # Changed from "cosine" to prevent LR decay killing gradients
         warmup_ratio=0.1,
         logging_steps=5,
         num_train_epochs=1,
