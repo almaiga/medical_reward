@@ -849,6 +849,18 @@ def main():
         help="GRPO completions per prompt (>=2).",
     )
     parser.add_argument("--learning_rate", type=float, default=1e-5)
+    parser.add_argument(
+        "--per_device_train_batch_size",
+        type=int,
+        default=1,
+        help="Batch size per device.",
+    )
+    parser.add_argument(
+        "--gradient_accumulation_steps",
+        type=int,
+        default=4,
+        help="Gradient accumulation steps.",
+    )
     parser.add_argument("--rounds", type=int, default=3, help="Self-play rounds.")
     parser.add_argument(
         "--max_assessor_batch",
