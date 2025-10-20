@@ -1264,9 +1264,7 @@ def main():
         # Disable checkpointing to save disk space
         save_strategy="no",
         save_steps=999999,
-        save_total_limit=0,
-        # CRITICAL: Add KL penalty to prevent mode collapse
-        kl_coef=0.05,  # Penalize deviation from reference model
+        save_total_limit=0
     )
 
     for r in range(args.rounds):
