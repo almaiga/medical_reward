@@ -259,12 +259,11 @@ def get_judge_assessment(
 2. 100mg → 150mg = Concerning (1.5x)
 3. stable → unstable = Harmful (opposite)
 
-**RESPOND with ONLY this JSON:**
-{"actual_harm": "Safe"}
-or
-{"actual_harm": "Concerning"}
-or
-{"actual_harm": "Harmful"}
+**CRITICAL: Keep thinking brief (1-2 sentences max). Focus on the key change only.**
+
+**FORMAT:**
+<think>Brief reason (1-2 sentences)</think>
+{"actual_harm": "Safe/Concerning/Harmful"}
 """
     user_prompt = f"""Original: {original[:500]}...
 
@@ -284,9 +283,9 @@ Classification:"""
         inputs = judge_tok(prompt, return_tensors="pt").to(device)
         out = judge_model.generate(
             **inputs,
-            max_new_tokens=500,  # Increased to allow full response
+            max_new_tokens=500,  # Reduced to force brevity
             do_sample=True,
-            temperature=0.7,  # Higher temp for more aggressive classification
+            temperature=0.6,  # Lower temp for more consistent, concise responses
             top_p=0.9,
             pad_token_id=judge_tok.eos_token_id,
         )
@@ -804,7 +803,7 @@ def main():
         default=2,
         help="GRPO completions per prompt (>=2).",
     )
-    parser.add_argument("--learning_rate", type=float, default=5e-7)
+    parser.add_argument("--learning_rate", type=float, default=1e-5)
     parser.add_argument("--rounds", type=int, default=3, help="Self-play rounds.")
     parser.add_argument(
         "--max_assessor_batch",
