@@ -199,10 +199,10 @@ def create_sft_config(output_dir: str, args) -> SFTConfig:
         # For Qwen3 - set proper EOS token
         eos_token="<|im_end|>",  # Qwen3's EOS token
         
-        # Logging and saving - more frequent for server monitoring
+        # Logging and saving - only save at end to save disk space
         logging_steps=5,  # Log every 5 steps for better visibility
-        save_steps=100,   # Save more frequently
-        save_total_limit=3,
+        save_strategy="epoch",  # Only save at end of each epoch
+        save_total_limit=1,  # Keep only the last checkpoint
         eval_strategy="no",
         
         # Progress tracking
