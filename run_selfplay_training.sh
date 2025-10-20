@@ -21,11 +21,9 @@ fi
 JUDGE_MODEL="google/medgemma-4b-it"
 NUM_SAMPLES=16
 NUM_GENERATIONS=4  # Increased for better reward variance
-LEARNING_RATE=5e-5  # Increased from 1e-5 to restore meaningful gradients
+LEARNING_RATE=1e-5
 ROUNDS=2
 MAX_ASSESSOR_BATCH=64
-BATCH_SIZE=2  # Increased from 1 for more stable gradients
-GRAD_ACCUM=2  # Reduced from 4 to compensate for batch size increase
 
 echo ""
 echo "🔍 Checking requirements..."
@@ -59,8 +57,6 @@ echo "  Judge: $JUDGE_MODEL"
 echo "  Samples: $NUM_SAMPLES"
 echo "  Generations: $NUM_GENERATIONS"
 echo "  Learning Rate: $LEARNING_RATE"
-echo "  Batch Size: $BATCH_SIZE"
-echo "  Gradient Accumulation: $GRAD_ACCUM"
 echo "  Rounds: $ROUNDS"
 echo "  Max Assessor Batch: $MAX_ASSESSOR_BATCH"
 
@@ -74,9 +70,7 @@ python3 script/train_selfplay_advanced.py \
     --num_generations $NUM_GENERATIONS \
     --learning_rate $LEARNING_RATE \
     --rounds $ROUNDS \
-    --max_assessor_batch $MAX_ASSESSOR_BATCH \
-    --per_device_train_batch_size $BATCH_SIZE \
-    --gradient_accumulation_steps $GRAD_ACCUM
+    --max_assessor_batch $MAX_ASSESSOR_BATCH
 
 echo ""
 echo "✅ Selfplay training complete!"
