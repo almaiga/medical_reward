@@ -18,7 +18,7 @@ else
 fi
 
 # Configuration
-JUDGE_MODEL="mlabonne/Qwen3-4B-abliterated"
+JUDGE_MODEL="google/medgemma-4b-it"
 NUM_SAMPLES=16
 NUM_GENERATIONS=4  # Increased for better reward variance
 LEARNING_RATE=1e-5
