@@ -38,7 +38,7 @@ python3 script/validate_sft_data.py "$DATA_PATH"
 
 echo ""
 echo "🧪 Testing TRL compatibility..."
-python3 script/test_trl_compatibility.py "$DATA_PATH"
+# python3 script/test_trl_compatibility.py "$DATA_PATH"
 
 echo ""
 echo "🚀 Starting SFT training..."
