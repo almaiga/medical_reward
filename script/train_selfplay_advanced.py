@@ -146,11 +146,19 @@ def load_causal_lm(model_id: str, device: torch.device):
 
 
 def parse_response(text):
-    """Improved parsing specifically for Qwen3 behavior."""
+    """Parse response supporting BOTH pre-fill and post-fill CoT formats.
+
+    Pre-fill format (original SFT):
+        <think>reasoning</think><output>response</output>
+
+    Post-fill format (adaptation SFT):
+        response<think>reasoning</think>
+
+    This parser tries both formats and uses whichever works.
+    """
 
     # Handle conversational format (list of messages)
     if isinstance(text, list):
-        # Extract the assistant's response from the last message
         if text and isinstance(text[-1], dict) and "content" in text[-1]:
             text = text[-1]["content"]
         else:
@@ -168,41 +176,65 @@ def parse_response(text):
     thought = ""
     output = ""
 
-    # Extract thinking (Qwen3 is good at this part)
+    # Try PRE-FILL format first (original SFT format)
+    # Format: <think>reasoning</think><output>response</output>
     think_match = re.search(
         r"<think>(.*?)(?:</think>|<output>|$)", text, re.DOTALL | re.IGNORECASE
     )
     if think_match:
         thought = think_match.group(1).strip()
 
-    # Extract output (this is where Qwen3 often fails)
     output_match = re.search(
         r"<output>(.*?)(?:</output>|$)", text, re.DOTALL | re.IGNORECASE
     )
     if output_match:
         output = output_match.group(1).strip()
+        print(f"DEBUG: Extracted using PRE-FILL format")
+        print(
+            f"DEBUG: Extracted - thought: {len(thought)} chars, output: {len(output)} chars"
+        )
+        return thought, output
 
-    # Emergency fallback for when Qwen3 doesn't generate <output>
+    # Try POST-FILL format (adaptation SFT format)
+    # Format: response<think>reasoning</think>
+    if "<think>" in text:
+        parts = text.split("<think>", 1)
+        output = parts[0].strip()
+
+        if len(parts) > 1:
+            # Extract thinking from <think>...</think>
+            think_part = parts[1]
+            if "</think>" in think_part:
+                thought = think_part.split("</think>")[0].strip()
+            else:
+                thought = think_part.strip()
+
+        if output:  # Only use post-fill if we got an output
+            print(f"DEBUG: Extracted using POST-FILL format")
+            print(
+                f"DEBUG: Extracted - thought: {len(thought)} chars, output: {len(output)} chars"
+            )
+            return thought, output
+
+    # Fallback: No clear format detected
+    print("WARNING: No clear format detected, using fallback extraction")
+
+    # If we have thinking but no output, try to get content after </think>
+    if thought and "</think>" in text:
+        after_think = text.split("</think>", 1)[1].strip()
+        if after_think and len(after_think) > 10:
+            output = re.sub(r"<[^>]*>", "", after_think).strip()
+
+    # Last resort: use the whole text as output
     if not output:
-        print("WARNING: No <output> found, using fallback extraction")
+        output = text.strip()
 
-        # If we have thinking, try to get content after </think>
-        if "</think>" in text:
-            after_think = text.split("</think>", 1)[1].strip()
-            if after_think and len(after_think) > 10:
-                # Clean up any remaining tags
-                output = re.sub(r"<[^>]*>", "", after_think).strip()
-
-        # Last resort: use the whole text
-        if not output:
-            output = text.strip()
-
-        # Truncate if too long
-        if len(output) > 1000:
-            output = output[:1000] + "..."
+    # Truncate if too long
+    if len(output) > 1000:
+        output = output[:1000] + "..."
 
     print(
-        f"DEBUG: Extracted - thought: {len(thought)} chars, output: {len(output)} chars"
+        f"DEBUG: Extracted (fallback) - thought: {len(thought)} chars, output: {len(output)} chars"
     )
     return thought, output
 
@@ -561,7 +593,7 @@ def build_attacker_prompts(
         seed_note = row.get("seed_note", "")
 
         if game_type == "harmful":
-            # Harmful game: Create error variation (like paper's harmful prompts)
+            # Harmful game: Create error variation - POST-FILL FORMAT
             system_content = f"""You are testing medical safety. Create a variation of the seed note with ONE substitution error.
 
 Learn from these examples of medical errors:
@@ -576,37 +608,21 @@ SUBSTITUTION ERRORS:
 RULES:
 - Make ONE substitution
 - Keep rest of note identical
-- Create realistic medical errors
-
-Format:
-<think>what I'm changing</think>
-<output>note with error</output>"""
+- Create realistic medical errors"""
 
             user_content = f"""Create an error variation of this seed note:
 
-{seed_note}
-
-Format:
-<think>your substitution</think>
-<output>note with ONE error</output>"""
+{seed_note}"""
 
         else:  # game_type == "safe"
-            # Safe game: Keep note clean (like paper's benign prompts)
+            # Safe game: Keep note clean - POST-FILL FORMAT
             system_content = """You are ensuring medical note safety. Keep the seed note clean and accurate.
 
-Your goal: Output the note without errors so assessor correctly identifies it as safe.
-
-Format:
-<think>brief reason</think>
-<output>clean note</output>"""
+Your goal: Output the note without errors so assessor correctly identifies it as safe."""
 
             user_content = f"""Keep this seed note safe (no errors):
 
-{seed_note}
-
-Format:
-<think>keeping it clean</think>
-<output>safe note</output>"""
+{seed_note}"""
 
         # Apply chat template
         messages = [
@@ -630,32 +646,35 @@ Format:
 
 
 def make_assessor_prompts(records: list, tokenizer):
-    """Make assessor prompts for GRPO.
+    """Make assessor prompts for GRPO - POST-FILL FORMAT.
 
     CRITICAL: Returns pre-templated strings, NOT messages.
     GRPO should NOT apply chat template again.
+
+    Uses POST-FILL format to match adaptation training:
+    Classification FIRST, then <think>reasoning</think>
     """
 
-    # Much more explicit
+    # POST-FILL FORMAT: Match adaptation training
     system_content = """You classify medical notes for safety errors.
 
-    CRITICAL: You MUST use this exact format:
-    <think>brief analysis</think>
-    <output>Safe</output> OR <output>Concerning</output> OR <output>Harmful</output>
+CRITICAL: You MUST use this exact format:
+Safe<think>brief analysis</think>
+OR
+Concerning<think>brief analysis</think>
+OR
+Harmful<think>brief analysis</think>
 
-    Example:
-    <think>The dosage seems incorrect</think>
-    <output>Concerning</output>"""
+Classifications:
+- Safe: No medical errors
+- Concerning: Minor medical error
+- Harmful: Major medical error"""
 
     prompts = []
     for rec in records:
         user_content = f"""Classify this medical note for errors:
 
-{rec['attacked']}
-
-Remember: Use EXACTLY this format:
-<think>analysis</think>
-<output>Safe/Concerning/Harmful</output>"""
+{rec['attacked']}"""
 
         # Apply chat template ONCE here, return string
         messages = [
@@ -1264,7 +1283,7 @@ def main():
         # Disable checkpointing to save disk space
         save_strategy="no",
         save_steps=999999,
-        save_total_limit=0
+        save_total_limit=0,
     )
 
     for r in range(args.rounds):
