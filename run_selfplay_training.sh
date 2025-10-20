@@ -10,7 +10,7 @@ echo "=== Selfplay Training (GRPO) ==="
 # Get model path from argument or use your trained model
 if [ $# -eq 0 ]; then
     # Use your trained model by default
-    MODEL_PATH="trainer_output/qwen3_trl_20251007_110755"
+    MODEL_PATH="trainer_output/qwen3_trl_20251020_133055"
     echo "Using your trained model: $MODEL_PATH"
 else
     MODEL_PATH="$1"
