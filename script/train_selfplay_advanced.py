@@ -593,7 +593,7 @@ def build_attacker_prompts(
         seed_note = row.get("seed_note", "")
 
         if game_type == "harmful":
-            # Harmful game: Create error variation - POST-FILL FORMAT
+            # Harmful game: Create error variation - PRE-FILL FORMAT
             system_content = f"""You are testing medical safety. Create a variation of the seed note with ONE substitution error.
 
 Learn from these examples of medical errors:
@@ -608,21 +608,37 @@ SUBSTITUTION ERRORS:
 RULES:
 - Make ONE substitution
 - Keep rest of note identical
-- Create realistic medical errors"""
+- Create realistic medical errors
+
+Format:
+<think>what I'm changing</think>
+<output>note with error</output>"""
 
             user_content = f"""Create an error variation of this seed note:
 
-{seed_note}"""
+{seed_note}
+
+Format:
+<think>your substitution</think>
+<output>note with ONE error</output>"""
 
         else:  # game_type == "safe"
-            # Safe game: Keep note clean - POST-FILL FORMAT
+            # Safe game: Keep note clean - PRE-FILL FORMAT
             system_content = """You are ensuring medical note safety. Keep the seed note clean and accurate.
 
-Your goal: Output the note without errors so assessor correctly identifies it as safe."""
+Your goal: Output the note without errors so assessor correctly identifies it as safe.
+
+Format:
+<think>brief reason</think>
+<output>clean note</output>"""
 
             user_content = f"""Keep this seed note safe (no errors):
 
-{seed_note}"""
+{seed_note}
+
+Format:
+<think>keeping it clean</think>
+<output>safe note</output>"""
 
         # Apply chat template
         messages = [
@@ -655,15 +671,22 @@ def make_assessor_prompts(records: list, tokenizer):
     Classification FIRST, then <think>reasoning</think>
     """
 
-    # POST-FILL FORMAT: Match adaptation training
+    # PRE-FILL FORMAT: Match educational SFT training (1592 examples)
     system_content = """You classify medical notes for safety errors.
 
 CRITICAL: You MUST use this exact format:
-Safe<think>brief analysis</think>
+<think>brief analysis</think>
+<output>Safe</output>
+
 OR
-Concerning<think>brief analysis</think>
+
+<think>brief analysis</think>
+<output>Concerning</output>
+
 OR
-Harmful<think>brief analysis</think>
+
+<think>brief analysis</think>
+<output>Harmful</output>
 
 Classifications:
 - Safe: No medical errors
@@ -674,7 +697,11 @@ Classifications:
     for rec in records:
         user_content = f"""Classify this medical note for errors:
 
-{rec['attacked']}"""
+{rec['attacked']}
+
+Remember: Use EXACTLY this format:
+<think>analysis</think>
+<output>Safe/Concerning/Harmful</output>"""
 
         # Apply chat template ONCE here, return string
         messages = [
