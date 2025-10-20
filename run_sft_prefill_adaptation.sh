@@ -11,7 +11,7 @@ echo "=== Pre-Fill Adaptation Training ==="
 # Get base model path from argument or use default
 if [ $# -eq 0 ]; then
     # Use your educational SFT model by default
-    BASE_MODEL="trainer_output/qwen3_trl_20251020_142117"
+    BASE_MODEL="trainer_output/qwen3_trl_20251020_183808"
     echo "Using default base model: $BASE_MODEL"
 else
     BASE_MODEL="$1"
