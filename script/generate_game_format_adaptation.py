@@ -7,8 +7,8 @@ This script creates training examples that teach the model:
 2. Strategic reasoning (how to play the game effectively)
 3. Pre-fill CoT format (matches educational SFT and GRPO expectations)
 
-Uses ms-train-733 to ms-train-857 (125 rows) to avoid contamination
-with educational SFT data (ms-train-0 to 732).
+Uses 125 rows starting from ms-train-734 (spans to ~ms-train-950) 
+to avoid contamination with educational SFT data (ms-train-0 to 732).
 
 Each row with Error Flag=1 generates 4 examples:
 - Attacker Harmful: Learn to introduce subtle errors
@@ -31,10 +31,10 @@ from collections import Counter
 from tqdm import tqdm
 
 try:
-    import openai
-    HAS_OPENAI = True
+    import requests
+    HAS_REQUESTS = True
 except ImportError:
-    HAS_OPENAI = False
+    HAS_REQUESTS = False
 
 
 def generate_strategic_attacker_reasoning(
@@ -145,44 +145,71 @@ def generate_strategic_assessor_reasoning(error_type, severity):
 # GPT-AUGMENTED REASONING GENERATION
 # ============================================================================
 
-def call_openai_api(messages, model="gpt-4o-mini", max_retries=3):
-    """Call OpenAI API with retries."""
-    if not HAS_OPENAI:
-        raise ImportError("OpenAI library not installed")
+def call_gpt5_api(prompt, max_retries=3):
+    """Call GPT-5 Responses API with retries."""
+    if not HAS_REQUESTS:
+        raise ImportError("requests library not installed")
     
-    client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+    api_key = os.getenv("OPENAI_API_KEY")
+    if not api_key:
+        raise ValueError("OPENAI_API_KEY not set")
+    
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json"
+    }
+    
+    data = {
+        "model": "gpt-5",
+        "input": prompt,
+        "reasoning": {"effort": "medium"},
+        "text": {"verbosity": "low"},
+        "max_output_tokens": 200,
+    }
     
     for attempt in range(max_retries):
         try:
-            response = client.chat.completions.create(
-                model=model,
-                messages=messages,
-                max_tokens=150,
-                temperature=0.7,
+            response = requests.post(
+                "https://api.openai.com/v1/responses",
+                headers=headers,
+                json=data,
+                timeout=30,
             )
-            return response.choices[0].message.content.strip()
+            
+            if response.status_code == 200:
+                result = response.json()
+                
+                # Extract text from GPT-5 response structure
+                if "output" in result:
+                    for output_item in result["output"]:
+                        if output_item.get("type") == "message":
+                            content = output_item.get("content", [])
+                            if content and len(content) > 0:
+                                return content[0].get("text", "").strip()
+                
+                return None
+            else:
+                if attempt < max_retries - 1:
+                    time.sleep(2 ** attempt)
+                else:
+                    print(f"\n⚠️  API error: {response.status_code}")
+                    return None
+                    
         except Exception as e:
             if attempt < max_retries - 1:
                 time.sleep(2 ** attempt)
             else:
                 print(f"\n⚠️  API error: {e}")
                 return None
+    
     return None
 
 
 def generate_gpt_attacker_harmful_reasoning(
     corrected_text, text_with_error, error_type
 ):
-    """Use GPT to generate strategic attacker reasoning."""
-    messages = [
-        {
-            "role": "system",
-            "content": "You generate strategic reasoning for a medical safety "
-            "training system. Explain what was changed and why it's tricky."
-        },
-        {
-            "role": "user",
-            "content": f"""Generate strategic reasoning for introducing a {error_type} error.
+    """Use GPT-5 to generate strategic attacker reasoning."""
+    prompt = f"""Generate strategic reasoning for introducing a {error_type} error in a medical note.
 
 Original: {corrected_text[:300]}...
 Modified: {text_with_error[:300]}...
@@ -190,36 +217,24 @@ Modified: {text_with_error[:300]}...
 Format: I'll [what you changed]. This is subtle because [why]. The assessor might miss this if they don't [what they need to check].
 
 Keep it 2-3 sentences, strategic and concise."""
-        }
-    ]
     
-    reasoning = call_openai_api(messages)
+    reasoning = call_gpt5_api(prompt)
     return reasoning if reasoning else generate_strategic_attacker_reasoning(
         error_type, "", ""
     )
 
 
 def generate_gpt_assessor_harmful_reasoning(text_with_error, error_type):
-    """Use GPT to generate strategic assessor reasoning."""
-    messages = [
-        {
-            "role": "system",
-            "content": "You generate analytical reasoning for a medical safety "
-            "assessment system. Explain what error was found."
-        },
-        {
-            "role": "user",
-            "content": f"""Generate analytical reasoning for detecting a {error_type} error.
+    """Use GPT-5 to generate strategic assessor reasoning."""
+    prompt = f"""Generate analytical reasoning for detecting a {error_type} error in a medical note.
 
 Note: {text_with_error[:300]}...
 
 Format: Checking [what]: verifying [details]. Found [error type] error. This could lead to [consequence].
 
 Keep it 2-3 sentences, analytical and clinical."""
-        }
-    ]
     
-    reasoning = call_openai_api(messages)
+    reasoning = call_gpt5_api(prompt)
     # Determine severity for fallback
     critical_types = ['pharmacotherapy', 'treatment', 'management']
     severity = "Harmful" if error_type in critical_types else "Concerning"
@@ -489,26 +504,21 @@ def main():
     parser.add_argument(
         "--start_id",
         type=int,
-        default=733,
+        default=734,
         help="Start from this ms-train ID (avoids educational SFT data)"
     )
     parser.add_argument(
-        "--end_id",
+        "--num_rows",
         type=int,
-        default=857,
-        help="End at this ms-train ID (125 rows total)"
+        default=125,
+        help="Number of rows to use (will generate 4x examples)"
     )
     parser.add_argument(
         "--use_gpt",
         action="store_true",
         help="Use GPT for higher quality reasoning (costs ~$0.05)"
     )
-    parser.add_argument(
-        "--gpt_model",
-        type=str,
-        default="gpt-4o-mini",
-        help="OpenAI model to use (default: gpt-4o-mini)"
-    )
+
     parser.add_argument(
         "--output_path",
         type=str,
@@ -517,10 +527,10 @@ def main():
     )
     args = parser.parse_args()
     
-    # Validate GPT setup if requested
+    # Validate GPT-5 setup if requested
     if args.use_gpt:
-        if not HAS_OPENAI:
-            print("❌ OpenAI library not installed. Run: pip install openai")
+        if not HAS_REQUESTS:
+            print("❌ requests library not installed. Run: pip install requests")
             print("   Falling back to template-based generation...")
             args.use_gpt = False
         elif not os.getenv("OPENAI_API_KEY"):
@@ -532,11 +542,11 @@ def main():
     print("GAME FORMAT ADAPTATION DATA GENERATION")
     print("=" * 70)
     print(f"\nGoal: Teach model game format + strategic reasoning")
-    print(f"Data: ms-train-{args.start_id} to ms-train-{args.end_id}")
+    print(f"Data: Starting from ms-train-{args.start_id}, taking {args.num_rows} rows")
     print(f"Format: PRE-FILL CoT (matches educational SFT + GRPO)")
-    print(f"Mode: {'GPT-augmented' if args.use_gpt else 'Template-based'}")
+    print(f"Mode: {'GPT-5 augmented' if args.use_gpt else 'Template-based'}")
     if args.use_gpt:
-        print(f"Model: {args.gpt_model}")
+        print(f"Model: gpt-5 (Responses API)")
     
     # Load MEDEC data
     print(f"\n📂 Loading MEDEC data from {args.medec_path}")
@@ -544,16 +554,30 @@ def main():
         reader = csv.DictReader(f)
         rows = list(reader)
     
-    # Filter to specified range with Error Flag = 1
+    # Filter to Error Flag = 1, starting from start_id
     filtered_rows = [
         r for r in rows
         if r['Error Flag'] == '1'
-        and args.start_id <= int(r['Text ID'].split('-')[-1]) <= args.end_id
+        and int(r['Text ID'].split('-')[-1]) >= args.start_id
         and r['Text'].strip() and r['Corrected Text'].strip()
     ]
     
+    # Sort by ID and take first num_rows
+    filtered_rows = sorted(
+        filtered_rows, 
+        key=lambda x: int(x['Text ID'].split('-')[-1])
+    )[:args.num_rows]
+    
+    # Show ID range
+    if filtered_rows:
+        ids = [int(r['Text ID'].split('-')[-1]) for r in filtered_rows]
+        id_range = f"ms-train-{min(ids)} to ms-train-{max(ids)}"
+    else:
+        id_range = "None"
+    
     print(f"\n📊 Data Analysis:")
-    print(f"  Total rows in range: {len(filtered_rows)}")
+    print(f"  Rows found: {len(filtered_rows)}")
+    print(f"  ID range: {id_range}")
     print(f"  Will generate: {len(filtered_rows) * 4} examples")
     
     # Count error types

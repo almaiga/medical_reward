@@ -1,0 +1,71 @@
+✅ GAME FORMAT ADAPTATION - READY TO RUN WITH GPT-5
+
+Created comprehensive game format adaptation system using GPT-5 for highest quality strategic reasoning.
+
+FILES CREATED:
+==============
+1. script/generate_game_format_adaptation.py
+   - Generates 500 examples from ms-train-733 to 857
+   - Uses GPT-5 Responses API for strategic reasoning
+   - Pre-fill CoT format (matches educational SFT + GRPO)
+   - Template fallback if GPT-5 unavailable
+
+2. run_generate_game_adaptation.sh
+   - Bash script to generate data with GPT-5
+   - Checks for API key
+   - ~13 minutes, ~$0.10-0.15
+
+3. run_sft_game_adaptation.sh
+   - Bash script for adaptation training
+   - 1 epoch, low LR (1e-5)
+   - ~30 minutes
+
+4. GAME_FORMAT_ADAPTATION_READY.md
+   - Complete documentation
+   - Examples, rationale, usage
+
+5. QUICK_START_GAME_ADAPTATION.md
+   - Quick start guide
+   - Step-by-step instructions
+
+KEY FEATURES:
+=============
+✓ GPT-5 Responses API (highest quality)
+✓ Strategic reasoning for attacker & assessor
+✓ Pre-fill format (matches educational SFT)
+✓ Clean data separation (ms-train-733+)
+✓ Balanced 50/50 attacker/assessor
+✓ Balanced 50/50 harmful/safe
+✓ Error-type specific reasoning
+
+USAGE:
+======
+1. export OPENAI_API_KEY='your-key'
+2. bash run_generate_game_adaptation.sh
+3. Update MODEL_ID in run_sft_game_adaptation.sh
+4. bash run_sft_game_adaptation.sh
+5. Run GRPO training!
+
+COST & TIME:
+============
+- Data generation: ~13 min, ~$0.10-0.15
+- Adaptation training: ~30 min, free
+- Total: ~43 min, ~$0.10-0.15
+
+WHY GPT-5:
+==========
+- Deepest strategic reasoning
+- Most sophisticated thinking patterns
+- Best medical knowledge integration
+- Highest quality adaptation data
+- Worth the extra cost vs GPT-4o-mini
+
+NEXT STEPS:
+===========
+1. Set OPENAI_API_KEY
+2. Run: bash run_generate_game_adaptation.sh
+3. Wait ~13 minutes for 500 examples
+4. Update model path
+5. Run: bash run_sft_game_adaptation.sh
+6. Wait ~30 minutes for adaptation
+7. Run GRPO training with adapted model!
