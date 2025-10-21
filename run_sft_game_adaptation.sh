@@ -55,7 +55,7 @@ echo "  - Expected time: ~30 minutes"
 echo ""
 
 # Run adaptation training
-python3 script/train_qwen3_sft.py \
+python3 script/train_qwen3_trl.py \
     --model_id "$MODEL_ID" \
     --data_path "$DATA_PATH" \
     --epochs 1 \
