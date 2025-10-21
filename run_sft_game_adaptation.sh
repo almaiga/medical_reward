@@ -126,4 +126,4 @@ echo "  python3 script/train_selfplay_advanced.py \\"
 echo "    --model_id $OUTPUT_DIR \\"
 echo "    --num_samples 16 \\"
 echo "    --rounds 3"
-echo ""
+echo 
