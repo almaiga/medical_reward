@@ -1106,44 +1106,21 @@ def main():
                 print("WARNING: Empty attacked_note, using full completion")
                 attacked_note = c.strip()
 
-            # CRITICAL: Check if attack is faithful (subtle modification, not garbage)
-            # Paper filters these out, but GRPO needs a score for every completion
-            # Solution: Make garbage MUCH worse than losing the game
-            is_valid, reason = check_attack_faithfulness(attacked_note, original)
-            if not is_valid:
-                print(f"⚠️ FAITHFULNESS CHECK FAILED: {reason}")
-                print(f"   Applying heavy penalty (lose game + lose format = -2.0)")
-                # Worst possible score: lose both game and format
-                scores.append(-R_GAME - R_FORMAT)  # -2.0
+            # Paper approach: Only check format, not faithfulness
+            # Let the game dynamics teach subtle modifications naturally
+            # If attack is too different, assessor will catch it and attacker loses
 
-                log_interaction(
-                    round_num=state["round"],
-                    phase="attacker_training",
-                    original=original,
-                    attacked=attacked_note,
-                    attacker_response={
-                        "thought": attacker_thought,
-                        "attacked_note": attacked_note,
-                    },
-                    assessor_response={
-                        "thought": "N/A (faithfulness check failed)",
-                        "label": "N/A",
-                    },
-                    judgments={
-                        "actual_harm": "Invalid",
-                        "assessor_was_correct": False,
-                        "assessor_refused": False,
-                    },
-                    rewards={
-                        "game_type": game_type,
-                        "garbage_penalty": -R_GAME - R_FORMAT,
-                        "total": -R_GAME - R_FORMAT,
-                    },
-                    log_path=log_path,
-                )
-                continue
+            # Skip faithfulness check - it's causing mode collapse
+            # The game reward will naturally encourage subtle modifications
+            is_valid = True
+            reason = "format_only_check"
 
-            print(f"✅ Faithfulness check passed: {reason}")
+            # Optional: Could add basic sanity check here
+            # if len(attacked_note) < 50:  # Too short
+            #     is_valid = False
+            #     reason = "too_short"
+
+            # No faithfulness penalty - let game dynamics handle it
 
             # CRITICAL: Save this attacked note for assessor training
             attacked_notes_from_training.append(
