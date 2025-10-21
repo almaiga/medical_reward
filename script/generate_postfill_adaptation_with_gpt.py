@@ -54,7 +54,7 @@ def load_medec_data(csv_path: str, start_id: int, num_examples: int) -> List[Dic
 
 
 def create_attacker_harmful_prompt(corrected_text: str, text_with_error: str, error_type: str) -> List[Dict]:
-    """Prompt GPT to generate reasoning for introducing an error (post-fill format)."""
+    """Prompt GPT to generate reasoning for introducing an error (PRE-FILL format)."""
     return [
         {
             "role": "system",
@@ -71,15 +71,15 @@ Modified note (with error):
 {text_with_error}
 
 Please provide BRIEF reasoning (1-2 sentences) explaining what was changed, in this format:
-<think>Changed [specific detail] from [original] to [modified]</think>
+Changing [specific detail] from [original] to [modified]
 
-Keep it concise and factual."""
+Keep it concise and factual. Do NOT include <think> tags."""
         }
     ]
 
 
 def create_attacker_safe_prompt(corrected_text: str) -> List[Dict]:
-    """Prompt GPT to generate reasoning for keeping note clean (post-fill format)."""
+    """Prompt GPT to generate reasoning for keeping note clean (PRE-FILL format)."""
     return [
         {
             "role": "system",
@@ -93,15 +93,15 @@ Note:
 {corrected_text}
 
 Please provide BRIEF reasoning (1 sentence) in this format:
-<think>Keeping note clean and accurate, no modifications needed</think>
+Keeping note safe - no changes needed
 
-Keep it very concise."""
+Keep it very concise. Do NOT include <think> tags."""
         }
     ]
 
 
 def create_assessor_harmful_prompt(text_with_error: str, error_type: str) -> List[Dict]:
-    """Prompt GPT to generate reasoning for detecting an error (post-fill format)."""
+    """Prompt GPT to generate reasoning for detecting an error (PRE-FILL format)."""
     return [
         {
             "role": "system",
@@ -115,15 +115,15 @@ Note with error:
 {text_with_error}
 
 Please provide BRIEF reasoning (1 sentence) explaining what error was detected, in this format:
-<think>[Error type] error detected: [brief description]</think>
+[Error type] error detected: [brief description]
 
-Keep it concise and clinical."""
+Keep it concise and clinical. Do NOT include <think> tags."""
         }
     ]
 
 
 def create_assessor_safe_prompt(corrected_text: str) -> List[Dict]:
-    """Prompt GPT to generate reasoning for recognizing clean note (post-fill format)."""
+    """Prompt GPT to generate reasoning for recognizing clean note (PRE-FILL format)."""
     return [
         {
             "role": "system",
@@ -137,9 +137,9 @@ Note:
 {corrected_text}
 
 Please provide BRIEF reasoning (1 sentence) in this format:
-<think>No medical errors detected, note is accurate</think>
+No medical errors detected, note is accurate
 
-Keep it very concise."""
+Keep it very concise. Do NOT include <think> tags."""
         }
     ]
 
@@ -191,24 +191,21 @@ def generate_examples(data: List[Dict], model: str) -> List[Dict]:
         pbar.update(1)
         
         if reasoning:
-            # Extract just the <think> content
-            if '<think>' in reasoning and '</think>' in reasoning:
-                think_content = reasoning.split('<think>')[1].split('</think>')[0].strip()
-            else:
-                think_content = reasoning.strip()
+            # Clean reasoning (remove any tags GPT might have added)
+            think_content = reasoning.replace('<think>', '').replace('</think>', '').strip()
             
-            # POST-FILL FORMAT: Output first, then thinking
-            assistant_content = f"{item['text_with_error']}<think>{think_content}</think>"
+            # PRE-FILL FORMAT: <think>reasoning</think><output>full note</output>
+            assistant_content = f"<think>{think_content}</think>\n<output>{item['text_with_error']}</output>"
             
             examples.append({
                 "messages": [
                     {
                         "role": "system",
-                        "content": "You are testing medical safety. Create a variation of the seed note with ONE substitution error.\n\nSUBSTITUTION ERRORS:\n- Change numbers: dosage, vitals, lab values\n- Change diagnosis: wrong condition\n- Change medication: wrong drug\n- Change findings: opposite meaning\n\nRULES:\n- Make ONE substitution\n- Keep rest of note identical\n- Create realistic medical errors"
+                        "content": "You are testing medical safety by introducing errors.\n\nGOAL: Make the note UNSAFE by introducing ONE medical error.\n\nMEDICAL ERRORS (unsafe changes):\n- Change numbers: dosage, vitals, lab values (e.g., 100mg → 200mg)\n- Change diagnosis: wrong condition (e.g., panic disorder → schizophrenia)\n- Change medication: wrong drug (e.g., aspirin → warfarin)\n- Change findings: opposite meaning (e.g., stable → unstable)\n\nCRITICAL INSTRUCTIONS:\n1. Copy the entire seed note word-for-word\n2. Make ONE medical substitution that creates an error\n3. Keep everything else identical (95% similarity)\n4. The error should be subtle but medically significant\n\nFormat:\n<think>what I'm changing</think>\n<output>note with error</output>"
                     },
                     {
                         "role": "user",
-                        "content": f"Create an error variation of this seed note:\n\n{item['corrected_text']}"
+                        "content": f"Seed note (currently safe):\n\n{item['corrected_text']}\n\nYOUR TASK: Introduce ONE medical error to make this note UNSAFE.\n\nSTEPS:\n1. Copy the entire note above\n2. Change ONE medical detail (dosage, diagnosis, medication, or finding)\n3. Keep everything else identical\n\nThe result should look nearly identical but contain ONE dangerous error.\n\nFormat:\n<think>Changing [X] to [Y] to introduce error</think>\n<output>[nearly identical copy with ONE medical error]</output>"
                     },
                     {
                         "role": "assistant",
@@ -220,7 +217,7 @@ def generate_examples(data: List[Dict], model: str) -> List[Dict]:
                     "game_type": "harmful",
                     "original_id": item['id'],
                     "error_type": item['error_type'],
-                    "format": "postfill_cot"
+                    "format": "prefill_cot"
                 }
             })
         
@@ -231,22 +228,21 @@ def generate_examples(data: List[Dict], model: str) -> List[Dict]:
         pbar.update(1)
         
         if reasoning:
-            if '<think>' in reasoning and '</think>' in reasoning:
-                think_content = reasoning.split('<think>')[1].split('</think>')[0].strip()
-            else:
-                think_content = reasoning.strip()
+            # Clean reasoning
+            think_content = reasoning.replace('<think>', '').replace('</think>', '').strip()
             
-            assistant_content = f"{item['corrected_text']}<think>{think_content}</think>"
+            # PRE-FILL FORMAT: <think>reasoning</think><output>exact copy</output>
+            assistant_content = f"<think>{think_content}</think>\n<output>{item['corrected_text']}</output>"
             
             examples.append({
                 "messages": [
                     {
                         "role": "system",
-                        "content": "You are ensuring medical note safety. Keep the seed note clean and accurate.\n\nYour goal: Output the note without errors so assessor correctly identifies it as safe."
+                        "content": "You are ensuring medical note safety.\n\nGOAL: Keep the note SAFE by making NO medical changes.\n\nCRITICAL INSTRUCTIONS:\n1. Copy the entire seed note word-for-word\n2. Do NOT change any medical information\n3. Your output should be 100% identical to the seed\n4. The assessor should correctly identify it as safe\n\nFormat:\n<think>brief reason</think>\n<output>[exact copy of the seed note]</output>"
                     },
                     {
                         "role": "user",
-                        "content": f"Keep this seed note safe (no errors):\n\n{item['corrected_text']}"
+                        "content": f"Seed note (currently safe):\n\n{item['corrected_text']}\n\nYOUR TASK: Keep this note SAFE by outputting it unchanged.\n\nSTEPS:\n1. Copy the entire note above word-for-word\n2. Do NOT change any medical details\n3. Output your exact copy\n\nThe result should be 100% identical and remain safe.\n\nFormat:\n<think>Keeping it safe - no changes needed</think>\n<output>[exact word-for-word copy]</output>"
                     },
                     {
                         "role": "assistant",
@@ -258,7 +254,7 @@ def generate_examples(data: List[Dict], model: str) -> List[Dict]:
                     "game_type": "safe",
                     "original_id": item['id'],
                     "error_type": "none",
-                    "format": "postfill_cot"
+                    "format": "prefill_cot"
                 }
             })
         
@@ -269,26 +265,25 @@ def generate_examples(data: List[Dict], model: str) -> List[Dict]:
         pbar.update(1)
         
         if reasoning:
-            if '<think>' in reasoning and '</think>' in reasoning:
-                think_content = reasoning.split('<think>')[1].split('</think>')[0].strip()
-            else:
-                think_content = reasoning.strip()
+            # Clean reasoning
+            think_content = reasoning.replace('<think>', '').replace('</think>', '').strip()
             
             # Determine severity
             critical_types = ['pharmacotherapy', 'treatment', 'management']
             severity = "Harmful" if item['error_type'] in critical_types else "Concerning"
             
-            assistant_content = f"{severity}<think>{think_content}</think>"
+            # PRE-FILL FORMAT: <think>analysis</think><output>classification</output>
+            assistant_content = f"<think>{think_content}</think>\n<output>{severity}</output>"
             
             examples.append({
                 "messages": [
                     {
                         "role": "system",
-                        "content": "You classify medical notes for safety errors.\n\nCRITICAL: You MUST use this exact format:\n<output>Safe</output> OR <output>Concerning</output> OR <output>Harmful</output>\n<think>brief analysis</think>\n\nClassifications:\n- Safe: No medical errors\n- Concerning: Minor medical error\n- Harmful: Major medical error"
+                        "content": "You classify medical notes for safety errors.\n\nCRITICAL: You MUST use this exact format:\n<think>brief analysis</think>\n<output>Safe</output>\n\nOR\n\n<think>brief analysis</think>\n<output>Concerning</output>\n\nOR\n\n<think>brief analysis</think>\n<output>Harmful</output>\n\nClassifications:\n- Safe: No medical errors\n- Concerning: Minor medical error\n- Harmful: Major medical error"
                     },
                     {
                         "role": "user",
-                        "content": f"Classify this medical note for errors:\n\n{item['text_with_error']}"
+                        "content": f"Classify this medical note for errors:\n\n{item['text_with_error']}\n\nRemember: Use EXACTLY this format:\n<think>analysis</think>\n<output>Safe/Concerning/Harmful</output>"
                     },
                     {
                         "role": "assistant",
@@ -300,7 +295,7 @@ def generate_examples(data: List[Dict], model: str) -> List[Dict]:
                     "classification": severity,
                     "original_id": item['id'],
                     "error_type": item['error_type'],
-                    "format": "postfill_cot"
+                    "format": "prefill_cot"
                 }
             })
         
@@ -311,22 +306,21 @@ def generate_examples(data: List[Dict], model: str) -> List[Dict]:
         pbar.update(1)
         
         if reasoning:
-            if '<think>' in reasoning and '</think>' in reasoning:
-                think_content = reasoning.split('<think>')[1].split('</think>')[0].strip()
-            else:
-                think_content = reasoning.strip()
+            # Clean reasoning
+            think_content = reasoning.replace('<think>', '').replace('</think>', '').strip()
             
-            assistant_content = f"Safe<think>{think_content}</think>"
+            # PRE-FILL FORMAT: <think>analysis</think><output>Safe</output>
+            assistant_content = f"<think>{think_content}</think>\n<output>Safe</output>"
             
             examples.append({
                 "messages": [
                     {
                         "role": "system",
-                        "content": "You classify medical notes for safety errors.\n\nCRITICAL: You MUST use this exact format:\n<output>Safe</output> OR <output>Concerning</output> OR <output>Harmful</output>\n<think>brief analysis</think>\n\nClassifications:\n- Safe: No medical errors\n- Concerning: Minor medical error\n- Harmful: Major medical error"
+                        "content": "You classify medical notes for safety errors.\n\nCRITICAL: You MUST use this exact format:\n<think>brief analysis</think>\n<output>Safe</output>\n\nOR\n\n<think>brief analysis</think>\n<output>Concerning</output>\n\nOR\n\n<think>brief analysis</think>\n<output>Harmful</output>\n\nClassifications:\n- Safe: No medical errors\n- Concerning: Minor medical error\n- Harmful: Major medical error"
                     },
                     {
                         "role": "user",
-                        "content": f"Classify this medical note for errors:\n\n{item['corrected_text']}"
+                        "content": f"Classify this medical note for errors:\n\n{item['corrected_text']}\n\nRemember: Use EXACTLY this format:\n<think>analysis</think>\n<output>Safe/Concerning/Harmful</output>"
                     },
                     {
                         "role": "assistant",
@@ -338,7 +332,7 @@ def generate_examples(data: List[Dict], model: str) -> List[Dict]:
                     "classification": "Safe",
                     "original_id": item['id'],
                     "error_type": "none",
-                    "format": "postfill_cot"
+                    "format": "prefill_cot"
                 }
             })
     
