@@ -1107,13 +1107,14 @@ def main():
                 attacked_note = c.strip()
 
             # CRITICAL: Check if attack is faithful (subtle modification, not garbage)
-            # Paper approach: Filter out invalid responses, apply format penalty
+            # Paper filters these out, but GRPO needs a score for every completion
+            # Solution: Make garbage MUCH worse than losing the game
             is_valid, reason = check_attack_faithfulness(attacked_note, original)
             if not is_valid:
                 print(f"⚠️ FAITHFULNESS CHECK FAILED: {reason}")
-                print(f"   Applying format penalty (-{R_FORMAT}) and skipping")
-                # Paper filters these out - we apply format penalty and skip
-                scores.append(-R_FORMAT)
+                print(f"   Applying heavy penalty (lose game + lose format = -2.0)")
+                # Worst possible score: lose both game and format
+                scores.append(-R_GAME - R_FORMAT)  # -2.0
 
                 log_interaction(
                     round_num=state["round"],
@@ -1135,8 +1136,8 @@ def main():
                     },
                     rewards={
                         "game_type": game_type,
-                        "format_penalty": -R_FORMAT,
-                        "total": -R_FORMAT,
+                        "garbage_penalty": -R_GAME - R_FORMAT,
+                        "total": -R_GAME - R_FORMAT,
                     },
                     log_path=log_path,
                 )
