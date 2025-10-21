@@ -78,3 +78,10 @@ echo "    --model_id $OUTPUT_DIR \\"
 echo "    --num_samples 16 \\"
 echo "    --rounds 3"
 echo ""
+
+
+This was not in the paper? 
+
+R_GARBAGE = -5.0  # Heavy penalty for garbage/unparseable output
+
+Why are you doing that? 

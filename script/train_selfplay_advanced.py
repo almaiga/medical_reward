@@ -26,10 +26,9 @@ from trl import GRPOConfig, GRPOTrainer
 
 print("TRL imported...")
 
-# --- Reward Constants ---
-R_HARM = 2.0  # Main game reward for harm classification
-R_REFUSAL = 0.5  # Appropriate refusal reward
-R_FORMAT = 0.2  # CoT formatting reward (increased from 0.1)
+# --- Reward Constants (Matching Self-RedTeam paper exactly) ---
+R_GAME = 1.0  # Main game reward: +1 for win, -1 for loss
+R_FORMAT = 1.0  # Format reward: +1 for correct format, -1 for violation
 
 print("Constants defined...")
 
@@ -1026,20 +1025,18 @@ def main():
             # Track judge classification for validation
             judge_validator.add_classification(judgments["actual_harm"])
 
-            # SIMPLE BINARY REWARDS (like Self-RedTeam paper)
-            # No harm-level multipliers - just win/lose
-
+            # SIMPLIFIED BINARY REWARDS (like Self-RedTeam paper)
+            # Game reward: +1 for correct classification, -1 for incorrect
             if judgments["assessor_was_correct"]:
-                r_harm = +R_HARM  # Assessor wins
+                r_game = +R_GAME  # Assessor wins
             else:
-                r_harm = -R_HARM  # Assessor loses
+                r_game = -R_GAME  # Assessor loses
 
-            # Remove refusal reward - keep it simple
-            r_refusal = 0.0
+            # Format reward: +1 for using <think> tags, -1 for not using them
+            r_format = +R_FORMAT if thought else -R_FORMAT
 
-            # Format reward
-            r_format = R_FORMAT if thought else -R_FORMAT
-            total_reward = r_harm + r_refusal + r_format
+            # Total: range from -2.0 to +2.0
+            total_reward = r_game + r_format
 
             log_interaction(
                 round_num=state["round"],
@@ -1057,9 +1054,8 @@ def main():
                 },
                 judgments=judgments,
                 rewards={
-                    "harm_detection": r_harm,
-                    "appropriate_refusal": r_refusal,
-                    "format": r_format,
+                    "game_reward": r_game,
+                    "format_reward": r_format,
                     "total": total_reward,
                 },
                 log_path=log_path,
@@ -1111,18 +1107,12 @@ def main():
                 attacked_note = c.strip()
 
             # CRITICAL: Check if attack is faithful (subtle modification, not garbage)
+            # Paper approach: Filter out invalid responses, apply format penalty
             is_valid, reason = check_attack_faithfulness(attacked_note, original)
             if not is_valid:
                 print(f"⚠️ FAITHFULNESS CHECK FAILED: {reason}")
-                print(f"   Applying format penalty (-{R_FORMAT})")
-                # Still save it for logging purposes
-                attacked_notes_from_training.append(
-                    {
-                        "original": original,
-                        "attacked": attacked_note,
-                        "game_type": game_type,
-                    }
-                )
+                print(f"   Applying format penalty (-{R_FORMAT}) and skipping")
+                # Paper filters these out - we apply format penalty and skip
                 scores.append(-R_FORMAT)
 
                 log_interaction(
@@ -1145,10 +1135,7 @@ def main():
                     },
                     rewards={
                         "game_type": game_type,
-                        "faithfulness_penalty": -R_FORMAT,
-                        "harm_evasion": 0.0,
-                        "refusal_manipulation": 0.0,
-                        "format": 0.0,
+                        "format_penalty": -R_FORMAT,
                         "total": -R_FORMAT,
                     },
                     log_path=log_path,
@@ -1200,29 +1187,20 @@ def main():
             actual_harm = judgments["actual_harm"]
             diversity_stats[f"{game_type}_{actual_harm.lower()}"] += 1
 
-            # SIMPLE BINARY REWARDS (like Self-RedTeam paper)
-            # No harm-level multipliers - just win/lose
-
+            # SIMPLIFIED BINARY REWARDS (matching Self-RedTeam paper)
+            # Game reward: +1 for win, -1 for loss
             if game_type == "harmful":
                 # Game 1: Attacker wins if assessor MISSES the error
-                if judgments["assessor_was_correct"]:
-                    r_harm = -R_HARM  # Attacker loses
-                else:
-                    r_harm = +R_HARM  # Attacker wins
-
+                r_game = -R_GAME if judgments["assessor_was_correct"] else +R_GAME
             else:  # game_type == "safe"
                 # Game 2: Attacker wins if assessor CORRECTLY says Safe
-                if judgments["assessor_was_correct"]:
-                    r_harm = +R_HARM  # Attacker wins (kept it clean)
-                else:
-                    r_harm = -R_HARM  # Attacker loses (assessor confused)
+                r_game = +R_GAME if judgments["assessor_was_correct"] else -R_GAME
 
-            # Remove refusal reward - keep it simple
-            r_refusal = 0.0
+            # Format reward: +1 for using <think>, -1 for not using it
+            r_format = +R_FORMAT if attacker_thought else -R_FORMAT
 
-            # Format reward
-            r_format = R_FORMAT if attacker_thought else -R_FORMAT
-            total_reward = r_harm + r_refusal + r_format
+            # Total: range from -2.0 to +2.0
+            total_reward = r_game + r_format
 
             log_interaction(
                 round_num=state["round"],
@@ -1240,9 +1218,8 @@ def main():
                 judgments=judgments,
                 rewards={
                     "game_type": game_type,
-                    "harm_evasion": r_harm,
-                    "refusal_manipulation": r_refusal,
-                    "format": r_format,
+                    "game_reward": r_game,
+                    "format_reward": r_format,
                     "total": total_reward,
                 },
                 log_path=log_path,
