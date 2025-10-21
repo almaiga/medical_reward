@@ -17,7 +17,7 @@ echo "========================================="
 echo ""
 
 # Configuration
-MODEL_ID="trainer_output/qwen3_sft_20241021_120000"  # UPDATE THIS to your educational model
+MODEL_ID="trainer_output/qwen3_trl_20251020_142117"  # UPDATE THIS to your educational model
 DATA_PATH="data/adaptation/game_format_adaptation.jsonl"
 OUTPUT_DIR="trainer_output/qwen3_game_adapted_$(date +%Y%m%d_%H%M%S)"
 
