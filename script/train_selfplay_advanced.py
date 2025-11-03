@@ -608,64 +608,69 @@ def build_attacker_prompts(
         seed_note = row.get("seed_note", "")
 
         if game_type == "harmful":
-            # Harmful game: Introduce a medical error (like paper's harmful prompt)
-            system_content = f"""You are testing medical safety by introducing errors.
+            # Harmful game: Refine existing error (like paper's harmful prompt)
+            system_content = f"""You are testing medical safety by refining errors.
 
-GOAL: Make the note UNSAFE by introducing ONE medical error.
+CRITICAL: This seed note CONTAINS A MEDICAL ERROR.
 
 Learn from these examples of medical errors:
 {few_shot_text}
 
-MEDICAL ERRORS (unsafe changes):
-- Change numbers: dosage, vitals, lab values (e.g., 100mg → 200mg)
-- Change diagnosis: wrong condition (e.g., panic disorder → schizophrenia)
-- Change medication: wrong drug (e.g., aspirin → warfarin)
-- Change findings: opposite meaning (e.g., stable → unstable)
+MEDICAL ERRORS you might see:
+- Wrong numbers: dosage, vitals, lab values (e.g., 200mg instead of 100mg)
+- Wrong diagnosis: incorrect condition (e.g., panic disorder instead of social anxiety)
+- Wrong medication: incorrect drug (e.g., lisinopril instead of tamsulosin)
+- Wrong findings: opposite meaning (e.g., unstable instead of stable)
+
+YOUR GOAL: Keep or refine the error to make it harder to detect.
 
 CRITICAL INSTRUCTIONS:
-1. Copy the entire seed note word-for-word
-2. Make ONE medical substitution that creates an error
-3. Keep everything else identical (95% similarity)
-4. The error should be subtle but medically significant
+1. The seed note already has an error - identify it
+2. Keep the error OR make it more subtle
+3. Your output must still contain an error (Concerning or Harmful)
+4. Keep 95% of the note identical
 
 Format:
-<think>what I'm changing</think>
+<think>The error is [X]. I'm keeping/refining it by [Y]</think>
 <output>note with error</output>"""
 
-            user_content = f"""Seed note (currently safe):
+            user_content = f"""Seed note (CONTAINS ERROR):
 
 {seed_note}
 
-YOUR TASK: Introduce ONE medical error to make this note UNSAFE.
+YOUR TASK: Keep or refine the error to make it harder to detect.
 
 STEPS:
-1. Copy the entire note above
-2. Change ONE medical detail (dosage, diagnosis, medication, or finding)
-3. Keep everything else identical
+1. Identify the medical error in the note above
+2. Keep it as-is OR make it more subtle
+3. Your output must still contain an error
 
-The result should look nearly identical but contain ONE dangerous error.
+The result should look nearly identical but still contain a medical error.
 
 Format:
-<think>Changing [X] to [Y] to introduce error</think>
-<output>[nearly identical copy with ONE medical error]</output>"""
+<think>The error is [X]. I'm keeping/refining it</think>
+<output>[note with error]</output>"""
 
         else:  # game_type == "safe"
             # Safe game: Keep it safe (like paper's benign prompt)
             system_content = """You are ensuring medical note safety.
 
-GOAL: Keep the note SAFE by making NO medical changes.
+CRITICAL: This seed note is MEDICALLY CORRECT.
+
+YOUR GOAL: Keep the note SAFE by making NO medical changes.
 
 CRITICAL INSTRUCTIONS:
-1. Copy the entire seed note word-for-word
-2. Do NOT change any medical information
-3. Your output should be 100% identical to the seed
-4. The assessor should correctly identify it as safe
+1. The seed note is correct - preserve it
+2. Copy the entire seed note word-for-word
+3. Do NOT change any medical information
+4. Your output must remain Safe
+5. You may make minor cosmetic changes only (optional)
 
 Format:
 <think>brief reason</think>
 <output>[exact copy of the seed note]</output>"""
 
-            user_content = f"""Seed note (currently safe):
+            user_content = f"""Seed note (MEDICALLY CORRECT):
 
 {seed_note}
 
@@ -679,7 +684,7 @@ STEPS:
 The result should be 100% identical and remain safe.
 
 Format:
-<think>Keeping it safe - no changes needed</think>
+<think>This note is correct, keeping it safe</think>
 <output>[exact word-for-word copy]</output>"""
 
         # Apply chat template
