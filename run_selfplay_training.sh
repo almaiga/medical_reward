@@ -19,10 +19,10 @@ fi
 
 # Configuration
 JUDGE_MODEL="google/medgemma-4b-it"
-NUM_SAMPLES=16
+NUM_SAMPLES=32
 NUM_GENERATIONS=4  # Increased for better reward variance
 LEARNING_RATE=1e-5  # Increased from 1e-5 to restore meaningful gradients
-ROUNDS=2
+ROUNDS=4
 MAX_ASSESSOR_BATCH=64
 
 echo ""
