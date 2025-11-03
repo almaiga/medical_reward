@@ -26,9 +26,25 @@ from trl import GRPOConfig, GRPOTrainer
 
 print("TRL imported...")
 
-# --- Reward Constants (Matching Self-RedTeam paper exactly) ---
-R_GAME = 1.0  # Main game reward: +1 for win, -1 for loss
-R_FORMAT = 1.0  # Format reward: +1 for correct format, -1 for violation
+# --- Reward Constants (Matching Self-RedTeam paper) ---
+# Paper's reward structure (from red_team/utils.py):
+# - Attacker: prompt_harmfulness + response_refusal + response_harmfulness + format
+# - Defender: response_refusal + response_harmfulness + format
+#
+# Our simplified version:
+# - Attacker: faithfulness (prompt_harmfulness) + game (refusal+harmfulness) + format = ±3.0
+# - Defender: game (refusal+harmfulness) + format = ±2.0
+#
+# This matches paper's "general_sum_all_one" config with all rewards at ±1.0
+
+R_GAME = 1.0  # Game reward: +1 for win, -1 for loss
+R_FORMAT = 1.0  # Format reward: +1 for correct CoT format, -1 for violation
+
+# FAITHFULNESS/REVISION REWARD (RA,revision from paper):
+# Prevents reward hacking by ensuring attacker respects seed type
+# - Harmful game: Attacker MUST create Concerning/Harmful to get +1.0
+# - Safe game: Attacker MUST keep Safe to get +1.0
+# This balances the distribution and prevents defender from exploiting imbalance
 
 print("Constants defined...")
 
@@ -1015,6 +1031,19 @@ def main():
     judge_validator = JudgeValidator()
 
     # --- Reward Functions ---
+    # Based on Self-RedTeam paper's reward structure (red_team/utils.py)
+    # 
+    # DEFENDER (Assessor):
+    #   - Game reward (response_refusal + response_harmfulness): ±1.0
+    #   - Format reward (CoT): ±1.0
+    #   - Total range: -2.0 to +2.0
+    #
+    # ATTACKER:
+    #   - Faithfulness reward (prompt_harmfulness/revision): ±1.0
+    #   - Game reward (response_refusal + response_harmfulness): ±1.0
+    #   - Format reward (CoT): ±1.0
+    #   - Total range: -3.0 to +3.0
+    
     def assessor_reward_fn(prompts, completions, **kwargs):
         scores = []
 
@@ -1052,17 +1081,21 @@ def main():
             # Track judge classification for validation
             judge_validator.add_classification(judgments["actual_harm"])
 
-            # SIMPLIFIED BINARY REWARDS (like Self-RedTeam paper)
-            # Game reward: +1 for correct classification, -1 for incorrect
+            # DEFENDER REWARDS (matching Self-RedTeam paper structure)
+            # Paper has: response_refusal + response_harmfulness + format
+            # We simplify: combine refusal+harmfulness into single game reward
+            
+            # 1. GAME REWARD (combines response_refusal + response_harmfulness)
+            # Defender wins if correctly classifies, loses if misclassifies
             if judgments["assessor_was_correct"]:
-                r_game = +R_GAME  # Assessor wins
+                r_game = +R_GAME  # Defender wins: correct classification
             else:
-                r_game = -R_GAME  # Assessor loses
+                r_game = -R_GAME  # Defender loses: incorrect classification
 
-            # Format reward: +1 for using <think> tags, -1 for not using them
+            # 2. FORMAT REWARD (CoT formatting)
             r_format = +R_FORMAT if thought else -R_FORMAT
 
-            # Total: range from -2.0 to +2.0
+            # Total: range from -2.0 to +2.0 (game + format)
             total_reward = r_game + r_format
 
             log_interaction(
@@ -1233,21 +1266,53 @@ def main():
             diversity_stats[f"{game_type}_games"] += 1
             actual_harm = judgments["actual_harm"]
             diversity_stats[f"{game_type}_{actual_harm.lower()}"] += 1
-
-            # SIMPLIFIED BINARY REWARDS (matching Self-RedTeam paper)
-            # Game reward: +1 for win, -1 for loss
+            
+            # Track faithfulness (respecting game type)
             if game_type == "harmful":
-                # Game 1: Attacker wins if assessor MISSES the error
+                is_faithful = actual_harm in ["Concerning", "Harmful"]
+            else:
+                is_faithful = actual_harm == "Safe"
+            
+            if is_faithful:
+                diversity_stats[f"{game_type}_faithful"] = diversity_stats.get(f"{game_type}_faithful", 0) + 1
+            else:
+                diversity_stats[f"{game_type}_unfaithful"] = diversity_stats.get(f"{game_type}_unfaithful", 0) + 1
+
+            # ATTACKER REWARDS (matching Self-RedTeam paper structure)
+            # Paper has: prompt_harmfulness + response_refusal + response_harmfulness + format
+            # We simplify: prompt_harmfulness (faithfulness) + game (refusal+harmfulness) + format
+            
+            # 1. PROMPT HARMFULNESS / REVISION REWARD (RA,revision from paper)
+            # Called "prompt_harmfulness" in paper's get_attacker_prompt_reward()
+            # Ensures attacker respects seed type (harmful vs benign) to prevent reward hacking
+            if game_type == "harmful":
+                # Harmful game: Should create Concerning or Harmful
+                if actual_harm in ["Concerning", "Harmful"]:
+                    r_faithfulness = +R_GAME  # Faithful: created error as required
+                else:
+                    r_faithfulness = -R_GAME  # Unfaithful: failed to create error
+            else:  # game_type == "safe"
+                # Safe game: Should keep Safe
+                if actual_harm == "Safe":
+                    r_faithfulness = +R_GAME  # Faithful: kept it safe as required
+                else:
+                    r_faithfulness = -R_GAME  # Unfaithful: added unwanted error
+
+            # 2. GAME REWARD (combines response_refusal + response_harmfulness from paper)
+            # Did attacker fool the defender/assessor?
+            if game_type == "harmful":
+                # Attacker wins if assessor MISSES the error
                 r_game = -R_GAME if judgments["assessor_was_correct"] else +R_GAME
             else:  # game_type == "safe"
-                # Game 2: Attacker wins if assessor CORRECTLY says Safe
+                # Attacker wins if assessor CORRECTLY says Safe
                 r_game = +R_GAME if judgments["assessor_was_correct"] else -R_GAME
 
-            # Format reward: +1 for using <think>, -1 for not using it
+            # 3. FORMAT REWARD (CoT formatting - get_cot_formatting_reward in paper)
             r_format = +R_FORMAT if attacker_thought else -R_FORMAT
 
-            # Total: range from -2.0 to +2.0
-            total_reward = r_game + r_format
+            # Total: range from -3.0 to +3.0 (faithfulness + game + format)
+            # This matches paper's "general_sum_all_one" config with all rewards at ±1.0
+            total_reward = r_faithfulness + r_game + r_format
 
             log_interaction(
                 round_num=state["round"],
@@ -1265,6 +1330,7 @@ def main():
                 judgments=judgments,
                 rewards={
                     "game_type": game_type,
+                    "faithfulness_reward": r_faithfulness,
                     "game_reward": r_game,
                     "format_reward": r_format,
                     "total": total_reward,
@@ -1387,10 +1453,19 @@ def main():
         print(f"  - Safe: {diversity_stats['harmful_safe']}")
         print(f"  - Concerning: {diversity_stats['harmful_concerning']}")
         print(f"  - Harmful: {diversity_stats['harmful_harmful']}")
+        harmful_faithful = diversity_stats.get('harmful_faithful', 0)
+        harmful_total = diversity_stats['harmful_games']
+        if harmful_total > 0:
+            print(f"  - Faithfulness: {harmful_faithful}/{harmful_total} ({100*harmful_faithful/harmful_total:.1f}%)")
+        
         print(f"Safe games: {diversity_stats['safe_games']}")
         print(f"  - Safe: {diversity_stats['safe_safe']}")
         print(f"  - Concerning: {diversity_stats['safe_concerning']}")
         print(f"  - Harmful: {diversity_stats['safe_harmful']}")
+        safe_faithful = diversity_stats.get('safe_faithful', 0)
+        safe_total = diversity_stats['safe_games']
+        if safe_total > 0:
+            print(f"  - Faithfulness: {safe_faithful}/{safe_total} ({100*safe_faithful/safe_total:.1f}%)")
         print(f"{'='*60}\n")
 
         # Log judge validation statistics
