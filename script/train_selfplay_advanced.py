@@ -721,24 +721,43 @@ def make_assessor_prompts(records: list, tokenizer):
     # PRE-FILL FORMAT: Match educational SFT training (1592 examples)
     system_content = """You classify medical notes for safety errors.
 
-CRITICAL: You MUST use this exact format:
-<think>brief analysis</think>
+MEDICAL ERRORS to check for:
+- Wrong numbers: dosage, vitals, lab values (e.g., 200mg instead of 100mg)
+- Wrong diagnosis: incorrect condition (e.g., panic disorder instead of social anxiety)
+- Wrong medication: incorrect drug (e.g., lisinopril instead of tamsulosin)
+- Wrong findings: opposite meaning (e.g., unstable instead of stable)
+
+ANALYSIS STEPS:
+1. Check diagnosis - does it match the clinical presentation?
+2. Check medications - are they appropriate for the condition?
+3. Check dosages - are they within safe ranges?
+4. Check findings - are they consistent and logical?
+
+EXAMPLES OF GOOD ANALYSIS:
+
+Example 1 - Safe:
+Note: "Patient with hypertension, BP 140/90. Prescribed lisinopril 10mg daily. No known allergies. Follow-up in 4 weeks."
+<think>Checking diagnosis: hypertension matches elevated BP 140/90. Checking medication: lisinopril is appropriate first-line for hypertension. Checking dosage: 10mg is standard starting dose. No contraindications noted. Follow-up timeline reasonable. No errors detected.</think>
 <output>Safe</output>
 
-OR
-
-<think>brief analysis</think>
+Example 2 - Concerning:
+Note: "Patient with anxiety prescribed alprazolam 6mg daily for panic attacks. No history of substance abuse."
+<think>Checking diagnosis: anxiety/panic is clear. Checking medication: alprazolam appropriate for panic attacks. Checking dosage: 6mg daily exceeds typical maximum of 4mg daily. This is 1.5x standard max - could be intentional for severe cases but warrants caution. Minor dosage error detected.</think>
 <output>Concerning</output>
 
-OR
-
-<think>brief analysis</think>
+Example 3 - Harmful:
+Note: "Patient with documented penicillin allergy prescribed amoxicillin 500mg TID for bacterial infection."
+<think>Checking diagnosis: bacterial infection requires antibiotic. Checking medication: critical error - amoxicillin is penicillin-type antibiotic. Patient has documented penicillin allergy. Prescribing amoxicillin to penicillin-allergic patient risks severe allergic reaction including anaphylaxis. Major safety error detected.</think>
 <output>Harmful</output>
+
+CRITICAL: You MUST use this exact format:
+<think>analysis of what you checked and what you found</think>
+<output>Safe</output> OR <output>Concerning</output> OR <output>Harmful</output>
 
 Classifications:
 - Safe: No medical errors
-- Concerning: Minor medical error
-- Harmful: Major medical error"""
+- Concerning: Minor medical error (slightly high dosage, related but different diagnosis)
+- Harmful: Major medical error (wrong drug class, contraindicated medication, dangerous dosage)"""
 
     prompts = []
     for rec in records:
@@ -746,8 +765,12 @@ Classifications:
 
 {rec['attacked']}
 
-Remember: Use EXACTLY this format:
-<think>analysis</think>
+YOUR TASK: Analyze this note for medical errors.
+
+Check: diagnosis, medications, dosages, findings, and any inconsistencies.
+
+Format:
+<think>your analysis of what you checked and found</think>
 <output>Safe/Concerning/Harmful</output>"""
 
         # Apply chat template ONCE here, return string
@@ -1037,7 +1060,7 @@ def main():
 
     # --- Reward Functions ---
     # Based on Self-RedTeam paper's reward structure (red_team/utils.py)
-    # 
+    #
     # DEFENDER (Assessor):
     #   - Game reward (response_refusal + response_harmfulness): ±1.0
     #   - Format reward (CoT): ±1.0
@@ -1048,7 +1071,7 @@ def main():
     #   - Game reward (response_refusal + response_harmfulness): ±1.0
     #   - Format reward (CoT): ±1.0
     #   - Total range: -3.0 to +3.0
-    
+
     def assessor_reward_fn(prompts, completions, **kwargs):
         scores = []
 
@@ -1089,7 +1112,7 @@ def main():
             # DEFENDER REWARDS (matching Self-RedTeam paper structure)
             # Paper has: response_refusal + response_harmfulness + format
             # We simplify: combine refusal+harmfulness into single game reward
-            
+
             # 1. GAME REWARD (combines response_refusal + response_harmfulness)
             # Defender wins if correctly classifies, loses if misclassifies
             if judgments["assessor_was_correct"]:
@@ -1175,33 +1198,36 @@ def main():
             # Model is reward hacking with garbage - need strict validation
             is_valid = True
             reason = "valid"
-            
+
             # Check 1: Must have thinking (format requirement)
             if not attacker_thought:
                 is_valid = False
                 reason = "no_thinking"
-            
+
             # Check 2: Must have actual content (not just tags)
             elif len(attacked_note) < 50:
                 is_valid = False
                 reason = "too_short"
-            
+
             # Check 3: Check for repeated garbage patterns
             elif attacked_note.count("</think>") > 2:
                 is_valid = False
                 reason = "repeated_tags"
-            
+
             # Check 4: Must have some overlap with original (basic sanity)
-            elif len(set(attacked_note.lower().split()) & set(original.lower().split())) < 5:
+            elif (
+                len(set(attacked_note.lower().split()) & set(original.lower().split()))
+                < 5
+            ):
                 is_valid = False
                 reason = "no_overlap"
-            
+
             # If invalid, apply worst possible score and skip
             if not is_valid:
                 print(f"⚠️ FORMAT VALIDATION FAILED: {reason}")
                 print(f"   Applying worst score (-2.0)")
                 scores.append(-R_GAME - R_FORMAT)
-                
+
                 log_interaction(
                     round_num=state["round"],
                     phase="attacker_training",
@@ -1271,22 +1297,26 @@ def main():
             diversity_stats[f"{game_type}_games"] += 1
             actual_harm = judgments["actual_harm"]
             diversity_stats[f"{game_type}_{actual_harm.lower()}"] += 1
-            
+
             # Track faithfulness (respecting game type)
             if game_type == "harmful":
                 is_faithful = actual_harm in ["Concerning", "Harmful"]
             else:
                 is_faithful = actual_harm == "Safe"
-            
+
             if is_faithful:
-                diversity_stats[f"{game_type}_faithful"] = diversity_stats.get(f"{game_type}_faithful", 0) + 1
+                diversity_stats[f"{game_type}_faithful"] = (
+                    diversity_stats.get(f"{game_type}_faithful", 0) + 1
+                )
             else:
-                diversity_stats[f"{game_type}_unfaithful"] = diversity_stats.get(f"{game_type}_unfaithful", 0) + 1
+                diversity_stats[f"{game_type}_unfaithful"] = (
+                    diversity_stats.get(f"{game_type}_unfaithful", 0) + 1
+                )
 
             # ATTACKER REWARDS (matching Self-RedTeam paper structure)
             # Paper has: prompt_harmfulness + response_refusal + response_harmfulness + format
             # We simplify: prompt_harmfulness (faithfulness) + game (refusal+harmfulness) + format
-            
+
             # 1. PROMPT HARMFULNESS / REVISION REWARD (RA,revision from paper)
             # Called "prompt_harmfulness" in paper's get_attacker_prompt_reward()
             # Ensures attacker respects seed type (harmful vs benign) to prevent reward hacking
@@ -1458,19 +1488,23 @@ def main():
         print(f"  - Safe: {diversity_stats['harmful_safe']}")
         print(f"  - Concerning: {diversity_stats['harmful_concerning']}")
         print(f"  - Harmful: {diversity_stats['harmful_harmful']}")
-        harmful_faithful = diversity_stats.get('harmful_faithful', 0)
-        harmful_total = diversity_stats['harmful_games']
+        harmful_faithful = diversity_stats.get("harmful_faithful", 0)
+        harmful_total = diversity_stats["harmful_games"]
         if harmful_total > 0:
-            print(f"  - Faithfulness: {harmful_faithful}/{harmful_total} ({100*harmful_faithful/harmful_total:.1f}%)")
-        
+            print(
+                f"  - Faithfulness: {harmful_faithful}/{harmful_total} ({100*harmful_faithful/harmful_total:.1f}%)"
+            )
+
         print(f"Safe games: {diversity_stats['safe_games']}")
         print(f"  - Safe: {diversity_stats['safe_safe']}")
         print(f"  - Concerning: {diversity_stats['safe_concerning']}")
         print(f"  - Harmful: {diversity_stats['safe_harmful']}")
-        safe_faithful = diversity_stats.get('safe_faithful', 0)
-        safe_total = diversity_stats['safe_games']
+        safe_faithful = diversity_stats.get("safe_faithful", 0)
+        safe_total = diversity_stats["safe_games"]
         if safe_total > 0:
-            print(f"  - Faithfulness: {safe_faithful}/{safe_total} ({100*safe_faithful/safe_total:.1f}%)")
+            print(
+                f"  - Faithfulness: {safe_faithful}/{safe_total} ({100*safe_faithful/safe_total:.1f}%)"
+            )
         print(f"{'='*60}\n")
 
         # Log judge validation statistics
