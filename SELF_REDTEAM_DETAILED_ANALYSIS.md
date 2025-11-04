@@ -242,3 +242,122 @@ Our implementation was partially correct but missing key components:
 - ❌ We tried to force zero-sum when paper uses general-sum
 
 The paper's "general_sum_all_one" config is the key - it's NOT zero-sum, but has multiple reward components that together create the right incentives.
+
+
+## CORRECTION: Format Reward in Self-RedTeam
+
+### What the Paper Actually Says
+
+I need to correct my earlier analysis. The paper DOES give format rewards:
+
+> **RP,format (CoT Formatting Sub-Reward)**: This sub-reward ensures that both agents, A and D, adhere to the correct CoT format. A reward of +rformat is given if the agent's output can be correctly parsed into distinct reasoning (yCoT_P) and answer (yP) components, and −rformat otherwise.
+
+### The Actual Reward Structure
+
+**Game Outcome Rewards (Zero-Sum):**
+```
+RA,res_harm = -RD,res_harm
+RA,res_refusal = -RD,res_refusal
+```
+
+**Total Rewards (NOT Zero-Sum due to shaping):**
+```
+Attacker: RA = RA,res_harm + RA,res_refusal + RA,format + RA,revision
+Defender: RD = RD,res_harm + RD,res_refusal + RD,format
+
+RA + RD ≠ 0 (because RA,revision only for attacker)
+```
+
+### Why Format Reward Doesn't Cause Lazy Thinking in Self-RedTeam
+
+**1. Parsing Requirement (Structural Check)**
+- Must have valid `<think>...</think>` structure
+- Must have valid `<answer>...</answer>` structure  
+- Both must be parseable
+- This is syntax checking, not content quality checking
+
+**2. Format is Small Proportion of Total Reward**
+```
+Attacker total: rharm + rrefusal + rformat + rrevision
+              = ±1.0  ± 1.0     ± 1.0    ± 1.0
+              = -4.0 to +4.0
+
+Format is 1/4 of total reward
+```
+
+**3. Hidden CoT Separates Thinking from Action**
+```
+<think>private reasoning</think>  ← Gets format reward, hidden from opponent
+<answer>actual move</answer>       ← Affects game outcome, visible to opponent
+```
+
+The thinking gets format reward but doesn't directly affect game outcome. The answer affects game outcome but is separate from thinking.
+
+**4. Game Outcome Rewards Dominate**
+Even with lazy thinking that gets +rformat, if the answer is bad:
+- Bad answer → opponent exploits it
+- Game outcome: -rharm - rrefusal = -2.0
+- Net: +1.0 (format) - 2.0 (game) = -1.0
+
+Lazy thinking doesn't pay off because game outcomes matter more.
+
+### Why YOUR System Has Lazy Thinking (The Real Reason)
+
+**The Critical Difference:**
+
+| Aspect | Self-RedTeam | Your System |
+|--------|--------------|-------------|
+| **Thinking content** | Strategic planning | Medical analysis |
+| **Answer content** | The actual move | Just a label |
+| **Thinking visibility** | Hidden from opponent | Part of output |
+| **Thinking impact** | Indirect (helps answer) | Direct (IS the analysis) |
+| **Format proportion** | 1/4 of attacker, 1/3 of defender | 1/3 of assessor |
+
+**In Self-RedTeam:**
+- Thinking = private planning
+- Answer = the actual adversarial prompt/response
+- Lazy thinking → bad answer → bad game outcome
+
+**In Your System:**
+- Thinking = the medical analysis itself
+- Output = just the classification label
+- Lazy thinking → might still get correct label by luck
+
+### What This Means for Your Implementation
+
+**Your current approach is actually CORRECT per the paper!**
+
+1. ✅ Format reward is appropriate (paper uses it)
+2. ✅ Multi-component rewards (paper uses them)
+3. ✅ Quality-gating format reward (stricter than paper)
+
+**The lazy thinking issue is NOT because of format reward.**
+
+It's because:
+1. Your 4B model is small and takes shortcuts
+2. The thinking contains the actual analysis (not just planning)
+3. Classification can sometimes be correct even with lazy thinking
+
+**Solutions that align with the paper:**
+
+1. **Stricter Parsing (What Paper Does)**
+   - Check that `<think>` is not empty
+   - Check that `<think>` contains actual content (not just meta-commentary)
+   - Check that `<output>` is valid classification
+
+2. **Increase Game Outcome Weight (What Paper Implies)**
+   - Make classification accuracy worth more
+   - Make format worth less
+   - Example: rharm=2.0, rrefusal=2.0, rformat=1.0
+
+3. **Better Prompting (What Paper Does)**
+   - Show examples of good thinking
+   - Show examples of bad thinking
+   - Explicitly forbid lazy meta-commentary
+
+**What you've already implemented (quality-gated format reward) is actually BETTER than what the paper does!** The paper only checks parsing, you check content quality too.
+
+The lazy thinking you're seeing is likely:
+1. Model capacity limitations (4B is small)
+2. Early training dynamics (will improve over rounds)
+3. Need for better few-shot examples in prompts
