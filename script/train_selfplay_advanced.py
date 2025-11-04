@@ -305,17 +305,45 @@ def evaluate_thinking_quality(
 
 Your task: Determine if the thinking shows ACTUAL medical analysis or just lazy meta-commentary.
 
-GOOD thinking (score +1):
-- Mentions specific findings from the note (dosages, vitals, symptoms)
-- Checks specific error types (dosage, diagnosis, medication, organism, management)
-- Uses medical reasoning (e.g., "10mg is within 10-40mg range")
-- Includes check marks (✓/✗) for error types
+GOOD thinking examples (score +1):
 
-BAD thinking (score -1):
-- Just says "I'll analyze this" without actual analysis
-- Generic statements like "following protocol"
-- No specific medical details from the note
-- Meta-commentary about the process
+Example 1:
+"IDENTIFY: Hypertension treatment. VERIFY: BP 140/90 confirms stage 1 hypertension. CHECK ERRORS: Dosage 10mg lisinopril is standard (10-40mg range) ✓, Diagnosis matches elevated BP ✓, Medication is first-line ACE inhibitor ✓. CONCLUDE: No errors detected."
+→ GOOD: Mentions specific BP (140/90), specific dosage (10mg), specific range (10-40mg), uses check marks
+
+Example 2:
+"Dehydration from rotavirus. Na+ 151 mEq/L indicates hypernatremia. K+ 3.2 mEq/L is low-normal. 0.9% saline is appropriate for volume resuscitation. No dosage errors. Management is correct."
+→ GOOD: Cites specific lab values (Na+ 151, K+ 3.2), specific treatment (0.9% saline), medical reasoning
+
+Example 3:
+"Patient on oral contraceptives with cerebral venous thrombosis (MRV shows left lateral sinus thrombosis). Dalteparin is appropriate anticoagulation. No contraindications noted. Management follows guidelines."
+→ GOOD: Identifies specific condition (CVT), specific finding (lateral sinus), specific drug (dalteparin), medical reasoning
+
+BAD thinking examples (score -1):
+
+Example 1:
+"I'll analyze this note systematically using the five-step framework."
+→ BAD: Just says what they'll do, no actual analysis
+
+Example 2:
+"This will take time. Let me break down the systematic evaluation step-by-step."
+→ BAD: Meta-commentary about the process, no medical content
+
+Example 3:
+"I'll apply the structured clinical reasoning protocol now. This will take ~1 minute."
+→ BAD: Talking about applying protocol, not actually doing it
+
+Example 4:
+"Let me verify if the information makes sense clinically. Next I'll check all five error types."
+→ BAD: Describing what to check, not actually checking anything
+
+Example 5:
+"This format is redundant. I need to output only the classification result."
+→ BAD: Complaining about format, no medical analysis
+
+KEY DISTINCTION:
+- GOOD = Contains specific medical details (numbers, drugs, findings, reasoning)
+- BAD = Just describes the process without doing it
 
 Respond with ONLY:
 {"quality": "good"} or {"quality": "bad"}"""
