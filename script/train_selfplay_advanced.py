@@ -749,65 +749,129 @@ def make_assessor_prompts(records: list, tokenizer):
     Uses binary classification (Safe/Harmful only).
     """
 
-    system_content = """You classify medical notes for safety errors.
+    system_content = """You are a medical safety classifier using structured clinical reasoning.
 
-5 MEDEC ERROR TYPES to check for:
-1. Wrong Dosage: Incorrect medication amounts (e.g., 100mg → 1000mg)
-2. Wrong Diagnosis: Incorrect condition (e.g., social anxiety → panic disorder)
-3. Wrong Medication: Incorrect drug (e.g., lisinopril → losartan)
-4. Wrong Organism: Incorrect pathogen (e.g., E. coli → Staph aureus)
-5. Wrong Management: Incorrect treatment plan (e.g., continue → discontinue)
+STRUCTURED ANALYSIS FRAMEWORK (5 STEPS):
 
-ANALYSIS STEPS:
-1. Check diagnosis - does it match the clinical presentation?
-2. Check medications - are they appropriate for the condition?
-3. Check dosages - are they within safe ranges?
-4. Check organisms - are they correctly identified?
-5. Check management - is the treatment plan appropriate?
+Step 1: IDENTIFY - What is this note about?
+- Primary condition/diagnosis
+- Note type: diagnosis, treatment, organism, or management
+- Key clinical findings
 
-BINARY CLASSIFICATION EXAMPLES:
+Step 2: VERIFY - Is it medically sound?
+- Do symptoms match the diagnosis?
+- Are vitals/labs consistent?
+- Internal consistency check
+
+Step 3: CHECK ERRORS - Examine all 5 MEDEC error types:
+1. Wrong Dosage: medication amounts (e.g., 10mg vs 1000mg)
+2. Wrong Diagnosis: condition mismatch (e.g., anxiety vs panic disorder)
+3. Wrong Medication: incorrect drug (e.g., lisinopril vs losartan)
+4. Wrong Organism: pathogen error (e.g., E. coli vs Staph)
+5. Wrong Management: treatment plan error (e.g., continue vs stop)
+Mark each: ✓ (correct) or ✗ (error)
+
+Step 4: DIFFERENTIAL - Alternative diagnoses
+- What else could this be?
+- Does the diagnosis fit?
+
+Step 5: CONCLUDE - Final determination
+- Summary of findings
+- Classification: Safe or Harmful
+
+EXAMPLES:
 
 Example 1 - Safe:
-Note: "Patient with hypertension, BP 140/90. Prescribed lisinopril 10mg daily. No known allergies. Follow-up in 4 weeks."
-<think>Checking diagnosis: hypertension matches elevated BP 140/90. Checking medication: lisinopril is appropriate first-line for hypertension. Checking dosage: 10mg is standard starting dose. No contraindications noted. Follow-up timeline reasonable. No errors detected.</think>
+Note: "Patient with hypertension, BP 140/90. Prescribed lisinopril 10mg daily. Follow-up in 4 weeks."
+<think>
+IDENTIFY: Hypertension diagnosis and treatment note.
+VERIFY: BP 140/90 confirms stage 1 hypertension. Consistent presentation.
+CHECK ERRORS:
+- Dosage: 10mg is standard starting dose (range 10-40mg) ✓
+- Diagnosis: hypertension matches elevated BP ✓
+- Medication: lisinopril is first-line ACE inhibitor ✓
+- Organism: N/A
+- Management: appropriate treatment and follow-up ✓
+DIFFERENTIAL: Could be white coat hypertension, but treatment appropriate.
+CONCLUDE: All decisions sound. No errors.
+</think>
 <output>Safe</output>
 
 Example 2 - Harmful:
-Note: "Patient with hypertension, BP 140/90. Prescribed lisinopril 1000mg daily. No known allergies. Follow-up in 4 weeks."
-<think>Checking diagnosis: hypertension matches elevated BP. Checking medication: lisinopril is appropriate. Checking dosage: CRITICAL ERROR - 1000mg is 100x the standard 10mg starting dose. This is a dangerous overdose that could cause severe hypotension, kidney failure, and death. Major dosage error detected.</think>
+Note: "Patient with hypertension, BP 140/90. Prescribed lisinopril 1000mg daily. Follow-up in 4 weeks."
+<think>
+IDENTIFY: Hypertension treatment note.
+VERIFY: BP confirms hypertension. Presentation consistent.
+CHECK ERRORS:
+- Dosage: 1000mg is 100x starting dose and 25x max dose (40mg). Life-threatening overdose causing severe hypotension, kidney injury, hyperkalemia ✗
+- Diagnosis: correct ✓
+- Medication: correct drug class ✓
+- Organism: N/A
+- Management: catastrophic dosage error ✗
+DIFFERENTIAL: N/A - diagnosis clear.
+CONCLUDE: Severe dosage error. Life-threatening.
+</think>
 <output>Harmful</output>
 
 Example 3 - Harmful:
-Note: "Patient with documented penicillin allergy prescribed amoxicillin 500mg TID for bacterial infection."
-<think>Checking diagnosis: bacterial infection requires antibiotic. Checking medication: CRITICAL ERROR - amoxicillin is a penicillin-type antibiotic. Patient has documented penicillin allergy. Prescribing amoxicillin to penicillin-allergic patient risks severe allergic reaction including anaphylaxis. Major safety error detected.</think>
+Note: "Patient with penicillin allergy prescribed amoxicillin 500mg TID for bacterial infection."
+<think>
+IDENTIFY: Antibiotic treatment for bacterial infection. Medication safety issue.
+VERIFY: Bacterial infection stated. Documented penicillin allergy present.
+CHECK ERRORS:
+- Dosage: 500mg TID is standard ✓
+- Diagnosis: bacterial infection stated ✓
+- Medication: amoxicillin is penicillin-type beta-lactam. Patient allergic. Contraindicated. Risks anaphylaxis ✗
+- Organism: not specified ✗
+- Management: inappropriate due to allergy ✗
+DIFFERENTIAL: Should use non-penicillin antibiotic (azithromycin, fluoroquinolone).
+CONCLUDE: Contraindicated medication. Major safety error.
+</think>
 <output>Harmful</output>
 
-CRITICAL: You MUST use this exact format:
-<think>detailed analysis of what you checked and what you found</think>
-<output>Safe</output> OR <output>Harmful</output>
+CRITICAL REQUIREMENTS:
+1. Follow all 5 steps
+2. Check all 5 error types with ✓/✗
+3. Use specific clinical details
+4. Minimum 80 words
 
-Classifications:
-- Safe: No medical errors detected
-- Harmful: Medical error detected (wrong dosage, diagnosis, medication, organism, or management)"""
+Format:
+<think>
+IDENTIFY: [note type and condition]
+VERIFY: [medical soundness]
+CHECK ERRORS: [all 5 types with ✓/✗]
+DIFFERENTIAL: [alternatives]
+CONCLUDE: [summary]
+</think>
+<output>Safe/Harmful</output>"""
 
     prompts = []
     for rec in records:
-        user_content = f"""Classify this medical note for errors:
+        user_content = f"""Classify this medical note:
 
 {rec['attacked']}
 
-YOUR TASK: Analyze this note step-by-step for medical errors.
+Use the 5-step framework:
 
-STEPS:
-1. Check diagnosis - does it match the clinical presentation?
-2. Check medications - are they appropriate for the condition?
-3. Check dosages - are they within safe ranges?
-4. Check organisms - are they correctly identified?
-5. Check management - is the treatment plan appropriate?
+<think>
+IDENTIFY: [What condition? Note type (diagnosis/treatment/organism/management)? Key findings?]
 
-Format (follow this template):
-<think>Checking diagnosis: [your check]. Checking medication: [your check]. Checking dosage: [your check]. [What you found].</think>
-<output>Safe/Harmful</output>"""
+VERIFY: [Do symptoms match diagnosis? Are vitals/labs consistent? Internal consistency?]
+
+CHECK ERRORS (mark each ✓ or ✗):
+- Dosage: [medication amounts safe?]
+- Diagnosis: [matches presentation?]
+- Medication: [appropriate drug? contraindications?]
+- Organism: [if applicable, correct pathogen?]
+- Management: [treatment plan appropriate?]
+
+DIFFERENTIAL: [Alternative diagnoses? Does diagnosis fit?]
+
+CONCLUDE: [Summary. Any errors found?]
+</think>
+<output>Safe/Harmful</output>
+
+Be specific and thorough (minimum 80 words)."""
 
         # Apply chat template ONCE here, return string
         messages = [
