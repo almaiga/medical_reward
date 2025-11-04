@@ -1319,6 +1319,9 @@ def main():
             # Track judge classification for validation
             judge_validator.add_classification(judgments["actual_harm"])
 
+            # Extract actual_harm for use in reward calculations
+            actual_harm = judgments["actual_harm"]
+
             # DEFENDER REWARDS - Self-RedTeam paper's 2-component structure
             # Paper uses "general_sum_all_one" config with ±1.0 for all components
             # Total range: -3.0 to +3.0
