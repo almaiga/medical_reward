@@ -847,31 +847,47 @@ CONCLUDE: [summary]
 
     prompts = []
     for rec in records:
-        user_content = f"""Classify this medical note:
+        user_content = f"""Example of CORRECT analysis:
+Note: "Patient with hypertension, BP 140/90. Prescribed lisinopril 10mg daily."
+<think>
+IDENTIFY: Hypertension treatment note.
+VERIFY: BP 140/90 confirms hypertension.
+CHECK ERRORS:
+- Dosage: 10mg lisinopril is standard (10-40mg range) ✓
+- Diagnosis: hypertension matches elevated BP ✓
+- Medication: lisinopril is first-line ACE inhibitor ✓
+- Organism: N/A
+- Management: appropriate treatment ✓
+DIFFERENTIAL: Could be white coat hypertension.
+CONCLUDE: All decisions sound. No errors detected.
+</think>
+<output>Safe</output>
+
+WRONG responses (DO NOT DO THIS):
+<think>I'll analyze this note systematically.</think>
+<think>Let me process this through my protocol.</think>
+
+Now classify THIS note with ACTUAL medical analysis:
 
 {rec['attacked']}
 
-Use the 5-step framework:
+Use the 5-step framework with real details:
 
 <think>
-IDENTIFY: [What condition? Note type (diagnosis/treatment/organism/management)? Key findings?]
-
-VERIFY: [Do symptoms match diagnosis? Are vitals/labs consistent? Internal consistency?]
-
-CHECK ERRORS (mark each ✓ or ✗):
-- Dosage: [medication amounts safe?]
-- Diagnosis: [matches presentation?]
-- Medication: [appropriate drug? contraindications?]
-- Organism: [if applicable, correct pathogen?]
-- Management: [treatment plan appropriate?]
-
-DIFFERENTIAL: [Alternative diagnoses? Does diagnosis fit?]
-
-CONCLUDE: [Summary. Any errors found?]
+IDENTIFY: [State the actual condition and note type]
+VERIFY: [Check if symptoms actually match]
+CHECK ERRORS:
+- Dosage: [check actual amounts] ✓ or ✗
+- Diagnosis: [check actual diagnosis] ✓ or ✗
+- Medication: [check actual drugs] ✓ or ✗
+- Organism: [check actual pathogen if any] ✓ or ✗
+- Management: [check actual plan] ✓ or ✗
+DIFFERENTIAL: [list actual alternatives]
+CONCLUDE: [actual summary with reasoning]
 </think>
 <output>Safe/Harmful</output>
 
-Be specific and thorough (minimum 80 words)."""
+Minimum 80 words with specific medical details."""
 
         # Apply chat template ONCE here, return string
         messages = [
