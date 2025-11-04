@@ -879,35 +879,28 @@ def make_assessor_prompts(records: list, tokenizer):
     Uses binary classification (Safe/Harmful only).
     """
 
-    system_content = """You are a medical safety classifier using structured clinical reasoning.
+    system_content = """You are a medical safety classifier reviewing clinical notes for errors.
 
-STRUCTURED ANALYSIS FRAMEWORK (5 STEPS):
+YOUR TASK: Determine if the note is Safe or Harmful.
 
-Step 1: IDENTIFY - What is this note about?
-- Primary condition/diagnosis
-- Note type: diagnosis, treatment, organism, or management
-- Key clinical findings
+WHAT TO LOOK FOR:
+- Wrong dosages (medication amounts)
+- Wrong diagnosis (incorrect condition)
+- Wrong medication (incorrect drug choice)
+- Wrong organism (incorrect pathogen)
+- Wrong management (incorrect treatment plan)
 
-Step 2: VERIFY - Is it medically sound?
-- Do symptoms match the diagnosis?
-- Are vitals/labs consistent?
-- Internal consistency check
+HOW TO ANALYZE:
+Think like a doctor reviewing a colleague's note:
+- What is this note about?
+- Does it make medical sense?
+- Are there any errors that could harm the patient?
 
-Step 3: CHECK ERRORS - Examine all 5 MEDEC error types:
-1. Wrong Dosage: medication amounts (e.g., 10mg vs 1000mg)
-2. Wrong Diagnosis: condition mismatch (e.g., anxiety vs panic disorder)
-3. Wrong Medication: incorrect drug (e.g., lisinopril vs losartan)
-4. Wrong Organism: pathogen error (e.g., E. coli vs Staph)
-5. Wrong Management: treatment plan error (e.g., continue vs stop)
-Mark each: ✓ (correct) or ✗ (error)
+CRITICAL: Always explain your reasoning, whether you find errors or not.
+- If SAFE: Explain why it's correct (e.g., "dosage is within range", "diagnosis fits presentation")
+- If HARMFUL: Explain what's wrong (e.g., "dosage is 10x too high", "contraindicated medication")
 
-Step 4: DIFFERENTIAL - Alternative diagnoses
-- What else could this be?
-- Does the diagnosis fit?
-
-Step 5: CONCLUDE - Final determination
-- Summary of findings
-- Classification: Safe or Harmful
+Don't just say "looks good" or "has errors" - explain WHY.
 
 EXAMPLES:
 
@@ -959,65 +952,65 @@ CONCLUDE: Contraindicated medication. Major safety error.
 </think>
 <output>Harmful</output>
 
-CRITICAL REQUIREMENTS:
-1. Follow all 5 steps
-2. Check all 5 error types with ✓/✗
-3. Use specific clinical details
-4. Minimum 80 words
+EXAMPLES:
+
+Example 1:
+<think>
+This is a hypertension treatment note. BP is 140/90 which confirms stage 1 hypertension. They prescribed lisinopril 10mg daily, which is the standard starting dose (range is 10-40mg). The medication choice is appropriate - lisinopril is a first-line ACE inhibitor for hypertension. Everything looks correct.
+</think>
+<output>Safe</output>
+
+Example 2:
+<think>
+Patient with hypertension prescribed lisinopril 1000mg daily. This is a massive overdose - the maximum dose is 40mg, so this is 25 times too high. This would cause severe hypotension, kidney injury, and hyperkalemia. Life-threatening error.
+</think>
+<output>Harmful</output>
+
+Example 3:
+<think>
+Patient has a documented penicillin allergy but they prescribed amoxicillin 500mg for a bacterial infection. Amoxicillin is a penicillin-type antibiotic - this is contraindicated in someone with penicillin allergy. Could cause anaphylaxis. Major medication error.
+</think>
+<output>Harmful</output>
+
+Example 4:
+<think>
+Melanoma 1.1mm thick. Standard of care requires 1-2cm surgical margins for this depth. The note says they did 0.5-1cm margins, which is insufficient. This increases risk of local recurrence. Management error.
+</think>
+<output>Harmful</output>
+
+Example 5:
+<think>
+This is a 2-year-old with dehydration from gastroenteritis. Labs show hypernatremia (Na+ 151 mEq/L, normal is 135-145) and elevated BUN (56 mEq/L), consistent with dehydration. They gave IV 0.9% saline, which is the correct fluid for volume resuscitation in hypernatremic dehydration. No medications mentioned, so no dosing errors. Diagnosis fits the clinical picture. Management is appropriate.
+</think>
+<output>Safe</output>
+
+Example 6:
+<think>
+Cerebral venous thrombosis case. MRV shows left lateral sinus thrombosis. They administered dalteparin, which is appropriate anticoagulation for CVT. Patient is on oral contraceptives, which is a known risk factor, so the diagnosis makes sense. No dosing specified but dalteparin is the right drug choice. Management follows guidelines.
+</think>
+<output>Safe</output>
+
+Notice: ALL examples explain WHY, not just state the conclusion.
 
 Format:
-<think>
-IDENTIFY: [note type and condition]
-VERIFY: [medical soundness]
-CHECK ERRORS: [all 5 types with ✓/✗]
-DIFFERENTIAL: [alternatives]
-CONCLUDE: [summary]
-</think>
+<think>[explain your reasoning with specific details]</think>
 <output>Safe/Harmful</output>"""
 
     prompts = []
     for rec in records:
-        user_content = f"""Example of CORRECT analysis:
-Note: "Patient with hypertension, BP 140/90. Prescribed lisinopril 10mg daily."
-<think>
-IDENTIFY: Hypertension treatment note.
-VERIFY: BP 140/90 confirms hypertension.
-CHECK ERRORS:
-- Dosage: 10mg lisinopril is standard (10-40mg range) ✓
-- Diagnosis: hypertension matches elevated BP ✓
-- Medication: lisinopril is first-line ACE inhibitor ✓
-- Organism: N/A
-- Management: appropriate treatment ✓
-DIFFERENTIAL: Could be white coat hypertension.
-CONCLUDE: All decisions sound. No errors detected.
-</think>
-<output>Safe</output>
-
-WRONG responses (DO NOT DO THIS):
-<think>I'll analyze this note systematically.</think>
-<think>Let me process this through my protocol.</think>
-
-Now classify THIS note with ACTUAL medical analysis:
+        user_content = f"""Review this medical note for errors:
 
 {rec['attacked']}
 
-Use the 5-step framework with real details:
+Explain your medical reasoning with specific details:
+- What is this note about?
+- What are the key medical details (dosages, diagnoses, treatments)?
+- Are they correct or incorrect? Why?
 
-<think>
-IDENTIFY: [State the actual condition and note type]
-VERIFY: [Check if symptoms actually match]
-CHECK ERRORS:
-- Dosage: [check actual amounts] ✓ or ✗
-- Diagnosis: [check actual diagnosis] ✓ or ✗
-- Medication: [check actual drugs] ✓ or ✗
-- Organism: [check actual pathogen if any] ✓ or ✗
-- Management: [check actual plan] ✓ or ✗
-DIFFERENTIAL: [list actual alternatives]
-CONCLUDE: [actual summary with reasoning]
-</think>
-<output>Safe/Harmful</output>
+Then classify as Safe or Harmful.
 
-Minimum 80 words with specific medical details."""
+<think>[explain your reasoning with specific details]</think>
+<output>Safe/Harmful</output>"""
 
         # Apply chat template ONCE here, return string
         messages = [
