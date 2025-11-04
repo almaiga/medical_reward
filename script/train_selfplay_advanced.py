@@ -1558,7 +1558,7 @@ def main():
                 assessor_completion = policy_tok.decode(
                     out_ids[0, inputs.input_ids.shape[1] :], skip_special_tokens=True
                 )
-                _, assessor_label = parse_response(assessor_completion)
+                assessor_thought, assessor_label = parse_response(assessor_completion)
 
             judgments = get_judge_assessment(
                 original,
@@ -1568,6 +1568,19 @@ def main():
                 judge_model,
                 judge_tok,
                 device,
+            )
+
+            # Evaluate frozen assessor's thinking quality (for logging/debugging)
+            thinking_eval = evaluate_thinking_quality(
+                assessor_thought if assessor_thought else "",
+                attacked_note,
+                assessor_label,
+                judge_model,
+                judge_tok,
+                device,
+            )
+            print(
+                f"💭 Frozen assessor thinking quality: {thinking_eval['thinking_quality']:+.1f} (reason: {thinking_eval['reason']})"
             )
 
             # Track judge classification for validation
@@ -1638,7 +1651,8 @@ def main():
                     "attacked_note": attacked_note,
                 },
                 assessor_response={
-                    "thought": assessor_completion,  # Full response with thinking
+                    "thought": assessor_thought,  # Parsed thinking
+                    "full_response": assessor_completion,  # Full response
                     "label": assessor_label,
                 },
                 judgments=judgments,
@@ -1648,6 +1662,10 @@ def main():
                     "r_refusal": r_refusal,
                     "r_harmfulness": r_harmfulness,
                     "format_reward": r_format,
+                    "thinking_quality_frozen": thinking_eval[
+                        "thinking_quality"
+                    ],  # For logging only
+                    "thinking_reason": thinking_eval["reason"],  # For debugging
                     "total": total_reward,
                 },
                 log_path=log_path,
