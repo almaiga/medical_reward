@@ -1135,22 +1135,31 @@ def main():
             # Track judge classification for validation
             judge_validator.add_classification(judgments["actual_harm"])
 
-            # DEFENDER REWARDS (matching Self-RedTeam paper structure)
-            # Paper has: response_refusal + response_harmfulness + format
-            # We simplify: combine refusal+harmfulness into single game reward
+            # DEFENDER REWARDS - Self-RedTeam paper's 2-component structure
+            # Paper uses "general_sum_all_one" config with ±1.0 for all components
+            # Total range: -3.0 to +3.0
 
-            # 1. GAME REWARD (combines response_refusal + response_harmfulness)
-            # Defender wins if correctly classifies, loses if misclassifies
-            if judgments["assessor_was_correct"]:
-                r_game = +R_GAME  # Defender wins: correct classification
-            else:
-                r_game = -R_GAME  # Defender loses: incorrect classification
+            # 1. RD,refusal (Classification Correctness / response_refusal)
+            # Purpose: Reward defender for correct classification based on actual harm
+            if actual_harm == "Harmful":
+                # Note has error: Should say "Harmful"
+                r_refusal = +R_GAME if label == "Harmful" else -R_GAME
+            else:  # actual_harm == "Safe"
+                # Note is safe: Should say "Safe"
+                r_refusal = +R_GAME if label == "Safe" else -R_GAME
 
-            # 2. FORMAT REWARD (CoT formatting)
+            # 2. RD,harmfulness (Always Detect Errors / response_harmfulness)
+            # Purpose: Reward defender for always generating safe classifications
+            # This is the same as r_refusal in our binary case, but kept separate
+            # to match paper's structure
+            r_harmfulness = +R_GAME if judgments["assessor_was_correct"] else -R_GAME
+
+            # 3. Format reward (CoT formatting)
             r_format = +R_FORMAT if thought else -R_FORMAT
 
-            # Total: range from -2.0 to +2.0 (game + format)
-            total_reward = r_game + r_format
+            # Total reward: sum of all components
+            # Range: -3.0 to +3.0 (matches paper's scale)
+            total_reward = r_refusal + r_harmfulness + r_format
 
             log_interaction(
                 round_num=state["round"],
@@ -1168,7 +1177,8 @@ def main():
                 },
                 judgments=judgments,
                 rewards={
-                    "game_reward": r_game,
+                    "r_refusal": r_refusal,
+                    "r_harmfulness": r_harmfulness,
                     "format_reward": r_format,
                     "total": total_reward,
                 },
@@ -1352,41 +1362,40 @@ def main():
                     diversity_stats.get(f"{game_type}_unfaithful", 0) + 1
                 )
 
-            # ATTACKER REWARDS (matching Self-RedTeam paper structure)
-            # Paper has: prompt_harmfulness + response_refusal + response_harmfulness + format
-            # We simplify: prompt_harmfulness (faithfulness) + game (refusal+harmfulness) + format
+            # ATTACKER REWARDS - Self-RedTeam paper's 3-component structure
+            # Paper uses "general_sum_all_one" config with ±1.0 for all components
+            # Total range: -4.0 to +4.0
 
-            # 1. PROMPT HARMFULNESS / REVISION REWARD (RA,revision from paper)
-            # Called "prompt_harmfulness" in paper's get_attacker_prompt_reward()
-            # Ensures attacker respects seed type (harmful vs benign) to prevent reward hacking
+            # 1. RA,revision (Note Modification Faithfulness / prompt_harmfulness)
+            # Purpose: Ensure attacker respects the game type
             if game_type == "harmful":
-                # Harmful game: Should create Harmful
-                if actual_harm == "Harmful":
-                    r_faithfulness = +R_GAME  # Faithful: created error as required
-                else:
-                    r_faithfulness = -R_GAME  # Unfaithful: failed to create error
-            else:  # game_type == "safe"
-                # Safe game: Should keep Safe
-                if actual_harm == "Safe":
-                    r_faithfulness = +R_GAME  # Faithful: kept it safe as required
-                else:
-                    r_faithfulness = -R_GAME  # Unfaithful: added unwanted error
+                # Harmful game: Should introduce error
+                r_revision = +R_GAME if actual_harm == "Harmful" else -R_GAME
+            else:  # safe game
+                # Safe game: Should keep safe
+                r_revision = +R_GAME if actual_harm == "Safe" else -R_GAME
 
-            # 2. GAME REWARD (combines response_refusal + response_harmfulness from paper)
-            # Did attacker fool the defender/assessor?
+            # 2. RA,refusal (Defender Classification / response_refusal)
+            # Purpose: Reward attacker for making defender classify incorrectly
+            # Based on what defender SAID, not whether it's correct
             if game_type == "harmful":
-                # Attacker wins if assessor MISSES the error
-                r_game = -R_GAME if judgments["assessor_was_correct"] else +R_GAME
-            else:  # game_type == "safe"
-                # Attacker wins if assessor CORRECTLY says Safe
-                r_game = +R_GAME if judgments["assessor_was_correct"] else -R_GAME
+                # Harmful game: Attacker wins if defender says "Safe" (failed to detect)
+                r_refusal = +R_GAME if assessor_label == "Safe" else -R_GAME
+            else:  # safe game
+                # Safe game: Attacker wins if defender says "Harmful" (over-refused)
+                r_refusal = +R_GAME if assessor_label == "Harmful" else -R_GAME
 
-            # 3. FORMAT REWARD (CoT formatting - get_cot_formatting_reward in paper)
+            # 3. RA,harmfulness (Actual Harm Level / response_harmfulness)
+            # Purpose: Reward attacker for creating harmful notes (breaking defender)
+            # For BOTH games: reward if note has error
+            r_harmfulness = +R_GAME if actual_harm == "Harmful" else -R_GAME
+
+            # 4. Format reward (CoT formatting)
             r_format = +R_FORMAT if attacker_thought else -R_FORMAT
 
-            # Total: range from -3.0 to +3.0 (faithfulness + game + format)
-            # This matches paper's "general_sum_all_one" config with all rewards at ±1.0
-            total_reward = r_faithfulness + r_game + r_format
+            # Total reward: sum of all components
+            # Range: -4.0 to +4.0 (matches paper's scale)
+            total_reward = r_revision + r_refusal + r_harmfulness + r_format
 
             log_interaction(
                 round_num=state["round"],
@@ -1404,8 +1413,9 @@ def main():
                 judgments=judgments,
                 rewards={
                     "game_type": game_type,
-                    "faithfulness_reward": r_faithfulness,
-                    "game_reward": r_game,
+                    "r_revision": r_revision,
+                    "r_refusal": r_refusal,
+                    "r_harmfulness": r_harmfulness,
                     "format_reward": r_format,
                     "total": total_reward,
                 },
