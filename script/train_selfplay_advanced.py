@@ -261,46 +261,11 @@ def evaluate_thinking_quality(
         dict: Contains thinking_quality (+1 or -1) and reasoning
     """
 
-    # Quick heuristic checks first
-    if not thinking or len(thinking) < 50:
-        return {"thinking_quality": -1, "reason": "too_short"}
+    # Handle empty thinking
+    if not thinking or len(thinking) < 10:
+        return {"thinking_quality": -1, "reason": "empty_or_too_short"}
 
-    # Check for lazy phrases
-    lazy_phrases = [
-        "i'll analyze",
-        "i will analyze",
-        "let me analyze",
-        "i'll assess",
-        "i will assess",
-        "let me assess",
-        "following protocol",
-        "systematic approach",
-        "step by step",
-        "analyzing...",
-    ]
-
-    thinking_lower = thinking.lower()
-    if any(phrase in thinking_lower for phrase in lazy_phrases):
-        # Has lazy phrases - check if it also has medical content
-        medical_indicators = [
-            "dosage",
-            "dose",
-            "mg",
-            "ml",
-            "diagnosis",
-            "symptom",
-            "finding",
-            "bp",
-            "blood pressure",
-            "heart rate",
-            "✓",
-            "✗",
-        ]
-        medical_count = sum(1 for ind in medical_indicators if ind in thinking_lower)
-        if medical_count < 3:
-            return {"thinking_quality": -1, "reason": "lazy_meta_commentary"}
-
-    # Use judge model for deeper evaluation
+    # Use judge model to evaluate (no heuristics)
     system_prompt = """You are evaluating the quality of medical reasoning.
 
 Your task: Determine if the thinking shows ACTUAL medical analysis or just lazy meta-commentary.
@@ -342,8 +307,13 @@ Example 5:
 → BAD: Complaining about format, no medical analysis
 
 KEY DISTINCTION:
-- GOOD = Contains specific medical details (numbers, drugs, findings, reasoning)
-- BAD = Just describes the process without doing it
+- GOOD = Contains specific medical details (numbers, drugs, findings, reasoning) + Usually longer (80+ words)
+- BAD = Just describes the process without doing it + Usually short (<80 words)
+
+LENGTH MATTERS:
+- Short thinking (<80 words) is usually lazy meta-commentary
+- Long thinking (80+ words) with specific details is usually good analysis
+- Exception: Long thinking that's all meta-commentary is still BAD
 
 Respond with ONLY:
 {"quality": "good"} or {"quality": "bad"}"""
@@ -351,12 +321,17 @@ Respond with ONLY:
     user_prompt = f"""Medical note:
 {note[:300]}...
 
-Assessor's thinking:
+Assessor's thinking (length: {len(thinking)} chars, ~{len(thinking.split())} words):
 {thinking}
 
 Assessor's classification: {classification}
 
 Is this GOOD thinking (specific medical reasoning) or BAD thinking (lazy meta-commentary)?
+
+Consider:
+1. Does it contain specific medical details (numbers, drugs, findings)?
+2. Is it long enough to show actual analysis (80+ words)?
+3. Or is it just short meta-commentary about what they'll do?
 
 Response:"""
 
@@ -383,20 +358,13 @@ Response:"""
 
     # Parse response
     if "good" in text.lower():
-        return {"thinking_quality": +1, "reason": "specific_medical_reasoning"}
+        return {"thinking_quality": +1, "reason": "judge_good"}
     elif "bad" in text.lower():
-        return {"thinking_quality": -1, "reason": "lazy_meta_commentary"}
+        return {"thinking_quality": -1, "reason": "judge_bad"}
     else:
-        # Fallback: check for medical content
-        medical_count = sum(
-            1
-            for ind in ["dosage", "diagnosis", "medication", "✓", "✗"]
-            if ind in thinking_lower
-        )
-        if medical_count >= 2:
-            return {"thinking_quality": +1, "reason": "fallback_has_medical_content"}
-        else:
-            return {"thinking_quality": -1, "reason": "fallback_no_medical_content"}
+        # Fallback: if judge doesn't give clear answer, assume bad
+        print(f"⚠️ Judge gave unclear response: {text}")
+        return {"thinking_quality": -1, "reason": "judge_unclear"}
 
 
 def get_judge_assessment(
