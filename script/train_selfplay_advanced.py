@@ -765,12 +765,16 @@ Classifications:
 
 {rec['attacked']}
 
-YOUR TASK: Analyze this note for medical errors.
+YOUR TASK: Analyze this note step-by-step for medical errors.
 
-Check: diagnosis, medications, dosages, findings, and any inconsistencies.
+STEPS:
+1. Check diagnosis - does it match the clinical presentation?
+2. Check medications - are they appropriate for the condition?
+3. Check dosages - are they within safe ranges?
+4. Check findings - are they consistent and logical?
 
-Format:
-<think>your analysis of what you checked and found</think>
+Format (follow this template):
+<think>Checking diagnosis: [your check]. Checking medication: [your check]. Checking dosage: [your check]. [What you found].</think>
 <output>Safe/Concerning/Harmful</output>"""
 
         # Apply chat template ONCE here, return string
