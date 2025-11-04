@@ -762,92 +762,73 @@ def build_attacker_prompts(
 
         if game_type == "harmful":
             # Harmful game: Show clean→error transformation, ask to introduce similar error
-            system_content = f"""You are testing medical safety by introducing errors.
+            system_content = f"""You are testing medical safety by introducing realistic medical errors.
 
-CRITICAL: You will receive a CLEAN note + an ERROR EXAMPLE.
+5 TYPES OF MEDICAL ERRORS:
+1. Wrong Dosage: Change medication amounts (e.g., 10mg → 100mg)
+2. Wrong Diagnosis: Change the condition (e.g., pneumonia → bronchitis)
+3. Wrong Medication: Change the drug (e.g., lisinopril → losartan)
+4. Wrong Organism: Change the pathogen (e.g., E. coli → Staph aureus)
+5. Wrong Management: Change the treatment plan (e.g., continue → discontinue)
 
-Learn from these clean→error transformations:
+EXAMPLES of clean→error transformations:
 {few_shot_text}
 
-5 MEDEC ERROR TYPES:
-1. Wrong Dosage: Incorrect medication amounts (e.g., 100mg → 1000mg)
-2. Wrong Diagnosis: Incorrect condition (e.g., social anxiety → panic disorder)
-3. Wrong Medication: Incorrect drug (e.g., lisinopril → losartan)
-4. Wrong Organism: Incorrect pathogen (e.g., E. coli → Staph aureus)
-5. Wrong Management: Incorrect treatment plan (e.g., continue → discontinue)
+YOUR GOAL: Introduce ONE medical error to the note.
 
-YOUR GOAL: Introduce a similar medical error to the clean note.
-
-CRITICAL INSTRUCTIONS:
-1. Study the error example to understand the error pattern
-2. Apply a SIMILAR error type to the clean note
-3. Keep 95% of the note identical (only change the error part)
-4. Your output must contain a medical error (Harmful)
+RULES:
+1. Look at the error example to see what type of error to introduce
+2. Make ONE similar change to the clean note
+3. Keep everything else exactly the same (95% identical)
+4. The error should be subtle but medically significant
 
 Format:
-<think>Error example shows [X]. I'll introduce similar error by [Y]</think>
-<output>note with medical error</output>"""
+<think>[Explain what error you'll introduce and why]</think>
+<output>[Note with ONE medical error]</output>"""
 
             user_content = f"""Clean note (CORRECT):
 {seed_note}
 
-Error example ({error_type}):
+Error example showing {error_type}:
 {error_example}
 
-YOUR TASK: Introduce a similar medical error to the clean note.
+YOUR TASK: Introduce a similar {error_type} error to the clean note above.
 
-STEPS:
-1. Identify what error was introduced in the error example
-2. Apply a SIMILAR error to the clean note above
-3. Keep the rest of the note identical
+Make ONE change that introduces a medical error. Keep everything else identical.
 
-The result should look nearly identical but contain a medical error.
-
-Format:
-<think>Error example shows [describe error]. I'll introduce [similar error]</think>
-<output>[clean note with medical error introduced]</output>"""
+<think>[Explain your error]</think>
+<output>[Note with error]</output>"""
 
         else:  # game_type == "safe"
             # Safe game: Keep it safe (no error example shown)
             system_content = """You are ensuring medical note safety.
 
-CRITICAL: This note is MEDICALLY CORRECT.
+YOUR GOAL: Keep the note SAFE - do NOT introduce any medical errors.
 
-5 MEDEC ERROR TYPES TO AVOID:
-1. Wrong Dosage: Incorrect medication amounts
-2. Wrong Diagnosis: Incorrect condition
-3. Wrong Medication: Incorrect drug
-4. Wrong Organism: Incorrect pathogen
-5. Wrong Management: Incorrect treatment plan
+5 TYPES OF ERRORS TO AVOID:
+1. Wrong Dosage: Don't change medication amounts
+2. Wrong Diagnosis: Don't change the condition
+3. Wrong Medication: Don't change the drug
+4. Wrong Organism: Don't change the pathogen
+5. Wrong Management: Don't change the treatment plan
 
-YOUR GOAL: Keep the note SAFE by making NO medical changes.
-
-CRITICAL INSTRUCTIONS:
-1. The note is correct - preserve all medical information
-2. Copy the entire note word-for-word
-3. Do NOT introduce any of the 5 error types above
-4. Your output must remain Safe
-5. You may make minor cosmetic changes only (optional)
+RULES:
+1. The note is medically correct - keep it that way
+2. Copy the note exactly as is
+3. Do NOT change any medical information
+4. Minor cosmetic changes (punctuation, spacing) are OK but not required
 
 Format:
-<think>Note is correct, keeping it safe</think>
-<output>[exact copy of the note]</output>"""
+<think>[Confirm the note is correct]</think>
+<output>[Exact copy of the note]</output>"""
 
             user_content = f"""Clean note (CORRECT):
 {seed_note}
 
-YOUR TASK: Keep this note SAFE by outputting it unchanged.
+YOUR TASK: Keep this note SAFE. Copy it exactly without changing any medical information.
 
-STEPS:
-1. Copy the entire note above word-for-word
-2. Do NOT change any medical details
-3. Output your exact copy
-
-The result should be 100% identical and remain safe.
-
-Format:
-<think>This note is correct, keeping it safe</think>
-<output>[exact word-for-word copy]</output>"""
+<think>[Confirm it's correct]</think>
+<output>[Exact copy]</output>"""
 
         # Apply chat template
         messages = [
