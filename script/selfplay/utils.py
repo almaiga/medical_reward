@@ -357,10 +357,11 @@ def log_interaction(
         "assessor_response": assessor_response,  # Includes thought + label
         "judge_assessment": judgments,
         "judge_reasoning": {
+            "raw_response": judgments.get("judge_raw_response", ""),
+            "reasoning": judgments.get("judge_reasoning", ""),
             "differences": judgments.get("differences", []),
             "medical_changes": judgments.get("medical_changes", []),
             "significance": judgments.get("significance", ""),
-            "reasoning": judgments.get("judge_reasoning", ""),
         },
         "rewards": rewards,
         "metadata": {

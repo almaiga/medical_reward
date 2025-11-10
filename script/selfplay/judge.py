@@ -280,7 +280,8 @@ Classification:"""
         "actual_harm": "Safe",
         "assessor_was_correct": False,
         "assessor_refused": False,
-        "judge_reasoning": "",  # No reasoning in new format
+        "judge_reasoning": text,  # Store full judge response for debugging
+        "judge_raw_response": text,  # Alias for clarity
         "differences": [],
         "medical_changes": [],
         "significance": "",
