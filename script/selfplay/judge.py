@@ -257,7 +257,7 @@ Classification:"""
         inputs = judge_tok(prompt, return_tensors="pt").to(device)
         out = judge_model.generate(
             **inputs,
-            max_new_tokens=50,  # Only need JSON output
+            max_new_tokens=512,  # Increased for full reasoning + JSON output
             do_sample=False,  # Greedy decoding for consistency
             temperature=1.0,  # Not used with do_sample=False
             pad_token_id=judge_tok.eos_token_id,
