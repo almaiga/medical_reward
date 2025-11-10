@@ -1,6 +1,6 @@
 # Quick Setup Guide
 
-## One-Command Setup
+## One-Command Setup (SSH Server)
 
 After cloning the repository on your SSH server, run:
 
@@ -8,13 +8,19 @@ After cloning the repository on your SSH server, run:
 bash setup_environment.sh
 ```
 
-The script will prompt you for your Hugging Face token on first run. The token will be saved securely in `~/.cache/huggingface/token` so you only need to enter it once.
+The script will prompt you for your Hugging Face token on first run.
+
+**Important**: Everything is installed in the workspace directory to persist across SSH restarts:
+- Miniconda3: `workspace/miniconda3/`
+- Conda environment: `workspace/envs/medical_reward/`
+- HF token: `workspace/.hf_token`
+- HF cache: `workspace/.huggingface/`
 
 This script will:
-1. Install Miniconda3 (if not already installed)
-2. Create the `medical_reward` conda environment with Python 3.10
+1. Install Miniconda3 to `workspace/miniconda3/`
+2. Create the conda environment in `workspace/envs/medical_reward/`
 3. Install all required packages from `requirements.txt`
-4. Prompt for and save your Hugging Face token (first run only)
+4. Prompt for and save your Hugging Face token in the workspace
 
 ## Manual Steps (if needed)
 
