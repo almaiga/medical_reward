@@ -97,16 +97,30 @@ echo ""
 
 # Step 4: Hugging Face authentication
 echo "Step 4: Configuring Hugging Face authentication..."
-HF_TOKEN="${HF_TOKEN:-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}"
 
-if command -v huggingface-cli &> /dev/null; then
-    echo "${HF_TOKEN}" | huggingface-cli login --token "${HF_TOKEN}"
-    echo "✓ Hugging Face authentication configured"
+# Check if already logged in
+HF_TOKEN_PATH="${HOME}/.cache/huggingface/token"
+if [ -f "${HF_TOKEN_PATH}" ]; then
+    echo "✓ Hugging Face token already configured"
 else
-    echo "⚠️  huggingface-cli not found, installing..."
-    pip install huggingface_hub
-    echo "${HF_TOKEN}" | huggingface-cli login --token "${HF_TOKEN}"
-    echo "✓ Hugging Face authentication configured"
+    echo "Hugging Face token not found. Please enter your token:"
+    echo "(Get your token from: https://huggingface.co/settings/tokens)"
+    read -p "HF Token: " HF_TOKEN
+    
+    if [ -z "${HF_TOKEN}" ]; then
+        echo "⚠️  No token provided. Skipping authentication..."
+        echo "You can login later with: huggingface-cli login"
+    else
+        # Install huggingface_hub if needed
+        if ! command -v huggingface-cli &> /dev/null; then
+            echo "Installing huggingface_hub..."
+            pip install -q huggingface_hub
+        fi
+        
+        # Login (this saves the token to ~/.cache/huggingface/token)
+        echo "${HF_TOKEN}" | huggingface-cli login --token "${HF_TOKEN}"
+        echo "✓ Hugging Face authentication configured and saved"
+    fi
 fi
 
 echo ""
