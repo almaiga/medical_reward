@@ -18,7 +18,7 @@ else
 fi
 
 # Configuration
-JUDGE_MODEL="google/medgemma-4b-it"
+JUDGE_MODEL="Intelligent-Internet/II-Medical-8B"
 NUM_SAMPLES=32
 NUM_GENERATIONS=8  # Increased for better reward variance
 LEARNING_RATE=1e-5  # Increased from 1e-5 to restore meaningful gradients
