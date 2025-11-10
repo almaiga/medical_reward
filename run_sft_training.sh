@@ -1,73 +1,97 @@
 #!/bin/bash
 
 # SFT Training Script for Qwen with TRL
-# Supervised Fine-Tuning only
+# Single-stage training on merged educational + adaptation data
 
 set -e  # Exit on any error
 
-echo "=== Qwen SFT Training with TRL ==="
+echo "=== Qwen SFT Training with Clean Stratified Data ==="
 
 # Configuration
 MODEL_ID="mlabonne/Qwen3-4B-abliterated"
-DATA_PATH="data/sft_training/20251017_161801_sft_merged.jsonl"
-OUTPUT_DIR="trainer_output/qwen3_trl"
+EDUCATIONAL_DATA="data/sft_clean/educational_stratified.jsonl"
+ADAPTATION_DATA="data/sft_clean/adaptation_stratified.jsonl"
+MERGED_DATA="data/sft_clean/merged_all.jsonl"
+OUTPUT_DIR="trainer_output/qwen3_sft_complete"
 
 echo ""
 echo "🔍 Checking required files..."
 
-# Check if original data exists
-if [ ! -f "data/sft_training/20251017_161801_sft_merged.jsonl" ]; then
-    echo "❌ Original data file not found"
-    echo "Please make sure you have the SFT training data."
+# Check if clean data exists
+if [ ! -f "$EDUCATIONAL_DATA" ]; then
+    echo "❌ Educational data not found: $EDUCATIONAL_DATA"
+    echo "Please run: python3 script/organize_clean_data.py"
     exit 1
 fi
 
-# Check if fixed data exists, if not create it
-if [ ! -f "$DATA_PATH" ]; then
-    echo "⚠️  Creating fixed data file..."
-    python3 script/fix_sft_format.py \
-        data/sft_training/20251017_161801_sft_merged.jsonl \
-        --output_path "$DATA_PATH"
-else
-    echo "✅ Found: $DATA_PATH"
+if [ ! -f "$ADAPTATION_DATA" ]; then
+    echo "❌ Adaptation data not found: $ADAPTATION_DATA"
+    echo "Please run: python3 script/organize_clean_data.py"
+    exit 1
 fi
 
-echo ""
-echo "📊 Validating SFT data..."
-python3 script/validate_sft_data.py "$DATA_PATH"
+echo "✅ Found: $EDUCATIONAL_DATA"
+echo "✅ Found: $ADAPTATION_DATA"
 
+# Merge datasets
 echo ""
-echo "🧪 Testing TRL compatibility..."
-# python3 script/test_trl_compatibility.py "$DATA_PATH"
+echo "🔗 Merging educational + adaptation data..."
+cat "$EDUCATIONAL_DATA" "$ADAPTATION_DATA" > "$MERGED_DATA"
+echo "✅ Created: $MERGED_DATA"
 
+# Count examples
+TOTAL_EXAMPLES=$(wc -l < "$MERGED_DATA")
 echo ""
-echo "🚀 Starting SFT training..."
-echo "💡 TIP: Open another terminal and run this to monitor progress:"
+echo "📊 Training Data Summary:"
+echo "  Educational: 913 notes (75% of MEDEC, all 5 error types)"
+echo "  Adaptation: 306 notes → 1,224 examples (25% of MEDEC, game format)"
+echo "  Total examples: $TOTAL_EXAMPLES"
+echo ""
+
+# ============================================================================
+# SINGLE-STAGE SFT TRAINING
+# ============================================================================
+
+echo "=" | tr '\n' '=' | head -c 70; echo ""
+echo "SFT TRAINING ON MERGED DATA"
+echo "=" | tr '\n' '=' | head -c 70; echo ""
+echo ""
+echo "📚 Training on educational + adaptation data..."
+echo "💡 TIP: Open another terminal to monitor:"
 echo "   python3 script/monitor_training.py --training_dir $OUTPUT_DIR"
 echo ""
-echo "🔄 Training will show detailed progress with time estimates..."
-echo ""
 
-python3 script/train_qwen3_trl.py \
+python3 script/train_qwen3_sft.py \
     --model_id "$MODEL_ID" \
-    --data_path "$DATA_PATH" \
+    --data_path "$MERGED_DATA" \
     --epochs 3 \
-    --batch_size 2 \
-    --grad_accumulation 8 \
+    --batch_size 4 \
     --learning_rate 2e-5 \
-    --output_dir "$OUTPUT_DIR" \
-    --test_format
+    --output_dir "$OUTPUT_DIR"
 
 echo ""
 echo "✅ SFT training complete!"
+echo "📁 Model saved to: $OUTPUT_DIR"
+echo ""
 
-# Find the trained model
-LATEST_OUTPUT=$(ls -td ${OUTPUT_DIR}_* 2>/dev/null | head -1)
-if [ -n "$LATEST_OUTPUT" ]; then
-    echo "📁 Model saved to: $LATEST_OUTPUT"
-    echo ""
-    echo "🎯 Next step: Run selfplay training"
-    echo "   bash run_selfplay_training.sh $LATEST_OUTPUT"
-else
-    echo "⚠️  Could not find trained model output"
-fi
+# ============================================================================
+# SUMMARY
+# ============================================================================
+
+echo "=" | tr '\n' '=' | head -c 70; echo ""
+echo "✅ SFT TRAINING COMPLETE!"
+echo "=" | tr '\n' '=' | head -c 70; echo ""
+echo ""
+echo "📊 Training Summary:"
+echo "  Model: $OUTPUT_DIR"
+echo "  Examples trained: $TOTAL_EXAMPLES"
+echo "  Epochs: 3"
+echo ""
+echo "🎯 Next Step: Run GRPO Self-Play Training"
+echo ""
+echo "   python3 script/train_selfplay_advanced.py \\"
+echo "     --model_id $OUTPUT_DIR \\"
+echo "     --num_samples 16 \\"
+echo "     --rounds 3"
+echo ""
+echo "=" | tr '\n' '=' | head -c 70; echo ""
