@@ -1,0 +1,24 @@
+{
+  "educational": {
+    "new_notes": 522,
+    "existing_notes": 398,
+    "total_notes": 920,
+    "examples_per_note": 4,
+    "new_examples": 2088,
+    "total_examples": 3680
+  },
+  "adaptation": {
+    "new_notes": 174,
+    "existing_notes": 125,
+    "total_notes": 299,
+    "examples_per_note": 4,
+    "new_examples": 696,
+    "total_examples": 1196
+  },
+  "total": {
+    "new_notes": 696,
+    "new_examples": 2784,
+    "total_notes": 1219,
+    "total_examples": 4876
+  }
+}

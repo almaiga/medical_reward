@@ -86,25 +86,31 @@ I'm analyzing this {error_type} error for educational purposes. The original tex
 
 
 def create_vanilla_attacker_messages(original_text: str) -> List[Dict]:
-    """Create harmless/vanilla changes for negative examples."""
+    """Create realistic messy variations that mimic real-world clinical documentation."""
     return [
         {
             "role": "system",
-            "content": "You are a medical education AI that helps create training examples. You create harmless variations of medical notes to train error detection systems to recognize when changes are NOT medically significant.",
+            "content": "You are a medical education AI creating realistic clinical note variations. Real-world clinical notes are often messy with abbreviations, formatting variations, and shorthand. You create these realistic variations while keeping ALL medical information accurate.",
         },
         {
             "role": "user",
-            "content": f"""I need to create a harmless variation of this medical note for training purposes.
+            "content": f"""Create a realistic variation of this medical note that mimics real-world clinical documentation:
 
-Original text: {original_text}
+Original (clean research note): {original_text}
 
-Please create a harmless variation (e.g., minor wording changes, formatting, non-medical details) that doesn't change the medical meaning:
+Transform it to look like a real clinician wrote it quickly:
+- Use medical abbreviations (BP, HR, Temp, RR, etc.)
+- Vary formatting (spacing, punctuation, capitalization)
+- Use shorthand where appropriate (↑, ↓, +, -, etc.)
+- Reorder information naturally
+- Keep ALL medical information accurate (no medical errors)
 
+Format your response as:
 <think>
-I need to create a harmless variation. The original text contains [analysis]. I can make safe changes like [examples: rewording, formatting, non-medical details] without affecting medical accuracy. This helps train systems to recognize truly safe variations.
+[Explain what realistic variations you're making and why they're medically safe. Detail which abbreviations, formatting changes, or reorderings you're using. Confirm all medical information remains accurate.]
 </think>
 <output>
-[Your harmless variation]
+[The realistic messy variation]
 </output>""",
         },
     ]
@@ -515,6 +521,11 @@ def main():
         help="Resume from this ID (e.g., ms-train-182)",
     )
     parser.add_argument(
+        "--note_ids_file",
+        type=str,
+        help="JSON file with note IDs to process (from split_medec_stratified.py)",
+    )
+    parser.add_argument(
         "--output_dir",
         type=str,
         default="data/sft_training",
@@ -546,8 +557,18 @@ def main():
         raise FileNotFoundError(f"MEDEC file not found: {args.medec_path}")
     medec_data = load_medec_data(args.medec_path)
 
+    # Filter by note IDs if provided
+    if args.note_ids_file:
+        print(f"Filtering by note IDs from: {args.note_ids_file}")
+        with open(args.note_ids_file, 'r') as f:
+            note_ids_data = json.load(f)
+            target_ids = set(note_ids_data['note_ids'])
+        
+        medec_data = [item for item in medec_data if item['id'] in target_ids]
+        print(f"Filtered to {len(medec_data)} notes from split file")
+    
     # Resume from specific ID if requested
-    if args.start_from:
+    elif args.start_from:
         print(f"Resuming from ID: {args.start_from}")
         start_idx = None
         for i, item in enumerate(medec_data):

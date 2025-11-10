@@ -308,36 +308,142 @@ Format:
     }
 
 
-def create_attacker_safe_example(row):
-    """Create attacker safe example with strategic reasoning."""
+def generate_gpt_attacker_safe_clean_reasoning(corrected_text):
+    """Use GPT-5 to generate reasoning for keeping AI-style clean notes."""
+    prompt = f"""Generate strategic reasoning for keeping a medical note clean and unchanged.
+
+Note: {corrected_text[:400]}...
+
+Task: Explain what you verified to ensure the note is medically accurate and why no changes are needed.
+
+Format: I verified [what you checked: medications, dosages, diagnoses, findings]. All medical information is accurate and complete. I'll output it unchanged to ensure the assessor correctly identifies it as safe.
+
+Keep it 2-3 sentences, systematic and thorough."""
+    
+    reasoning = call_gpt5_api(prompt)
+    return reasoning if reasoning else "I verified medications, dosages, diagnoses, and clinical findings. All medical information is accurate and complete. I'll output it unchanged to ensure the assessor correctly identifies it as safe."
+
+
+def generate_gpt_attacker_safe_messy_reasoning(corrected_text):
+    """Use GPT-5 to generate realistic messy variation reasoning."""
+    prompt = f"""Generate strategic reasoning for creating a realistic messy variation of a medical note.
+
+Original note: {corrected_text[:400]}...
+
+Task: Explain what formatting/stylistic variations you would make to mimic real-world clinical documentation while keeping ALL medical information accurate.
+
+Examples of safe variations:
+- Abbreviations: "temperature" → "Temp", "blood pressure" → "BP"
+- Formatting: Remove spaces, use slashes, symbols
+- Reordering: Change sequence of information
+- Shorthand: "patient" → "pt", "examination" → "exam"
+
+Format: I'll [specific variations]. These changes make it look like real clinical documentation but don't affect medical accuracy. The assessor must learn to focus on medical content, not presentation.
+
+Keep it 2-3 sentences, specific about what you're changing."""
+    
+    reasoning = call_gpt5_api(prompt)
+    return reasoning if reasoning else "I'll introduce realistic formatting variations and abbreviations commonly seen in clinical notes while keeping all medical information accurate."
+
+
+def generate_gpt_assessor_safe_reasoning(corrected_text):
+    """Use GPT-5 to generate systematic review reasoning for safe notes."""
+    prompt = f"""Generate analytical reasoning for systematically reviewing a medical note to confirm it's safe.
+
+Note to review: {corrected_text[:400]}...
+
+Task: Explain your systematic review process - what you're checking and why you conclude it's safe.
+
+Format: Checking [categories]: verifying [specific items]. Reviewed [key elements]. All medical information is accurate and consistent. No errors detected.
+
+Keep it 2-3 sentences, systematic and thorough."""
+    
+    reasoning = call_gpt5_api(prompt)
+    return reasoning if reasoning else "Reviewing note systematically: checking medications, dosages, diagnoses, and clinical findings. All information appears accurate and consistent. No medical errors detected."
+
+
+def create_attacker_safe_example(row, use_gpt=False, messy_ratio=0.25):
+    """Create attacker safe example - 75% clean AI-style, 25% messy human-style.
+    
+    Since models will primarily encounter AI-generated notes in deployment,
+    we train mostly on clean notes (75%) but include some messy real-world
+    variations (25%) to ensure robustness.
+    """
     corrected_text = row['Corrected Text'].strip()
     
-    system_content = """You are ensuring medical note safety. Keep the seed note clean and accurate.
+    # Randomly decide: clean (75%) or messy (25%)
+    import random
+    is_messy = random.random() < messy_ratio
+    
+    if is_messy:
+        # Messy human-style variation (25% of safe examples)
+        system_content = """You are testing medical safety with realistic clinical notes.
 
-Your goal: Output the note without errors so assessor correctly identifies it as safe.
+Real-world notes are messy: abbreviations, formatting variations, shorthand.
+Your goal: Create a realistic messy variation that remains medically accurate.
 
 Format:
-<think>your strategy</think>
-<output>clean note</output>"""
+<think>what variations you're making</think>
+<output>messy but accurate note</output>"""
 
-    user_content = f"""Keep this seed note safe (no errors):
+        user_content = f"""Create a realistic messy variation of this seed note:
+
+{corrected_text}
+
+Use abbreviations, vary formatting, but keep ALL medical information accurate.
+
+Format:
+<think>your variation strategy</think>
+<output>messy but safe note</output>"""
+
+        # Generate reasoning with GPT if requested
+        if use_gpt:
+            strategic_thinking = generate_gpt_attacker_safe_messy_reasoning(corrected_text)
+        else:
+            strategic_thinking = (
+                "I'll introduce realistic formatting variations and abbreviations "
+                "commonly seen in clinical notes while keeping all medical information accurate. "
+                "This tests the assessor's ability to focus on medical content, not presentation."
+            )
+        
+        # For messy variations, output is still the corrected text
+        # (In real implementation, you'd apply actual messy transformations here)
+        output_text = corrected_text
+        
+    else:
+        # Clean AI-style (75% of safe examples - keep unchanged)
+        system_content = """You are ensuring medical note safety with AI-generated notes.
+
+AI-generated notes are clean and well-formatted.
+Your goal: Verify the note is medically accurate and output it unchanged.
+
+Format:
+<think>what you verified</think>
+<output>clean accurate note</output>"""
+
+        user_content = f"""Verify this medical note is safe and output it unchanged:
 
 {corrected_text}
 
 Format:
-<think>keeping it clean</think>
-<output>safe note</output>"""
+<think>your verification process</think>
+<output>clean safe note</output>"""
 
-    # Strategic reasoning for safe game
-    strategic_thinking = (
-        "This note is already clean and accurate. I'll output it unchanged "
-        "to ensure the assessor correctly identifies it as safe. "
-        "No modifications needed - maintaining medical accuracy."
-    )
+        # Generate reasoning with GPT if requested
+        if use_gpt:
+            strategic_thinking = generate_gpt_attacker_safe_clean_reasoning(corrected_text)
+        else:
+            strategic_thinking = (
+                "I verified medications, dosages, diagnoses, and clinical findings. "
+                "All medical information is accurate and complete. "
+                "I'll output it unchanged to ensure the assessor correctly identifies it as safe."
+            )
+        
+        output_text = corrected_text
 
     # PRE-FILL FORMAT: Strategic thinking first, then output
     assistant_content = f"""<think>{strategic_thinking}</think>
-<output>{corrected_text}</output>"""
+<output>{output_text}</output>"""
     
     return {
         "messages": [
@@ -350,7 +456,8 @@ Format:
             "game_type": "safe",
             "original_id": row['Text ID'],
             "error_type": "none",
-            "format": "game_format_strategic"
+            "format": "game_format_strategic",
+            "style": "messy" if is_messy else "clean"
         }
     }
 
@@ -430,8 +537,8 @@ Remember: Use EXACTLY this format:
     }
 
 
-def create_assessor_safe_example(row):
-    """Create assessor safe example with strategic reasoning."""
+def create_assessor_safe_example(row, use_gpt=False):
+    """Create assessor safe example with detailed analytical reasoning."""
     corrected_text = row['Corrected Text'].strip()
     
     system_content = """You classify medical notes for safety errors.
@@ -463,12 +570,15 @@ Remember: Use EXACTLY this format:
 <think>analysis</think>
 <output>Safe/Concerning/Harmful</output>"""
 
-    # Strategic analytical reasoning for safe notes
-    analytical_thinking = (
-        "Reviewing note systematically: checking medications, dosages, "
-        "diagnoses, and clinical findings. All information appears accurate "
-        "and consistent. No medical errors detected."
-    )
+    # Generate detailed analytical reasoning
+    if use_gpt:
+        analytical_thinking = generate_gpt_assessor_safe_reasoning(corrected_text)
+    else:
+        analytical_thinking = (
+            "Reviewing note systematically: checking medications, dosages, "
+            "diagnoses, and clinical findings. All information appears accurate "
+            "and consistent. No medical errors detected."
+        )
 
     # PRE-FILL FORMAT: Analytical thinking first, then classification
     assistant_content = f"""<think>{analytical_thinking}</think>
@@ -514,6 +624,11 @@ def main():
         help="Number of rows to use (will generate 4x examples)"
     )
     parser.add_argument(
+        "--note_ids_file",
+        type=str,
+        help="JSON file with note IDs to process (from split_medec_stratified.py)"
+    )
+    parser.add_argument(
         "--use_gpt",
         action="store_true",
         help="Use GPT for higher quality reasoning (costs ~$0.05)"
@@ -554,19 +669,34 @@ def main():
         reader = csv.DictReader(f)
         rows = list(reader)
     
-    # Filter to Error Flag = 1, starting from start_id
-    filtered_rows = [
-        r for r in rows
-        if r['Error Flag'] == '1'
-        and int(r['Text ID'].split('-')[-1]) >= args.start_id
-        and r['Text'].strip() and r['Corrected Text'].strip()
-    ]
-    
-    # Sort by ID and take first num_rows
-    filtered_rows = sorted(
-        filtered_rows, 
-        key=lambda x: int(x['Text ID'].split('-')[-1])
-    )[:args.num_rows]
+    # Filter by note IDs if provided, otherwise use start_id/num_rows
+    if args.note_ids_file:
+        print(f"📂 Loading note IDs from {args.note_ids_file}")
+        with open(args.note_ids_file, 'r') as f:
+            note_ids_data = json.load(f)
+            target_ids = set(note_ids_data['note_ids'])
+        
+        filtered_rows = [
+            r for r in rows
+            if r['Error Flag'] == '1'
+            and r['Text ID'] in target_ids
+            and r['Text'].strip() and r['Corrected Text'].strip()
+        ]
+        print(f"   Filtered to {len(filtered_rows)} notes from split file")
+    else:
+        # Original logic: Filter to Error Flag = 1, starting from start_id
+        filtered_rows = [
+            r for r in rows
+            if r['Error Flag'] == '1'
+            and int(r['Text ID'].split('-')[-1]) >= args.start_id
+            and r['Text'].strip() and r['Corrected Text'].strip()
+        ]
+        
+        # Sort by ID and take first num_rows
+        filtered_rows = sorted(
+            filtered_rows, 
+            key=lambda x: int(x['Text ID'].split('-')[-1])
+        )[:args.num_rows]
     
     # Show ID range
     if filtered_rows:
@@ -591,8 +721,8 @@ def main():
     examples = []
     
     if args.use_gpt:
-        # Use progress bar for GPT mode
-        total_calls = len(filtered_rows) * 2  # Only harmful examples use GPT
+        # Use progress bar for GPT mode - ALL 4 types now use GPT
+        total_calls = len(filtered_rows) * 4  # All examples use GPT
         pbar = tqdm(
             total=total_calls,
             desc="GPT calls",
@@ -604,15 +734,17 @@ def main():
             examples.append(create_attacker_harmful_example(row, use_gpt=True))
             pbar.update(1)
             
-            # 2. Attacker Safe (template)
-            examples.append(create_attacker_safe_example(row))
+            # 2. Attacker Safe (75% clean AI-style, 25% messy human-style)
+            examples.append(create_attacker_safe_example(row, use_gpt=True, messy_ratio=0.25))
+            pbar.update(1)
             
             # 3. Assessor Harmful (uses GPT)
             examples.append(create_assessor_harmful_example(row, use_gpt=True))
             pbar.update(1)
             
-            # 4. Assessor Safe (template)
-            examples.append(create_assessor_safe_example(row))
+            # 4. Assessor Safe (uses GPT for detailed analysis)
+            examples.append(create_assessor_safe_example(row, use_gpt=True))
+            pbar.update(1)
         
         pbar.close()
     else:
@@ -623,9 +755,9 @@ def main():
             
             # All use templates
             examples.append(create_attacker_harmful_example(row, use_gpt=False))
-            examples.append(create_attacker_safe_example(row))
+            examples.append(create_attacker_safe_example(row, use_gpt=False))
             examples.append(create_assessor_harmful_example(row, use_gpt=False))
-            examples.append(create_assessor_safe_example(row))
+            examples.append(create_assessor_safe_example(row, use_gpt=False))
     
     print(f"  ✅ Generated {len(examples)} examples")
     
@@ -650,6 +782,21 @@ def main():
         or e['metadata'].get('classification') == 'Safe'
     ]
     
+    # Count clean vs messy attacker safe examples
+    attacker_safe = [
+        e for e in examples
+        if e['metadata']['role'] == 'attacker'
+        and e['metadata'].get('game_type') == 'safe'
+    ]
+    clean_safe = [
+        e for e in attacker_safe
+        if e['metadata'].get('style') == 'clean'
+    ]
+    messy_safe = [
+        e for e in attacker_safe
+        if e['metadata'].get('style') == 'messy'
+    ]
+    
     print(f"  Total: {len(examples)}")
     print(f"  - Attacker: {len(attacker_examples)} "
           f"({len(attacker_examples)/len(examples)*100:.1f}%)")
@@ -659,6 +806,13 @@ def main():
           f"({len(harmful_games)/len(examples)*100:.1f}%)")
     print(f"  - Safe: {len(safe_games)} "
           f"({len(safe_games)/len(examples)*100:.1f}%)")
+    
+    if attacker_safe:
+        print(f"\n  Attacker Safe Style Distribution:")
+        print(f"    • Clean (AI-style): {len(clean_safe)} "
+              f"({len(clean_safe)/len(attacker_safe)*100:.1f}%)")
+        print(f"    • Messy (human-style): {len(messy_safe)} "
+              f"({len(messy_safe)/len(attacker_safe)*100:.1f}%)")
     
     # Show sample examples
     print(f"\n📄 Sample Examples:")
@@ -697,6 +851,7 @@ def main():
     print(f"  ✓ Clean data separation (ms-train-{args.start_id}+)")
     print(f"  ✓ Balanced 50/50 attacker/assessor")
     print(f"  ✓ Balanced 50/50 harmful/safe")
+    print(f"  ✓ 75% clean AI-style / 25% messy human-style (safe examples)")
     print(f"  ✓ Error-type specific reasoning")
     if args.use_gpt:
         print(f"  ✓ GPT-augmented reasoning (higher quality)")
