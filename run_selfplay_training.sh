@@ -10,7 +10,7 @@ echo "=== Selfplay Training (GRPO) ==="
 # Get model path from argument or use your trained model
 if [ $# -eq 0 ]; then
     # Use your trained model by default - point to the checkpoint directory
-    MODEL_PATH="trainer_output/qwen3_game_adapted_20251021_163036_20251021_163043"
+    MODEL_PATH="trainer_output/qwen3_sft_complete_20251110_150350"
     echo "Using your trained model: $MODEL_PATH"
 else
     MODEL_PATH="$1"
@@ -20,7 +20,7 @@ fi
 # Configuration
 JUDGE_MODEL="google/medgemma-4b-it"
 NUM_SAMPLES=32
-NUM_GENERATIONS=4  # Increased for better reward variance
+NUM_GENERATIONS=8  # Increased for better reward variance
 LEARNING_RATE=1e-5  # Increased from 1e-5 to restore meaningful gradients
 ROUNDS=4
 MAX_ASSESSOR_BATCH=64
