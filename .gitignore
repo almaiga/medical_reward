@@ -1,2 +1,7 @@
 .env
-.env
+
+# Workspace-specific installations (persist on SSH server)
+miniconda3/
+envs/
+.huggingface/
+.hf_token
