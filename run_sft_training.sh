@@ -5,6 +5,9 @@
 
 set -e  # Exit on any error
 
+# Disable hf_transfer to avoid issues
+unset HF_HUB_ENABLE_HF_TRANSFER
+
 echo "=== Qwen SFT Training with Clean Stratified Data ==="
 
 # Configuration
@@ -61,11 +64,12 @@ echo "💡 TIP: Open another terminal to monitor:"
 echo "   python3 script/monitor_training.py --training_dir $OUTPUT_DIR"
 echo ""
 
-python3 script/train_qwen3_sft.py \
+python3 script/train_qwen3_trl.py \
     --model_id "$MODEL_ID" \
     --data_path "$MERGED_DATA" \
     --epochs 3 \
-    --batch_size 4 \
+    --batch_size 2 \
+    --grad_accumulation 8 \
     --learning_rate 2e-5 \
     --output_dir "$OUTPUT_DIR"
 
