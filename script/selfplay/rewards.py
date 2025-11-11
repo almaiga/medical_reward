@@ -353,7 +353,7 @@ def create_attacker_reward_fn(
                     **inputs,
                     max_new_tokens=1024,
                     do_sample=True,
-                    temperature=0.7,
+                    temperature=0.7,  # Frozen assessor uses consistent temperature
                     top_p=0.9,
                     repetition_penalty=1.1,
                     pad_token_id=policy_tok.eos_token_id,

@@ -208,9 +208,10 @@ def main():
 
     # CRITICAL: Configure generation parameters for GRPO
     # Set model's generation config directly (GRPO will use this)
+    # Note: Temperature will be adjusted per phase (attacker vs assessor)
     policy_model.generation_config.max_new_tokens = 1024
     policy_model.generation_config.do_sample = True
-    policy_model.generation_config.temperature = 0.7
+    policy_model.generation_config.temperature = 1.0  # Default (will be adjusted)
     policy_model.generation_config.top_p = 0.9
     policy_model.generation_config.top_k = 50
     policy_model.generation_config.repetition_penalty = (
@@ -221,11 +222,16 @@ def main():
     if hasattr(policy_tok, "bos_token_id") and policy_tok.bos_token_id:
         policy_model.generation_config.bos_token_id = policy_tok.bos_token_id
 
+    # Temperature settings for diversity
+    ATTACKER_TEMPERATURE = 1.0  # Higher for exploration and attack diversity
+    ASSESSOR_TEMPERATURE = 0.7  # Lower for consistent detection
+
     print(f"\n{'='*60}")
     print("MODEL GENERATION CONFIG")
     print(f"{'='*60}")
     print(f"  max_new_tokens: {policy_model.generation_config.max_new_tokens}")
-    print(f"  temperature: {policy_model.generation_config.temperature}")
+    print(f"  attacker_temperature: {ATTACKER_TEMPERATURE}")
+    print(f"  assessor_temperature: {ASSESSOR_TEMPERATURE}")
     print(f"  top_p: {policy_model.generation_config.top_p}")
     print(f"  top_k: {policy_model.generation_config.top_k}")
     print(f"  repetition_penalty: {policy_model.generation_config.repetition_penalty}")
@@ -277,6 +283,10 @@ def main():
         print(f"Attacker dataset size: {len(ds_attacker)}")
         print(f"Sample attacker prompt (first 300 chars):")
         print(f"{ds_attacker[0]['prompt'][:300]}...")
+
+        # Set attacker temperature (higher for diversity)
+        policy_model.generation_config.temperature = ATTACKER_TEMPERATURE
+        print(f"🌡️  Set temperature to {ATTACKER_TEMPERATURE} for attacker (exploration)")
 
         # Create attacker reward function
         attacker_reward_fn = create_attacker_reward_fn(
@@ -451,6 +461,10 @@ def main():
         print(f"{'='*60}\n")
 
         print(f"--- Round {r+1}: Training Assessor ---")
+        
+        # Set assessor temperature (lower for consistency)
+        policy_model.generation_config.temperature = ASSESSOR_TEMPERATURE
+        print(f"🌡️  Set temperature to {ASSESSOR_TEMPERATURE} for assessor (consistency)")
         
         # Create assessor reward function
         assessor_reward_fn = create_assessor_reward_fn(
