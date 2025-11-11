@@ -70,18 +70,21 @@ class MetricsLogger:
         
         # Add trainer metrics if available
         if hasattr(trainer_state, "log_history") and trainer_state.log_history:
-            # Get the last logged metrics
-            last_log = trainer_state.log_history[-1]
+            # Aggregate metrics from all log entries (GRPO logs different metrics at different steps)
+            # We want the most recent value for each metric
+            aggregated = {}
+            for log_entry in trainer_state.log_history:
+                aggregated.update(log_entry)
             
             # Core training metrics
-            if "loss" in last_log:
-                metrics["loss"] = last_log["loss"]
-            if "grad_norm" in last_log:
-                metrics["grad_norm"] = last_log["grad_norm"]
-            if "learning_rate" in last_log:
-                metrics["learning_rate"] = last_log["learning_rate"]
-            if "epoch" in last_log:
-                metrics["epoch"] = last_log["epoch"]
+            if "loss" in aggregated:
+                metrics["loss"] = aggregated["loss"]
+            if "grad_norm" in aggregated:
+                metrics["grad_norm"] = aggregated["grad_norm"]
+            if "learning_rate" in aggregated:
+                metrics["learning_rate"] = aggregated["learning_rate"]
+            if "epoch" in aggregated:
+                metrics["epoch"] = aggregated["epoch"]
             
             # GRPO-specific metrics
             grpo_keys = [
@@ -100,13 +103,13 @@ class MetricsLogger:
             ]
             
             for key in grpo_keys:
-                if key in last_log:
-                    metrics[key] = last_log[key]
+                if key in aggregated:
+                    metrics[key] = aggregated[key]
             
             # Reward function specific metrics
-            reward_keys = [k for k in last_log.keys() if k.startswith("rewards/")]
+            reward_keys = [k for k in aggregated.keys() if k.startswith("rewards/")]
             for key in reward_keys:
-                metrics[key] = last_log[key]
+                metrics[key] = aggregated[key]
         
         # Add additional metrics
         if additional_metrics:
