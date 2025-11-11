@@ -45,6 +45,9 @@ from .judge import (
     JudgeValidator,
 )
 
+# Import metrics logging
+from .metrics_logger import MetricsLogger, print_metrics_summary
+
 __all__ = [
     # Main entry point
     "main",
@@ -70,4 +73,7 @@ __all__ = [
     "get_judge_assessment",
     "evaluate_thinking_quality",
     "JudgeValidator",
+    # Metrics
+    "MetricsLogger",
+    "print_metrics_summary",
 ]

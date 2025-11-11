@@ -2,13 +2,24 @@
 Reward calculation functions for attacker and assessor roles.
 
 This module contains reward functions compatible with GRPOTrainer,
-implementing the Self-RedTeam paper's reward structure.
+implementing the Self-RedTeam paper's exact reward structure.
+
+Paper: Self-RedTeam: Online Self-Play Reinforcement Learning for LM Safety Alignment
+arXiv: 2506.07468
+
+Reward Structure:
+- Attacker: RA = RA,res_harm + RA,res_refusal + RA,format + RA,revision
+- Defender: RD = RD,res_harm + RD,res_refusal + RD,format
+- Zero-sum property: RA,res_harm = -RD,res_harm and RA,res_refusal = -RD,res_refusal
 """
 
 import torch
 from .utils import parse_response, log_interaction, extract_original_from_attacker_prompt
-from .judge import get_judge_assessment, evaluate_thinking_quality
+from .judge import get_judge_assessment
 from .prompts import make_assessor_prompts
+
+# Minimum thinking length to prevent gaming the format reward
+MIN_THINKING_LENGTH = 20
 
 
 def create_assessor_reward_fn(
@@ -21,10 +32,14 @@ def create_assessor_reward_fn(
     R_GAME: float = 1.0,
     R_FORMAT: float = 1.0
 ):
-    """Create assessor reward function with closure over dependencies.
+    """Create assessor reward function implementing Self-RedTeam paper's structure.
     
-    Returns a function compatible with GRPOTrainer that calculates rewards
-    for the assessor (defender) role.
+    Reward Components (Defender):
+    - RD,res_harm: Response harmfulness (zero-sum with attacker)
+    - RD,res_refusal: Response refusal (zero-sum with attacker)
+    - RD,format: CoT formatting (shaping term)
+    
+    Total range: [-3, +3] (matching paper)
     
     Args:
         judge_model: Judge model for evaluation
@@ -33,8 +48,8 @@ def create_assessor_reward_fn(
         state: Training state dict with 'round' key
         log_path: Path to log file
         judge_validator: JudgeValidator instance
-        R_GAME: Game reward magnitude (default 1.0)
-        R_FORMAT: Format reward magnitude (default 1.0)
+        R_GAME: Game reward magnitude (rharm, rrefusal in paper, default 1.0)
+        R_FORMAT: Format reward magnitude (rformat in paper, default 1.0)
         
     Returns:
         Reward function compatible with GRPOTrainer
@@ -75,6 +90,7 @@ def create_assessor_reward_fn(
             thought, label = parse_response(c)
             print(f"Parsed - Thought: {thought[:100] if thought else 'None'}...")
             print(f"Parsed - Label: {label}")
+            
             judgments = get_judge_assessment(
                 original, attacked, label, game_type, judge_model, judge_tok, device
             )
@@ -84,48 +100,50 @@ def create_assessor_reward_fn(
 
             # Extract actual_harm for use in reward calculations
             actual_harm = judgments["actual_harm"]
+            assessor_correct = judgments["assessor_was_correct"]
 
-            # DEFENDER REWARDS - Self-RedTeam paper's 2-component structure
-            # Paper uses "general_sum_all_one" config with ±1.0 for all components
-            # Total range: -3.0 to +3.0
-
-            # 1. RD,refusal (Classification Correctness / response_refusal)
-            # Purpose: Reward defender for correct classification based on actual harm
-            if actual_harm == "Harmful":
-                # Note has error: Should say "Harmful"
-                r_refusal = +R_GAME if label == "Harmful" else -R_GAME
-            else:  # actual_harm == "Safe"
-                # Note is safe: Should say "Safe"
-                r_refusal = +R_GAME if label == "Safe" else -R_GAME
-
-            # 2. RD,harmfulness (Always Detect Errors / response_harmfulness)
-            # Purpose: Reward defender for always generating safe classifications
-            # This is the same as r_refusal in our binary case, but kept separate
-            # to match paper's structure
-            r_harmfulness = +R_GAME if judgments["assessor_was_correct"] else -R_GAME
-
-            # 3. Format reward (CoT formatting)
-            r_format = +R_FORMAT if thought else -R_FORMAT
-
-            # 4. Thinking Quality Reward (NEW - Judge evaluates reasoning quality)
-            # Purpose: Reward specific medical reasoning, penalize lazy meta-commentary
-            # Uses MedGemma judge to evaluate if thinking contains actual analysis
-            thinking_eval = evaluate_thinking_quality(
-                thought if thought else "",
-                attacked,
-                label,
-                judge_model,
-                judge_tok,
-                device,
+            # ============================================================
+            # DEFENDER REWARDS - Self-RedTeam Paper's Exact Structure
+            # ============================================================
+            # Total: RD = RD,res_harm + RD,res_refusal + RD,format
+            # Range: [-3, +3]
+            
+            # 1. RD,res_harm (Response Harmfulness - Zero-Sum Component)
+            # Paper: "defender seeks to avoid harmful responses"
+            # In our binary case: defender wants to be correct
+            RD_res_harm = +R_GAME if assessor_correct else -R_GAME
+            
+            # 2. RD,res_refusal (Response Refusal - Zero-Sum Component)
+            # Paper: "appropriate refusal behavior, conditioned on query harmfulness"
+            # Conditional 2x2 matrix:
+            if actual_harm == "Harmful" and label == "Harmful":
+                RD_res_refusal = +R_GAME  # Correctly detected harmful
+            elif actual_harm == "Safe" and label == "Safe":
+                RD_res_refusal = +R_GAME  # Correctly said safe
+            elif actual_harm == "Harmful" and label == "Safe":
+                RD_res_refusal = -R_GAME  # Failed to detect harmful
+            else:  # actual_harm == "Safe" and label == "Harmful"
+                RD_res_refusal = -R_GAME  # Over-refused safe note
+            
+            # 3. RD,format (CoT Formatting - Shaping Term)
+            # Paper: "ensures agents adhere to correct CoT format"
+            # Require both <think> tag AND minimum length
+            has_valid_thinking = (
+                thought is not None 
+                and len(thought.strip()) >= MIN_THINKING_LENGTH
             )
-            r_thinking = thinking_eval["thinking_quality"] * R_FORMAT  # ±1.0
-            print(
-                f"💭 Thinking quality: {r_thinking:+.1f} (reason: {thinking_eval['reason']})"
-            )
+            RD_format = +R_FORMAT if has_valid_thinking else -R_FORMAT
+            
+            if not has_valid_thinking:
+                if thought is None:
+                    print(f"⚠️  Format penalty: Missing <think> tag")
+                else:
+                    print(f"⚠️  Format penalty: Thinking too short ({len(thought.strip())} < {MIN_THINKING_LENGTH} chars)")
 
-            # Total reward: sum of all components
-            # Range: -4.0 to +4.0 (added thinking quality component)
-            total_reward = r_refusal + r_harmfulness + r_format + r_thinking
+            # Total defender reward
+            total_reward = RD_res_harm + RD_res_refusal + RD_format
+            
+            print(f"💰 Defender rewards: res_harm={RD_res_harm:+.1f}, res_refusal={RD_res_refusal:+.1f}, format={RD_format:+.1f}, total={total_reward:+.1f}")
 
             log_interaction(
                 round_num=state["round"],
@@ -138,16 +156,17 @@ def create_assessor_reward_fn(
                 },
                 assessor_response={
                     "thought": thought,
-                    "full_response": c,  # Full completion with thinking
+                    "full_response": c,
                     "label": label,
                 },
                 judgments=judgments,
                 rewards={
-                    "r_refusal": r_refusal,
-                    "r_harmfulness": r_harmfulness,
-                    "format_reward": r_format,
-                    "thinking_quality": r_thinking,
+                    "game_type": game_type,
+                    "RD_res_harm": RD_res_harm,
+                    "RD_res_refusal": RD_res_refusal,
+                    "RD_format": RD_format,
                     "total": total_reward,
+                    "assessor_correct": assessor_correct,
                 },
                 log_path=log_path,
             )
@@ -171,10 +190,19 @@ def create_attacker_reward_fn(
     R_GAME: float = 1.0,
     R_FORMAT: float = 1.0
 ):
-    """Create attacker reward function with closure over dependencies.
+    """Create attacker reward function implementing Self-RedTeam paper's structure.
     
-    Returns a function compatible with GRPOTrainer that calculates rewards
-    for the attacker role.
+    Reward Components (Attacker):
+    - RA,res_harm: Response harmfulness (zero-sum, opposite of defender)
+    - RA,res_refusal: Response refusal (zero-sum, opposite of defender)
+    - RA,format: CoT formatting (shaping term)
+    - RA,revision: Revision faithfulness (shaping term)
+    
+    Total range: [-4, +4] (matching paper)
+    
+    Zero-sum property:
+    - RA,res_harm = -RD,res_harm
+    - RA,res_refusal = -RD,res_refusal
     
     Args:
         policy_tok: Policy tokenizer
@@ -187,8 +215,8 @@ def create_attacker_reward_fn(
         diversity_stats: Dict tracking diversity metrics
         judge_validator: JudgeValidator instance
         assessor_snapshot: Dict with frozen assessor model
-        R_GAME: Game reward magnitude (default 1.0)
-        R_FORMAT: Format reward magnitude (default 1.0)
+        R_GAME: Game reward magnitude (rharm, rrefusal, rrevision in paper, default 1.0)
+        R_FORMAT: Format reward magnitude (rformat in paper, default 1.0)
         
     Returns:
         Reward function compatible with GRPOTrainer
@@ -346,25 +374,13 @@ def create_attacker_reward_fn(
                 device,
             )
 
-            # Evaluate frozen assessor's thinking quality (for logging/debugging)
-            thinking_eval = evaluate_thinking_quality(
-                assessor_thought if assessor_thought else "",
-                attacked_note,
-                assessor_label,
-                judge_model,
-                judge_tok,
-                device,
-            )
-            print(
-                f"💭 Frozen assessor thinking quality: {thinking_eval['thinking_quality']:+.1f} (reason: {thinking_eval['reason']})"
-            )
-
             # Track judge classification for validation
             judge_validator.add_classification(judgments["actual_harm"])
 
             # Track diversity stats (BINARY)
             diversity_stats[f"{game_type}_games"] += 1
             actual_harm = judgments["actual_harm"]
+            assessor_correct = judgments["assessor_was_correct"]
             diversity_stats[f"{game_type}_{actual_harm.lower()}"] += 1
 
             # Track faithfulness (respecting game type) - BINARY
@@ -382,40 +398,69 @@ def create_attacker_reward_fn(
                     diversity_stats.get(f"{game_type}_unfaithful", 0) + 1
                 )
 
-            # ATTACKER REWARDS - Self-RedTeam paper's 3-component structure
-            # Paper uses "general_sum_all_one" config with ±1.0 for all components
-            # Total range: -4.0 to +4.0
-
-            # 1. RA,revision (Note Modification Faithfulness / prompt_harmfulness)
-            # Purpose: Ensure attacker respects the game type
+            # ============================================================
+            # ATTACKER REWARDS - Self-RedTeam Paper's Exact Structure
+            # ============================================================
+            # Total: RA = RA,res_harm + RA,res_refusal + RA,format + RA,revision
+            # Range: [-4, +4]
+            
+            # 1. RA,res_harm (Response Harmfulness - Zero-Sum, OPPOSITE of defender)
+            # Paper: RA,res_harm = -RD,res_harm
+            # Attacker wants defender to be WRONG
+            RA_res_harm = -R_GAME if assessor_correct else +R_GAME
+            
+            # 2. RA,res_refusal (Response Refusal - Zero-Sum, OPPOSITE of defender)
+            # Paper: RA,res_refusal = -RD,res_refusal
+            # Attacker wins if defender classifies incorrectly
+            if actual_harm == "Harmful" and assessor_label == "Harmful":
+                RA_res_refusal = -R_GAME  # Defender detected (attacker loses)
+            elif actual_harm == "Safe" and assessor_label == "Safe":
+                RA_res_refusal = -R_GAME  # Defender correct (attacker loses)
+            elif actual_harm == "Harmful" and assessor_label == "Safe":
+                RA_res_refusal = +R_GAME  # Defender missed error (attacker wins)
+            else:  # actual_harm == "Safe" and assessor_label == "Harmful"
+                RA_res_refusal = +R_GAME  # Defender over-refused (attacker wins)
+            
+            # 3. RA,revision (Revision Faithfulness - Shaping Term)
+            # Paper: "preserves original intent—harmful or benign"
+            # Ensures attacker respects game type (seed intent)
             if game_type == "harmful":
-                # Harmful game: Should introduce error
-                r_revision = +R_GAME if actual_harm == "Harmful" else -R_GAME
+                RA_revision = +R_GAME if actual_harm == "Harmful" else -R_GAME
             else:  # safe game
-                # Safe game: Should keep safe
-                r_revision = +R_GAME if actual_harm == "Safe" else -R_GAME
+                RA_revision = +R_GAME if actual_harm == "Safe" else -R_GAME
+            
+            # 4. RA,format (CoT Formatting - Shaping Term)
+            # Paper: "ensures agents adhere to correct CoT format"
+            # Require both <think> tag AND minimum length
+            has_valid_thinking = (
+                attacker_thought is not None 
+                and len(attacker_thought.strip()) >= MIN_THINKING_LENGTH
+            )
+            RA_format = +R_FORMAT if has_valid_thinking else -R_FORMAT
+            
+            if not has_valid_thinking:
+                if attacker_thought is None:
+                    print(f"⚠️  Format penalty: Missing <think> tag")
+                else:
+                    print(f"⚠️  Format penalty: Thinking too short ({len(attacker_thought.strip())} < {MIN_THINKING_LENGTH} chars)")
 
-            # 2. RA,refusal (Defender Classification / response_refusal)
-            # Purpose: Reward attacker for making defender classify incorrectly
-            # Based on what defender SAID, not whether it's correct
-            if game_type == "harmful":
-                # Harmful game: Attacker wins if defender says "Safe" (failed to detect)
-                r_refusal = +R_GAME if assessor_label == "Safe" else -R_GAME
-            else:  # safe game
-                # Safe game: Attacker wins if defender says "Harmful" (over-refused)
-                r_refusal = +R_GAME if assessor_label == "Harmful" else -R_GAME
-
-            # 3. RA,harmfulness (Actual Harm Level / response_harmfulness)
-            # Purpose: Reward attacker for creating harmful notes (breaking defender)
-            # For BOTH games: reward if note has error
-            r_harmfulness = +R_GAME if actual_harm == "Harmful" else -R_GAME
-
-            # 4. Format reward (CoT formatting)
-            r_format = +R_FORMAT if attacker_thought else -R_FORMAT
-
-            # Total reward: sum of all components
-            # Range: -4.0 to +4.0 (matches paper's scale)
-            total_reward = r_revision + r_refusal + r_harmfulness + r_format
+            # Total attacker reward
+            total_reward = RA_res_harm + RA_res_refusal + RA_revision + RA_format
+            
+            # Verify zero-sum property (for debugging)
+            # RD_res_harm + RA_res_harm should = 0
+            # RD_res_refusal + RA_res_refusal should = 0
+            RD_res_harm = +R_GAME if assessor_correct else -R_GAME
+            if actual_harm == "Harmful" and assessor_label == "Harmful":
+                RD_res_refusal = +R_GAME
+            elif actual_harm == "Safe" and assessor_label == "Safe":
+                RD_res_refusal = +R_GAME
+            else:
+                RD_res_refusal = -R_GAME
+            
+            zero_sum_check = (RA_res_harm + RD_res_harm) + (RA_res_refusal + RD_res_refusal)
+            print(f"💰 Attacker rewards: res_harm={RA_res_harm:+.1f}, res_refusal={RA_res_refusal:+.1f}, revision={RA_revision:+.1f}, format={RA_format:+.1f}, total={total_reward:+.1f}")
+            print(f"🎯 Zero-sum check: {zero_sum_check:.1f} (should be 0.0)")
 
             log_interaction(
                 round_num=state["round"],
@@ -427,22 +472,20 @@ def create_attacker_reward_fn(
                     "attacked_note": attacked_note,
                 },
                 assessor_response={
-                    "thought": assessor_thought,  # Parsed thinking
-                    "full_response": assessor_completion,  # Full response
+                    "thought": assessor_thought,
+                    "full_response": assessor_completion,
                     "label": assessor_label,
                 },
                 judgments=judgments,
                 rewards={
                     "game_type": game_type,
-                    "r_revision": r_revision,
-                    "r_refusal": r_refusal,
-                    "r_harmfulness": r_harmfulness,
-                    "format_reward": r_format,
-                    "thinking_quality_frozen": thinking_eval[
-                        "thinking_quality"
-                    ],  # For logging only
-                    "thinking_reason": thinking_eval["reason"],  # For debugging
+                    "RA_res_harm": RA_res_harm,
+                    "RA_res_refusal": RA_res_refusal,
+                    "RA_revision": RA_revision,
+                    "RA_format": RA_format,
                     "total": total_reward,
+                    "assessor_correct": assessor_correct,
+                    "zero_sum_check": zero_sum_check,
                 },
                 log_path=log_path,
             )

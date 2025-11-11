@@ -30,6 +30,7 @@ from .prompts import build_attacker_prompts, make_assessor_prompts
 from .rewards import create_attacker_reward_fn, create_assessor_reward_fn
 from .utils import patch_tokenizer_for_grpo, deduplicate_attacked_notes
 from .judge import JudgeValidator
+from .metrics_logger import MetricsLogger, print_metrics_summary
 
 R_GAME = 1.0  # Game reward: +1 for win, -1 for loss
 R_FORMAT = 1.0  # Format reward: +1 for correct CoT format, -1 for violation
@@ -160,13 +161,18 @@ def main():
     print(f"{'='*60}\n")
 
     ts = datetime.now().strftime("%Y%m%d_%H%M%S")
-    log_path = f"results/{ts}_{args.model_id.replace('/', '_')}_grpo_assessor.jsonl"
-    os.makedirs(os.path.dirname(log_path), exist_ok=True)
+    experiment_name = f"{ts}_{args.model_id.replace('/', '_')}_grpo"
+    log_path = f"results/{experiment_name}_interactions.jsonl"
+    os.makedirs("results", exist_ok=True)
     state = {"round": 0, "total_steps": 0}
 
     def log_jsonl(entry: dict):
         with open(log_path, "a", encoding="utf-8") as f:
             f.write(json.dumps(entry, ensure_ascii=False) + "\n")
+    
+    # Initialize metrics logger
+    metrics_logger = MetricsLogger(log_dir="results", experiment_name=experiment_name)
+    print(f"📊 Metrics will be logged to: results/{experiment_name}_metrics.jsonl")
 
     assessor_snapshot = {"model": None}
 
@@ -307,6 +313,21 @@ def main():
         print(f"\n{'='*60}")
         print("ATTACKER TRAINING COMPLETE")
         print(f"{'='*60}\n")
+        
+        # Log attacker training metrics
+        metrics_logger.log_training_metrics(
+            round_num=r + 1,
+            phase="attacker",
+            trainer_state=attacker_trainer.state,
+            additional_metrics={
+                "dataset_size": len(ds_attacker),
+                "num_generations": args.num_generations,
+            }
+        )
+        
+        # Print metrics summary
+        if hasattr(attacker_trainer.state, "log_history") and attacker_trainer.state.log_history:
+            print_metrics_summary(attacker_trainer.state.log_history[-1], "Attacker")
 
         # Log diversity statistics (BINARY)
         print(f"\n{'='*60}")
@@ -368,6 +389,18 @@ def main():
                     "status": validation["status"],
                     "warnings": validation.get("warnings", []),
                 },
+            }
+        )
+        
+        # Log round summary to metrics
+        metrics_logger.log_round_summary(
+            round_num=r + 1,
+            diversity_stats=diversity_stats.copy(),
+            judge_stats={
+                "total": judge_stats["total"],
+                "counts": judge_stats.get("counts", {}),
+                "percentages": judge_stats.get("percentages", {}),
+                "status": validation["status"],
             }
         )
 
@@ -439,6 +472,21 @@ def main():
             reward_funcs=[assessor_reward_fn],
         )
         assessor_trainer.train()
+        
+        # Log assessor training metrics
+        metrics_logger.log_training_metrics(
+            round_num=r + 1,
+            phase="assessor",
+            trainer_state=assessor_trainer.state,
+            additional_metrics={
+                "dataset_size": len(ds_assessor_round),
+                "num_generations": args.num_generations,
+            }
+        )
+        
+        # Print metrics summary
+        if hasattr(assessor_trainer.state, "log_history") and assessor_trainer.state.log_history:
+            print_metrics_summary(assessor_trainer.state.log_history[-1], "Assessor")
 
         # Clear memory after each round
         del assessor_trainer, snap, ds_assessor_round
@@ -449,10 +497,12 @@ def main():
             torch.cuda.empty_cache()
         gc.collect()
 
-    print(f"📄 JSONL log written to {log_path}")
-    print(
-        f"📄 Interaction log written to {log_path.replace('.jsonl', '_interactions.jsonl')}"
-    )
+    # Finalize metrics logging
+    metrics_logger.finalize()
+    
+    print(f"📄 Interaction log written to {log_path}")
+    print(f"📊 Metrics log written to results/{experiment_name}_metrics.jsonl")
+    print(f"📊 Metrics summary written to results/{experiment_name}_metrics_summary.json")
 
 
 if __name__ == "__main__":
