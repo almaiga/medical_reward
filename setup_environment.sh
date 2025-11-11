@@ -41,7 +41,7 @@ else
     
     # Download and install to workspace/miniconda3
     # Download and install to workspace/miniconda3
-    INSTALL_DIR="$(pwd)/miniconda3"
+    INSTALL_DIR="$workspace/miniconda3"
     wget "${MINICONDA_URL}" -O miniconda.sh
     bash miniconda.sh -b -p "${INSTALL_DIR}"
     rm miniconda.sh
