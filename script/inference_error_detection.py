@@ -63,6 +63,8 @@ def load_test_data(dataset_name: str = "all") -> pd.DataFrame:
         ms_path = "data_copy/MEDEC/MEDEC-MS/MEDEC-MS-TestSet-with-GroundTruth-and-ErrorType.csv"
         if os.path.exists(ms_path):
             df_ms = pd.read_csv(ms_path)
+            # Filter out rows with null Text ID
+            df_ms = df_ms[df_ms['Text ID'].notna()].copy()
             df_ms['dataset'] = 'MS'
             dfs.append(df_ms)
             print(f"✅ Loaded MS test set: {len(df_ms)} examples")
@@ -71,6 +73,8 @@ def load_test_data(dataset_name: str = "all") -> pd.DataFrame:
         uw_path = "data_copy/MEDEC/MEDEC-UW/MEDEC-UW-TestSet-with-GroundTruth-and-ErrorType.csv"
         if os.path.exists(uw_path):
             df_uw = pd.read_csv(uw_path)
+            # Filter out rows with null Text ID
+            df_uw = df_uw[df_uw['Text ID'].notna()].copy()
             df_uw['dataset'] = 'UW'
             dfs.append(df_uw)
             print(f"✅ Loaded UW test set: {len(df_uw)} examples")
@@ -425,8 +429,8 @@ def main():
                        help="Disable chain-of-thought reasoning")
     
     # Generation arguments
-    parser.add_argument("--temperature", type=float, default=0.3,
-                       help="Sampling temperature (default: 0.3)")
+    parser.add_argument("--temperature", type=float, default=0.7,
+                       help="Sampling temperature (default: 0.7)")
     parser.add_argument("--max_new_tokens", type=int, default=512,
                        help="Maximum tokens to generate (default: 512)")
     parser.add_argument("--thinking_budget", type=int, default=1024,
