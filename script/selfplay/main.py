@@ -116,6 +116,12 @@ def main():
         default=64,
         help="New notes for the assessor each round.",
     )
+    parser.add_argument(
+        "--output_dir",
+        type=str,
+        default=None,
+        help="Custom output directory for the final model (default: trainer_output/<experiment_name>_final)",
+    )
     args = parser.parse_args()
     print(f"Arguments parsed: {args}")
 
@@ -514,9 +520,40 @@ def main():
     # Finalize metrics logging
     metrics_logger.finalize()
     
+    # Save the final trained model
+    output_dir = args.output_dir if args.output_dir else f"trainer_output/{experiment_name}_final"
+    print(f"\n{'='*60}")
+    print("SAVING FINAL MODEL")
+    print(f"{'='*60}")
+    print(f"Saving model to: {output_dir}")
+    
+    os.makedirs(output_dir, exist_ok=True)
+    policy_model.save_pretrained(output_dir)
+    policy_tok.save_pretrained(output_dir)
+    
+    # Save training info
+    training_info = {
+        "model_id": args.model_id,
+        "judge_model_id": args.judge_model_id,
+        "num_samples": args.num_samples,
+        "num_generations": args.num_generations,
+        "learning_rate": args.learning_rate,
+        "rounds": args.rounds,
+        "max_assessor_batch": args.max_assessor_batch,
+        "timestamp": ts,
+        "experiment_name": experiment_name,
+    }
+    
+    with open(f"{output_dir}/training_info.json", "w") as f:
+        json.dump(training_info, f, indent=2)
+    
+    print(f"✅ Model saved successfully!")
+    print(f"{'='*60}\n")
+    
     print(f"📄 Interaction log written to {log_path}")
     print(f"📊 Metrics log written to results/{experiment_name}_metrics.jsonl")
     print(f"📊 Metrics summary written to results/{experiment_name}_metrics_summary.json")
+    print(f"💾 Final model saved to {output_dir}")
 
 
 if __name__ == "__main__":

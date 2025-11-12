@@ -25,6 +25,10 @@ LEARNING_RATE=1e-5  # Increased from 1e-5 to restore meaningful gradients
 ROUNDS=3
 MAX_ASSESSOR_BATCH=64
 
+# Optional: Set custom output directory for the final model
+# Leave empty to use default (trainer_output/<timestamp>_<model>_grpo_final)
+OUTPUT_DIR=""
+
 echo ""
 echo "🔍 Checking requirements..."
 
@@ -63,14 +67,22 @@ echo "  Max Assessor Batch: $MAX_ASSESSOR_BATCH"
 echo ""
 echo "🚀 Starting selfplay training..."
 
-python3 script/train_selfplay_advanced.py \
-    --model_id "$MODEL_PATH" \
-    --judge_model_id "$JUDGE_MODEL" \
+# Build command with optional output_dir
+CMD="python3 script/train_selfplay_advanced.py \
+    --model_id \"$MODEL_PATH\" \
+    --judge_model_id \"$JUDGE_MODEL\" \
     --num_samples $NUM_SAMPLES \
     --num_generations $NUM_GENERATIONS \
     --learning_rate $LEARNING_RATE \
     --rounds $ROUNDS \
-    --max_assessor_batch $MAX_ASSESSOR_BATCH
+    --max_assessor_batch $MAX_ASSESSOR_BATCH"
+
+if [ -n "$OUTPUT_DIR" ]; then
+    CMD="$CMD --output_dir \"$OUTPUT_DIR\""
+    echo "  Output: $OUTPUT_DIR"
+fi
+
+eval $CMD
 
 echo ""
 echo "✅ Selfplay training complete!"
@@ -78,5 +90,6 @@ echo ""
 echo "📊 Check results in the results/ directory"
 echo "📁 Look for files matching: results/*_grpo_assessor.jsonl"
 echo "📁 Interaction logs: results/*_interactions.jsonl"
+echo "💾 Final model saved in: trainer_output/"
 echo ""
 echo "🎉 Training pipeline finished!"
