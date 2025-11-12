@@ -199,10 +199,10 @@ def create_sft_config(output_dir: str, args) -> SFTConfig:
         # For Qwen3 - set proper EOS token
         eos_token="<|im_end|>",  # Qwen3's EOS token
         
-        # Logging and saving - only save at end to save disk space
+        # Logging and saving - DISABLED to save disk space (only final model saved)
         logging_steps=5,  # Log every 5 steps for better visibility
-        save_strategy="epoch",  # Only save at end of each epoch
-        save_total_limit=1,  # Keep only the last checkpoint
+        save_strategy="no",  # Don't save checkpoints during training
+        save_total_limit=0,  # Don't keep any intermediate checkpoints
         eval_strategy="no",
         
         # Progress tracking
