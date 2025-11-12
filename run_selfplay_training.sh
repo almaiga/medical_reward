@@ -21,7 +21,7 @@ fi
 JUDGE_MODEL="google/medgemma-4b-it"
 NUM_SAMPLES=64
 NUM_GENERATIONS=8  # Increased for better reward variance
-LEARNING_RATE=1e-5  # Increased from 1e-5 to restore meaningful gradients
+LEARNING_RATE=5e-6  # Increased from 1e-5 to restore meaningful gradients
 ROUNDS=3
 MAX_ASSESSOR_BATCH=64
 
