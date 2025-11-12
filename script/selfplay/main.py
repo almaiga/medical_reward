@@ -343,29 +343,23 @@ def main():
         if hasattr(attacker_trainer.state, "log_history") and attacker_trainer.state.log_history:
             print_metrics_summary(attacker_trainer.state.log_history[-1], "Attacker")
 
-        # Log diversity statistics (BINARY)
+        # Log diversity statistics (4-WAY)
         print(f"\n{'='*60}")
-        print("DIVERSITY STATISTICS")
+        print("DIVERSITY STATISTICS (4-WAY GAME STRUCTURE)")
         print(f"{'='*60}")
-        print(f"Harmful games: {diversity_stats['harmful_games']}")
-        print(f"  - Safe: {diversity_stats['harmful_safe']}")
-        print(f"  - Harmful: {diversity_stats['harmful_harmful']}")
-        harmful_faithful = diversity_stats.get("harmful_faithful", 0)
-        harmful_total = diversity_stats["harmful_games"]
-        if harmful_total > 0:
-            print(
-                f"  - Faithfulness: {harmful_faithful}/{harmful_total} ({100*harmful_faithful/harmful_total:.1f}%)"
-            )
-
-        print(f"Safe games: {diversity_stats['safe_games']}")
-        print(f"  - Safe: {diversity_stats['safe_safe']}")
-        print(f"  - Harmful: {diversity_stats['safe_harmful']}")
-        safe_faithful = diversity_stats.get("safe_faithful", 0)
-        safe_total = diversity_stats["safe_games"]
-        if safe_total > 0:
-            print(
-                f"  - Faithfulness: {safe_faithful}/{safe_total} ({100*safe_faithful/safe_total:.1f}%)"
-            )
+        
+        for category in ["vanilla_harmful", "adversarial_harmful", "vanilla_benign", "adversarial_benign"]:
+            total = diversity_stats.get(f"{category}_games", 0)
+            safe = diversity_stats.get(f"{category}_safe", 0)
+            harmful = diversity_stats.get(f"{category}_harmful", 0)
+            faithful = diversity_stats.get(f"{category}_faithful", 0)
+            
+            print(f"{category}: {total} games")
+            if total > 0:
+                print(f"  - Safe: {safe} ({100*safe/total:.1f}%)")
+                print(f"  - Harmful: {harmful} ({100*harmful/total:.1f}%)")
+                print(f"  - Faithfulness: {faithful}/{total} ({100*faithful/total:.1f}%)")
+        
         print(f"{'='*60}\n")
 
         # Log judge validation statistics

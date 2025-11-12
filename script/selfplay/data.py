@@ -49,7 +49,7 @@ def load_and_prepare_data(num_samples: int):
     quarter_samples = num_samples // 4
 
     # Shuffle once for random distribution
-    df_shuffled = df_errors.shuffle(seed=42).reset_index(drop=True)
+    df_shuffled = df_errors.sample(frac=1, random_state=42).reset_index(drop=True)
 
     # Create 4 game categories
     datasets = []
