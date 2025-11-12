@@ -69,8 +69,9 @@ python3 script/train_qwen3_trl.py \
     --data_path "$MERGED_DATA" \
     --epochs 3 \
     --batch_size 1 \
-    --grad_accumulation 16 \
+    --grad_accumulation 32 \
     --learning_rate 2e-5 \
+    --max_seq_length 1024 \
     --output_dir "$OUTPUT_DIR"
 
 echo ""
