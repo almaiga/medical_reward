@@ -61,7 +61,7 @@ def create_assessor_reward_fn(
         # Get dataset columns passed via kwargs
         original_notes = kwargs.get("original_note", [])
         attacked_notes = kwargs.get("attacked_note", [])
-        game_types = kwargs.get("game_type", [])
+        game_categories = kwargs.get("game_category", [])
 
         print(f"\n{'='*60}")
         print(f"ASSESSOR REWARD FUNCTION - Processing {len(prompts)} items")
@@ -78,11 +78,11 @@ def create_assessor_reward_fn(
                 scores.append(0.0)
                 continue
 
-            # Get game type for this item
-            game_type = game_types[i] if i < len(game_types) else "unknown"
+            # Get game category for this item
+            game_category = game_categories[i] if i < len(game_categories) else "unknown"
 
             # DEBUG: Show what assessor receives
-            print(f"Game type: {game_type}")
+            print(f"Game category: {game_category}")
             print(f"Prompt preview (first 200 chars): {str(p)[:200]}...")
             print(f"Completion preview (first 200 chars): {c[:200]}...")
             print(f"Attacked note preview (first 200 chars): {attacked[:200]}...")
@@ -92,7 +92,7 @@ def create_assessor_reward_fn(
             print(f"Parsed - Label: {label}")
             
             judgments = get_judge_assessment(
-                original, attacked, label, game_type, judge_model, judge_tok, device
+                original, attacked, label, game_category, judge_model, judge_tok, device
             )
 
             # Track judge classification for validation
@@ -161,7 +161,7 @@ def create_assessor_reward_fn(
                 },
                 judgments=judgments,
                 rewards={
-                    "game_type": game_type,
+                    "game_category": game_category,
                     "RD_res_harm": RD_res_harm,
                     "RD_res_refusal": RD_res_refusal,
                     "RD_format": RD_format,
@@ -228,7 +228,7 @@ def create_attacker_reward_fn(
 
         # Get dataset columns passed via kwargs
         original_notes = kwargs.get("original_note", [])
-        game_types = kwargs.get("game_type", [])
+        game_categories = kwargs.get("game_category", [])
 
         print(f"\n{'='*60}")
         print(f"ATTACKER REWARD FUNCTION - Processing {len(prompts)} items")
@@ -237,7 +237,7 @@ def create_attacker_reward_fn(
         for i, (p, c) in enumerate(zip(prompts, completions)):
             print(f"\n--- Attacker Item {i+1}/{len(prompts)} ---")
 
-            # Get original note and game type from kwargs
+            # Get original note and game category from kwargs
             if i < len(original_notes):
                 original = original_notes[i]
             else:
@@ -247,8 +247,8 @@ def create_attacker_reward_fn(
                     scores.append(0.0)
                     continue
 
-            game_type = game_types[i] if i < len(game_types) else "harmful"
-            print(f"Game Type: {game_type}")
+            game_category = game_categories[i] if i < len(game_categories) else "vanilla_benign"
+            print(f"Game Category: {game_category}")
 
             # DEBUG: Show what attacker generates
             print(f"Prompt preview (first 200 chars): {str(p)[:200]}...")
@@ -318,7 +318,7 @@ def create_attacker_reward_fn(
                         "assessor_refused": False,
                     },
                     rewards={
-                        "game_type": game_type,
+                        "game_category": game_category,
                         "validation_failure": reason,
                         "total": -R_GAME - R_FORMAT,
                     },
@@ -331,7 +331,7 @@ def create_attacker_reward_fn(
                 {
                     "original": original,
                     "attacked": attacked_note,
-                    "game_type": game_type,
+                    "game_category": game_category,
                 }
             )
 
@@ -340,7 +340,7 @@ def create_attacker_reward_fn(
                     {
                         "original": original,
                         "attacked": attacked_note,
-                        "game_type": game_type,
+                        "game_category": game_category,
                     }
                 ],
                 policy_tok,
@@ -368,7 +368,7 @@ def create_attacker_reward_fn(
                 original,
                 attacked_note,
                 assessor_label,
-                game_type,
+                game_category,
                 judge_model,
                 judge_tok,
                 device,
@@ -377,25 +377,27 @@ def create_attacker_reward_fn(
             # Track judge classification for validation
             judge_validator.add_classification(judgments["actual_harm"])
 
-            # Track diversity stats (BINARY)
-            diversity_stats[f"{game_type}_games"] += 1
+            # Track diversity stats by game category (4-way)
+            diversity_stats[f"{game_category}_games"] = diversity_stats.get(f"{game_category}_games", 0) + 1
             actual_harm = judgments["actual_harm"]
             assessor_correct = judgments["assessor_was_correct"]
-            diversity_stats[f"{game_type}_{actual_harm.lower()}"] += 1
+            diversity_stats[f"{game_category}_{actual_harm.lower()}"] = diversity_stats.get(f"{game_category}_{actual_harm.lower()}", 0) + 1
 
-            # Track faithfulness (respecting game type) - BINARY
-            if game_type == "harmful":
+            # Track faithfulness (respecting game category) - 4-way
+            # vanilla_harmful and adversarial_harmful should produce Harmful
+            # vanilla_benign and adversarial_benign should produce Safe
+            if "harmful" in game_category:
                 is_faithful = actual_harm == "Harmful"
-            else:
+            else:  # benign
                 is_faithful = actual_harm == "Safe"
 
             if is_faithful:
-                diversity_stats[f"{game_type}_faithful"] = (
-                    diversity_stats.get(f"{game_type}_faithful", 0) + 1
+                diversity_stats[f"{game_category}_faithful"] = (
+                    diversity_stats.get(f"{game_category}_faithful", 0) + 1
                 )
             else:
-                diversity_stats[f"{game_type}_unfaithful"] = (
-                    diversity_stats.get(f"{game_type}_unfaithful", 0) + 1
+                diversity_stats[f"{game_category}_unfaithful"] = (
+                    diversity_stats.get(f"{game_category}_unfaithful", 0) + 1
                 )
 
             # ============================================================
@@ -423,10 +425,12 @@ def create_attacker_reward_fn(
             
             # 3. RA,revision (Revision Faithfulness - Shaping Term)
             # Paper: "preserves original intent—harmful or benign"
-            # Ensures attacker respects game type (seed intent)
-            if game_type == "harmful":
+            # Ensures attacker respects game category (seed intent)
+            # vanilla_harmful and adversarial_harmful should produce Harmful
+            # vanilla_benign and adversarial_benign should produce Safe
+            if "harmful" in game_category:
                 RA_revision = +R_GAME if actual_harm == "Harmful" else -R_GAME
-            else:  # safe game
+            else:  # benign
                 RA_revision = +R_GAME if actual_harm == "Safe" else -R_GAME
             
             # 4. RA,format (CoT Formatting - Shaping Term)
@@ -478,7 +482,7 @@ def create_attacker_reward_fn(
                 },
                 judgments=judgments,
                 rewards={
-                    "game_type": game_type,
+                    "game_category": game_category,
                     "RA_res_harm": RA_res_harm,
                     "RA_res_refusal": RA_res_refusal,
                     "RA_revision": RA_revision,

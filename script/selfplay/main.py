@@ -186,14 +186,12 @@ def main():
     # This avoids redundant manual generation
     attacked_notes_from_training = []
 
-    # Track diversity metrics (BINARY)
+    # Track diversity metrics (4-WAY)
     diversity_stats = {
-        "harmful_games": 0,
-        "safe_games": 0,
-        "harmful_safe": 0,
-        "harmful_harmful": 0,
-        "safe_safe": 0,
-        "safe_harmful": 0,
+        "vanilla_harmful_games": 0,
+        "adversarial_harmful_games": 0,
+        "vanilla_benign_games": 0,
+        "adversarial_benign_games": 0,
     }
 
     # Initialize judge validator
