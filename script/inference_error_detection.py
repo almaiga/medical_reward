@@ -3,12 +3,13 @@
 Medical Error Detection Inference Script
 
 Tests different Qwen3-4B model versions on MEDEC test data:
-- Base model (Qwen/Qwen2.5-3B-Instruct or similar)
+- Base model (Qwen/Qwen3-4B)
 - Abliterated model (if available)
 - Fine-tuned model (from SFT)
 - Fine-tuned + Self-play model (from GRPO)
 
 Uses CoT prompting with few-shot examples for error detection.
+Follows official Qwen3 thinking format: https://qwen.readthedocs.io/
 """
 
 import os
@@ -17,10 +18,13 @@ import argparse
 import pandas as pd
 import torch
 from datetime import datetime
-from pathlib import Path
 from typing import List, Dict, Tuple
 from transformers import AutoTokenizer, AutoModelForCausalLM
 from tqdm import tqdm
+
+# Qwen3 special token IDs (from official documentation)
+THINK_END_TOKEN_ID = 151668  # </think>
+IM_END_TOKEN_ID = 151645  # <|im_end|>
 
 
 def load_model_and_tokenizer(model_path: str):
@@ -83,26 +87,32 @@ def load_test_data(dataset_name: str = "all") -> pd.DataFrame:
 def get_few_shot_examples() -> List[Dict[str, str]]:
     """
     Return few-shot examples for error detection.
-    These are hand-crafted examples showing the CoT reasoning process.
+    Uses real examples from MEDEC-MS training set.
     """
     return [
         {
-            "note": "Patient presents with chest pain. Prescribed aspirin 325mg daily and nitroglycerin as needed. Follow up in 2 weeks.",
-            "reasoning": "Let me analyze this medical note for potential errors:\n1. Chest pain assessment - no mention of ECG, troponin, or cardiac workup\n2. Aspirin dosage - 325mg is appropriate for cardiac events\n3. Nitroglycerin - appropriate for angina\n4. Follow-up timing - 2 weeks may be too long for new chest pain without ruling out MI\n\nThe main concern is lack of immediate cardiac workup for chest pain, which is a critical safety issue.",
+            "note": "A 53-year-old man comes to the physician because of a 1-day history of fever and chills, severe malaise, and cough with yellow-green sputum. He works as a commercial fisherman on Lake Superior. Current medications include metoprolol and warfarin. His temperature is 38.5 C (101.3 F), pulse is 96/min, respirations are 26/min, and blood pressure is 98/62 mm Hg. Examination shows increased fremitus and bronchial breath sounds over the right middle lung field. After reviewing imaging, the causal pathogen was determined to be Haemophilus influenzae. An x-ray of the chest showed consolidation of the right upper lobe.",
+            "reasoning": "Analyzing this pneumonia case:\n1. Clinical presentation: fever, productive cough, vital signs showing tachypnea and hypotension\n2. Physical exam: increased fremitus and bronchial breath sounds in right middle lung field\n3. Imaging: consolidation of right UPPER lobe\n4. Stated pathogen: Haemophilus influenzae\n\nDiscrepancy detected: Physical exam findings are in the right MIDDLE lung field, but X-ray shows RIGHT UPPER lobe consolidation. This anatomical mismatch is concerning. Additionally, for a lobar pneumonia with these classic findings, Streptococcus pneumoniae is more likely than H. influenzae in an adult.",
             "label": "Harmful",
-            "explanation": "Missing critical cardiac workup for chest pain presentation"
+            "explanation": "Anatomical discrepancy between physical exam (right middle field) and imaging (right upper lobe), plus incorrect pathogen identification"
         },
         {
-            "note": "45-year-old male with hypertension. Current BP 138/88. Continue lisinopril 10mg daily. Patient reports good medication adherence. No side effects noted.",
-            "reasoning": "Analyzing this note:\n1. Diagnosis clear - hypertension\n2. Blood pressure - 138/88 is slightly elevated but controlled\n3. Medication - lisinopril 10mg is appropriate dosage\n4. Adherence - patient compliant\n5. No adverse effects reported\n\nThis appears to be routine hypertension management with appropriate medication and monitoring.",
+            "note": "A 53-year-old man comes to the physician because of a 1-day history of fever and chills, severe malaise, and cough with yellow-green sputum. He works as a commercial fisherman on Lake Superior. Current medications include metoprolol and warfarin. His temperature is 38.5 C (101.3 F), pulse is 96/min, respirations are 26/min, and blood pressure is 98/62 mm Hg. Examination shows increased fremitus and bronchial breath sounds over the right middle lung field. An x-ray of the chest shows consolidation of the right upper lobe. The causal pathogen is Streptococcus pneumoniae.",
+            "reasoning": "Reviewing this pneumonia case:\n1. Clinical presentation: acute onset fever, chills, productive cough with purulent sputum\n2. Vital signs: fever 38.5C, tachypnea (26/min), relative hypotension\n3. Physical exam: increased fremitus and bronchial breath sounds - classic for consolidation\n4. Imaging: right upper lobe consolidation\n5. Pathogen: Streptococcus pneumoniae\n\nAll findings are consistent with community-acquired pneumonia. S. pneumoniae is the most common cause of lobar pneumonia in adults. Physical exam and imaging findings align appropriately. No errors detected.",
             "label": "Safe",
-            "explanation": "Appropriate hypertension management with no errors detected"
+            "explanation": "Consistent clinical presentation of community-acquired pneumonia with appropriate pathogen identification"
         },
         {
-            "note": "Diabetic patient with HbA1c of 8.2%. Increase metformin to 2000mg twice daily. Advised on diet and exercise.",
-            "reasoning": "Checking this note:\n1. HbA1c 8.2% - indicates suboptimal control\n2. Metformin dosage - MAXIMUM dose is 2000mg TOTAL per day, not twice daily\n3. This would be 4000mg/day which exceeds safe limits\n4. Risk of lactic acidosis and GI side effects\n\nThis is a dangerous dosing error that could harm the patient.",
+            "note": "A 9-year-old girl is brought to the pediatrician by her mother who reports that the girl has been complaining of genital itching over the past few days. She states she has noticed her daughter scratching her buttocks and anus for the past week; however, now she is scratching her groin quite profusely as well. The mother notices that symptoms seem to be worse at night. The girl is otherwise healthy, is up to date on her vaccinations, and feels well. She was recently treated with amoxicillin for a middle ear infection. The child also had a recent bout of diarrhea that was profuse and watery that seems to be improving. Her temperature is 98.5 F (36.9 C), pulse is 88/min, respirations are 18/min, and blood pressure is 110/72 mm Hg. Suspected of infection with Giardia lamblia.",
+            "reasoning": "Analyzing this pediatric case:\n1. Chief complaint: perianal and genital itching, worse at night\n2. Key symptom: nocturnal pruritus (worse at night) - classic sign\n3. Location: anus, buttocks, groin\n4. Recent history: recent diarrhea (improving), recent antibiotics\n5. Suspected diagnosis: Giardia lamblia\n\nError identified: The clinical presentation strongly suggests pinworm (Enterobius vermicularis) infection, NOT Giardia. Nocturnal perianal itching is pathognomonic for pinworms. Giardia causes GI symptoms (diarrhea, bloating) but not the characteristic nighttime perianal itching. This is a diagnostic error.",
             "label": "Harmful",
-            "explanation": "Metformin overdose - prescribed 4000mg/day exceeds maximum safe dose of 2000mg/day"
+            "explanation": "Incorrect diagnosis - symptoms indicate Enterobius vermicularis (pinworm) infection, not Giardia lamblia"
+        },
+        {
+            "note": "A 9-year-old girl is brought to the pediatrician by her mother who reports that the girl has been complaining of genital itching over the past few days. She states she has noticed her daughter scratching her buttocks and anus for the past week; however, now she is scratching her groin quite profusely as well. The mother notices that symptoms seem to be worse at night. The girl is otherwise healthy, is up to date on her vaccinations, and feels well. She was recently treated with amoxicillin for a middle ear infection. The child also had a recent bout of diarrhea that was profuse and watery that seems to be improving. Her temperature is 98.5 F (36.9 C), pulse is 88/min, respirations are 18/min, and blood pressure is 110/72 mm Hg. Suspected of infection with Enterobius vermicularis.",
+            "reasoning": "Reviewing this pediatric case:\n1. Presenting complaint: perianal and genital itching for one week\n2. Key feature: symptoms worse at night (nocturnal pruritus)\n3. Location: anus, buttocks, groin area\n4. Patient: otherwise healthy 9-year-old girl\n5. Diagnosis: Enterobius vermicularis (pinworm)\n\nThis is correct. Nocturnal perianal itching is the hallmark symptom of pinworm infection. Female pinworms migrate to the perianal area at night to lay eggs, causing intense itching. The diagnosis matches the clinical presentation perfectly. No errors detected.",
+            "label": "Safe",
+            "explanation": "Correct diagnosis of Enterobius vermicularis based on classic nocturnal perianal itching"
         }
     ]
 
@@ -111,11 +121,11 @@ def build_error_detection_prompt(
     note: str,
     use_few_shot: bool = True,
     use_cot: bool = True
-) -> List[Dict[str, str]]:
+) -> Tuple[List[Dict[str, str]], bool]:
     """
     Build prompt for error detection with optional few-shot and CoT.
     
-    Returns messages list for chat template.
+    Returns: (messages list for chat template, enable_thinking flag)
     """
     system_prompt = """You are an expert medical safety auditor. Your task is to carefully analyze medical notes for potential errors, safety issues, or harmful content.
 
@@ -134,7 +144,8 @@ Always explain your reasoning."""
             user_msg = f"Analyze this medical note:\n\n{ex['note']}"
             
             if use_cot:
-                assistant_msg = f"<think>\n{ex['reasoning']}\n</think>\n\n<output>\nLabel: {ex['label']}\nExplanation: {ex['explanation']}\n</output>"
+                # Use Qwen3's native thinking format for few-shot examples
+                assistant_msg = f"<think>\n{ex['reasoning']}\n</think>\n\nLabel: {ex['label']}\nExplanation: {ex['explanation']}"
             else:
                 assistant_msg = f"Label: {ex['label']}\nExplanation: {ex['explanation']}"
             
@@ -145,39 +156,60 @@ Always explain your reasoning."""
     query = f"Analyze this medical note:\n\n{note}"
     messages.append({"role": "user", "content": query})
     
-    return messages
+    # Return enable_thinking flag for Qwen3's native CoT
+    return messages, use_cot
 
 
-def parse_response(response: str) -> Tuple[str, str, str]:
+def parse_qwen3_output(tokenizer, input_ids, generated_ids) -> Tuple[str, str]:
+    """
+    Parse Qwen3 output using official method (token-based parsing).
+    
+    Returns: (thinking_content, content)
+    """
+    input_length = input_ids.shape[1]
+    output_ids = generated_ids[0, input_length:].tolist()
+    
+    # Parse thinking content using token ID (official Qwen3 method)
+    try:
+        # Find </think> token (151668)
+        index = len(output_ids) - output_ids[::-1].index(THINK_END_TOKEN_ID)
+    except ValueError:
+        # No thinking content found
+        index = 0
+    
+    thinking_content = tokenizer.decode(
+        output_ids[:index], 
+        skip_special_tokens=True
+    ).strip("\n")
+    
+    content = tokenizer.decode(
+        output_ids[index:], 
+        skip_special_tokens=True
+    ).strip("\n")
+    
+    return thinking_content, content
+
+
+def parse_response(thinking: str, content: str) -> Tuple[str, str, str]:
     """
     Parse model response to extract thinking, label, and explanation.
     
+    Args:
+        thinking: The thinking content (from <think> block)
+        content: The final response content
+    
     Returns: (thinking, label, explanation)
     """
-    thinking = ""
     label = "Unknown"
     explanation = ""
     
-    # Extract thinking if present
-    if "<think>" in response and "</think>" in response:
-        start = response.find("<think>") + 7
-        end = response.find("</think>")
-        thinking = response[start:end].strip()
-        response = response[end + 8:].strip()
-    
-    # Extract output if present
-    if "<output>" in response:
-        start = response.find("<output>") + 8
-        if "</output>" in response:
-            end = response.find("</output>")
-            response = response[start:end].strip()
-        else:
-            response = response[start:].strip()
-    
-    # Extract label
-    for line in response.split('\n'):
+    # Extract label and explanation from the content
+    lines = content.split('\n')
+    for i, line in enumerate(lines):
         line_lower = line.lower().strip()
-        if line_lower.startswith('label:'):
+        
+        # Look for label
+        if 'label:' in line_lower:
             label_text = line.split(':', 1)[1].strip()
             # Normalize label
             if 'safe' in label_text.lower() and 'harmful' not in label_text.lower():
@@ -186,21 +218,28 @@ def parse_response(response: str) -> Tuple[str, str, str]:
                 label = 'Harmful'
             elif 'concerning' in label_text.lower():
                 label = 'Concerning'
-        elif line_lower.startswith('explanation:'):
+        
+        # Look for explanation
+        if 'explanation:' in line_lower:
             explanation = line.split(':', 1)[1].strip()
             # Get rest of explanation if multi-line
-            remaining = response.split(line, 1)[1].strip()
-            if remaining:
-                explanation = explanation + " " + remaining
+            if i + 1 < len(lines):
+                remaining = '\n'.join(lines[i+1:]).strip()
+                if remaining:
+                    explanation = explanation + " " + remaining
             break
     
     # If no structured format, try to infer from text
     if label == "Unknown":
-        response_lower = response.lower()
-        if 'no error' in response_lower or 'appears safe' in response_lower:
+        content_lower = content.lower()
+        if 'no error' in content_lower or 'appears safe' in content_lower or 'is safe' in content_lower:
             label = 'Safe'
-        elif 'error' in response_lower or 'harmful' in response_lower or 'dangerous' in response_lower:
+        elif 'error' in content_lower or 'harmful' in content_lower or 'dangerous' in content_lower:
             label = 'Harmful'
+    
+    # If still no explanation, use the whole content
+    if not explanation:
+        explanation = content
     
     return thinking, label, explanation
 
@@ -213,7 +252,8 @@ def run_inference(
     use_cot: bool = True,
     max_samples: int = None,
     temperature: float = 0.3,
-    max_new_tokens: int = 512
+    max_new_tokens: int = 512,
+    thinking_budget: int = 1024
 ) -> List[Dict]:
     """
     Run inference on test data.
@@ -232,37 +272,79 @@ def run_inference(
         error_type = row.get('Error Type', '')
         
         # Build prompt
-        messages = build_error_detection_prompt(note, use_few_shot, use_cot)
+        messages, enable_thinking = build_error_detection_prompt(note, use_few_shot, use_cot)
         
-        # Apply chat template
+        # Apply chat template with Qwen3's native thinking mode
         prompt = tokenizer.apply_chat_template(
             messages,
             tokenize=False,
-            add_generation_prompt=True
+            add_generation_prompt=True,
+            enable_thinking=enable_thinking  # Use Qwen3's native CoT
         )
         
-        # Generate
-        inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
+        # Tokenize input
+        model_inputs = tokenizer([prompt], return_tensors="pt").to(model.device)
+        input_length = model_inputs.input_ids.size(-1)
         
+        # First generation up to thinking budget (official Qwen3 method)
         with torch.no_grad():
-            outputs = model.generate(
-                **inputs,
-                max_new_tokens=max_new_tokens,
+            generated_ids = model.generate(
+                **model_inputs,
+                max_new_tokens=thinking_budget,
                 temperature=temperature,
-                top_p=0.9,
+                top_p=0.95,
                 do_sample=temperature > 0,
                 pad_token_id=tokenizer.pad_token_id,
                 eos_token_id=tokenizer.eos_token_id
             )
         
-        # Decode response
-        response = tokenizer.decode(
-            outputs[0, inputs.input_ids.shape[1]:],
-            skip_special_tokens=True
+        output_ids = generated_ids[0, input_length:].tolist()
+        
+        # Check if generation finished or thinking budget reached
+        if IM_END_TOKEN_ID not in output_ids:
+            # Check if thinking process finished
+            if THINK_END_TOKEN_ID not in output_ids:
+                # Thinking budget reached - inject early stopping prompt
+                early_stopping_text = "\n\nConsidering the limited time by the user, I have to give the solution based on the thinking directly now.\n</think>\n\n"
+                early_stopping_ids = tokenizer(
+                    [early_stopping_text], 
+                    return_tensors="pt", 
+                    add_special_tokens=False
+                ).input_ids.to(model.device)
+                
+                input_ids = torch.cat([generated_ids, early_stopping_ids], dim=-1)
+            else:
+                input_ids = generated_ids
+            
+            attention_mask = torch.ones_like(input_ids, dtype=torch.int64)
+            
+            # Second generation to complete the response
+            remaining_tokens = max_new_tokens - (input_ids.size(-1) - input_length)
+            if remaining_tokens > 0:
+                with torch.no_grad():
+                    generated_ids = model.generate(
+                        input_ids=input_ids,
+                        attention_mask=attention_mask,
+                        max_new_tokens=remaining_tokens,
+                        temperature=temperature,
+                        top_p=0.95,
+                        do_sample=temperature > 0,
+                        pad_token_id=tokenizer.pad_token_id,
+                        eos_token_id=tokenizer.eos_token_id
+                    )
+        
+        # Parse using official Qwen3 method (token-based)
+        thinking_content, content = parse_qwen3_output(
+            tokenizer, 
+            model_inputs.input_ids, 
+            generated_ids
         )
         
-        # Parse response
-        thinking, predicted_label, explanation = parse_response(response)
+        # Extract label and explanation
+        thinking, predicted_label, explanation = parse_response(
+            thinking_content, 
+            content
+        )
         
         # Convert ground truth to label
         gt_label = "Harmful" if ground_truth == 1 else "Safe"
@@ -281,7 +363,8 @@ def run_inference(
             'explanation': explanation,
             'thinking': thinking,
             'correct': correct,
-            'full_response': response
+            'thinking_content': thinking_content,
+            'final_content': content
         })
     
     return results
@@ -346,6 +429,8 @@ def main():
                        help="Sampling temperature (default: 0.3)")
     parser.add_argument("--max_new_tokens", type=int, default=512,
                        help="Maximum tokens to generate (default: 512)")
+    parser.add_argument("--thinking_budget", type=int, default=1024,
+                       help="Thinking budget for Qwen3 (default: 1024)")
     
     # Output arguments
     parser.add_argument("--output_dir", type=str, default="results/inference",
@@ -384,7 +469,8 @@ def main():
         use_cot=not args.no_cot,
         max_samples=args.max_samples,
         temperature=args.temperature,
-        max_new_tokens=args.max_new_tokens
+        max_new_tokens=args.max_new_tokens,
+        thinking_budget=args.thinking_budget
     )
     
     # Calculate metrics
