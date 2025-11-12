@@ -1,0 +1,39 @@
+{
+  "educational": {
+    "path": "data/sft_clean/educational_stratified.jsonl",
+    "total_examples": 2083,
+    "unique_notes": 913,
+    "error_types": {
+      "causalOrganism": 47,
+      "diagnosis": 248,
+      "management": 519,
+      "pharmacotherapy": 132,
+      "treatment": 133
+    },
+    "percentage_of_medec": "74.9%"
+  },
+  "adaptation": {
+    "path": "data/sft_clean/adaptation_stratified.jsonl",
+    "total_examples": 1224,
+    "unique_notes": 306,
+    "error_types": {
+      "causalOrganism": 32,
+      "diagnosis": 166,
+      "management": 296,
+      "pharmacotherapy": 60,
+      "treatment": 58
+    },
+    "percentage_of_medec": "25.1%"
+  },
+  "total": {
+    "unique_notes": 1219,
+    "overlap": 0,
+    "coverage_of_medec": "100.0%"
+  },
+  "stratification": {
+    "educational_split": "75% of MEDEC",
+    "adaptation_split": "25% of MEDEC",
+    "all_error_types_included": true,
+    "proper_stratification": true
+  }
+}
