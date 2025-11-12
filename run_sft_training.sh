@@ -68,8 +68,8 @@ python3 script/train_qwen3_trl.py \
     --model_id "$MODEL_ID" \
     --data_path "$MERGED_DATA" \
     --epochs 3 \
-    --batch_size 2 \
-    --grad_accumulation 8 \
+    --batch_size 1 \
+    --grad_accumulation 16 \
     --learning_rate 2e-5 \
     --output_dir "$OUTPUT_DIR"
 
