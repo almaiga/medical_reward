@@ -11,7 +11,7 @@ unset HF_HUB_ENABLE_HF_TRANSFER
 echo "=== Qwen SFT Training with Clean Stratified Data ==="
 
 # Configuration
-MODEL_ID="mlabonne/Qwen3-4B-abliterated"
+MODEL_ID="mlabonne/Qwen3-8B-abliterated"
 EDUCATIONAL_DATA="data/sft_clean/educational_stratified.jsonl"
 ADAPTATION_DATA="data/sft_clean/adaptation_stratified.jsonl"
 MERGED_DATA="data/sft_clean/merged_all.jsonl"
