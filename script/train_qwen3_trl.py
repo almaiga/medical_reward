@@ -13,6 +13,7 @@ from datetime import datetime, timedelta
 from datasets import Dataset
 from transformers import AutoTokenizer, AutoModelForCausalLM, TrainerCallback
 from trl import SFTTrainer, SFTConfig
+from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training
 from tqdm import tqdm
 
 # Optional wandb import - only if explicitly requested
@@ -133,8 +134,8 @@ def load_sft_data(data_path: str) -> Dataset:
     return Dataset.from_list(data)
 
 
-def setup_model_and_tokenizer(model_id: str):
-    """Setup Qwen3 model and tokenizer for TRL training."""
+def setup_model_and_tokenizer(model_id: str, use_lora: bool = True):
+    """Setup Qwen3 model and tokenizer for TRL training with optional LoRA."""
     print(f"🔄 Loading model: {model_id}")
     
     # Load tokenizer with proper settings for Qwen3
@@ -161,6 +162,22 @@ def setup_model_and_tokenizer(model_id: str):
         device_map="auto"
     )
     print("✅ Model loaded successfully")
+    
+    # Apply LoRA if requested
+    if use_lora:
+        print("🔧 Applying LoRA for memory-efficient training...")
+        lora_config = LoraConfig(
+            r=16,  # LoRA rank
+            lora_alpha=32,  # LoRA alpha
+            target_modules=["q_proj", "k_proj", "v_proj", "o_proj", 
+                          "gate_proj", "up_proj", "down_proj"],  # Qwen3 attention modules
+            lora_dropout=0.05,
+            bias="none",
+            task_type="CAUSAL_LM"
+        )
+        model = get_peft_model(model, lora_config)
+        model.print_trainable_parameters()
+        print("✅ LoRA applied - only training ~1% of parameters!")
     
     return model, tokenizer
 
@@ -312,6 +329,10 @@ def main():
     parser.add_argument("--use_wandb", action="store_true", 
                        help="Use Weights & Biases logging")
     
+    # LoRA settings
+    parser.add_argument("--use_lora", action="store_true", default=True,
+                       help="Use LoRA for memory-efficient training")
+    
     # Testing
     parser.add_argument("--test_format", action="store_true", 
                        help="Test format compliance after training")
@@ -355,7 +376,7 @@ def main():
     
     # Setup model and tokenizer
     print("🤖 Step 2/5: Setting up model and tokenizer...")
-    model, tokenizer = setup_model_and_tokenizer(args.model_id)
+    model, tokenizer = setup_model_and_tokenizer(args.model_id, use_lora=args.use_lora)
     
     # Create SFT configuration
     print("⚙️  Step 3/5: Creating training configuration...")

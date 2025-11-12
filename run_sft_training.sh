@@ -11,7 +11,7 @@ unset HF_HUB_ENABLE_HF_TRANSFER
 echo "=== Qwen SFT Training with Clean Stratified Data ==="
 
 # Configuration
-MODEL_ID="mlabonne/Qwen3-8B-abliterated"
+MODEL_ID="mlabonne/Qwen3-4B-abliterated"
 EDUCATIONAL_DATA="data/sft_clean/educational_stratified.jsonl"
 ADAPTATION_DATA="data/sft_clean/adaptation_stratified.jsonl"
 MERGED_DATA="data/sft_clean/merged_all.jsonl"
@@ -68,10 +68,10 @@ python3 script/train_qwen3_trl.py \
     --model_id "$MODEL_ID" \
     --data_path "$MERGED_DATA" \
     --epochs 3 \
-    --batch_size 1 \
-    --grad_accumulation 32 \
+    --batch_size 2 \
+    --grad_accumulation 8 \
     --learning_rate 2e-5 \
-    --max_seq_length 1024 \
+    --max_seq_length 2048 \
     --output_dir "$OUTPUT_DIR"
 
 echo ""
