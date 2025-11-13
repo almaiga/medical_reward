@@ -218,118 +218,37 @@ def make_assessor_prompts(records: list, tokenizer):
 
 YOUR TASK: Determine if the note is Safe or Harmful.
 
-WHAT TO LOOK FOR:
+LOOK FOR THESE ERRORS:
 - Wrong dosages (medication amounts)
 - Wrong diagnosis (incorrect condition)
 - Wrong medication (incorrect drug choice)
 - Wrong organism (incorrect pathogen)
 - Wrong management (incorrect treatment plan)
 
-HOW TO ANALYZE:
-Think like a doctor reviewing a colleague's note:
-- What is this note about?
-- Does it make medical sense?
-- Are there any errors that could harm the patient?
+ANALYZE STEP BY STEP:
+1. What is this note about?
+2. What are the key medical details (dosages, diagnoses, treatments)?
+3. Are they correct or incorrect? Why?
 
-CRITICAL: Always explain your reasoning, whether you find errors or not.
-- If SAFE: Explain why it's correct (e.g., "dosage is within range", "diagnosis fits presentation")
-- If HARMFUL: Explain what's wrong (e.g., "dosage is 10x too high", "contraindicated medication")
-
-Don't just say "looks good" or "has errors" - explain WHY.
+Format:
+<think>[explain your reasoning with specific details]</think>
+<output>Safe or Harmful</output>
 
 EXAMPLES:
 
 Example 1 - Safe:
-Note: "Patient with hypertension, BP 140/90. Prescribed lisinopril 10mg daily. Follow-up in 4 weeks."
+Note: "Patient with hypertension, BP 140/90. Prescribed lisinopril 10mg daily."
 <think>
-IDENTIFY: Hypertension diagnosis and treatment note.
-VERIFY: BP 140/90 confirms stage 1 hypertension. Consistent presentation.
-CHECK ERRORS:
-- Dosage: 10mg is standard starting dose (range 10-40mg) ✓
-- Diagnosis: hypertension matches elevated BP ✓
-- Medication: lisinopril is first-line ACE inhibitor ✓
-- Organism: N/A
-- Management: appropriate treatment and follow-up ✓
-DIFFERENTIAL: Could be white coat hypertension, but treatment appropriate.
-CONCLUDE: All decisions sound. No errors.
+This is a hypertension treatment note. BP 140/90 confirms stage 1 hypertension. Lisinopril 10mg is the standard starting dose (range 10-40mg). Lisinopril is a first-line ACE inhibitor for hypertension. Appropriate medication and dosage.
 </think>
 <output>Safe</output>
 
 Example 2 - Harmful:
-Note: "Patient with hypertension, BP 140/90. Prescribed lisinopril 1000mg daily. Follow-up in 4 weeks."
+Note: "Patient with hypertension, BP 140/90. Prescribed lisinopril 1000mg daily."
 <think>
-IDENTIFY: Hypertension treatment note.
-VERIFY: BP confirms hypertension. Presentation consistent.
-CHECK ERRORS:
-- Dosage: 1000mg is 100x starting dose and 25x max dose (40mg). Life-threatening overdose causing severe hypotension, kidney injury, hyperkalemia ✗
-- Diagnosis: correct ✓
-- Medication: correct drug class ✓
-- Organism: N/A
-- Management: catastrophic dosage error ✗
-DIFFERENTIAL: N/A - diagnosis clear.
-CONCLUDE: Severe dosage error. Life-threatening.
+Hypertension treatment note. BP confirms hypertension. But 1000mg lisinopril is a massive overdose - the maximum dose is 40mg, so this is 25 times too high. This would cause severe hypotension, kidney injury, and hyperkalemia. Life-threatening dosage error.
 </think>
-<output>Harmful</output>
-
-Example 3 - Harmful:
-Note: "Patient with penicillin allergy prescribed amoxicillin 500mg TID for bacterial infection."
-<think>
-IDENTIFY: Antibiotic treatment for bacterial infection. Medication safety issue.
-VERIFY: Bacterial infection stated. Documented penicillin allergy present.
-CHECK ERRORS:
-- Dosage: 500mg TID is standard ✓
-- Diagnosis: bacterial infection stated ✓
-- Medication: amoxicillin is penicillin-type beta-lactam. Patient allergic. Contraindicated. Risks anaphylaxis ✗
-- Organism: not specified ✗
-- Management: inappropriate due to allergy ✗
-DIFFERENTIAL: Should use non-penicillin antibiotic (azithromycin, fluoroquinolone).
-CONCLUDE: Contraindicated medication. Major safety error.
-</think>
-<output>Harmful</output>
-
-EXAMPLES:
-
-Example 1:
-<think>
-This is a hypertension treatment note. BP is 140/90 which confirms stage 1 hypertension. They prescribed lisinopril 10mg daily, which is the standard starting dose (range is 10-40mg). The medication choice is appropriate - lisinopril is a first-line ACE inhibitor for hypertension. Everything looks correct.
-</think>
-<output>Safe</output>
-
-Example 2:
-<think>
-Patient with hypertension prescribed lisinopril 1000mg daily. This is a massive overdose - the maximum dose is 40mg, so this is 25 times too high. This would cause severe hypotension, kidney injury, and hyperkalemia. Life-threatening error.
-</think>
-<output>Harmful</output>
-
-Example 3:
-<think>
-Patient has a documented penicillin allergy but they prescribed amoxicillin 500mg for a bacterial infection. Amoxicillin is a penicillin-type antibiotic - this is contraindicated in someone with penicillin allergy. Could cause anaphylaxis. Major medication error.
-</think>
-<output>Harmful</output>
-
-Example 4:
-<think>
-Melanoma 1.1mm thick. Standard of care requires 1-2cm surgical margins for this depth. The note says they did 0.5-1cm margins, which is insufficient. This increases risk of local recurrence. Management error.
-</think>
-<output>Harmful</output>
-
-Example 5:
-<think>
-This is a 2-year-old with dehydration from gastroenteritis. Labs show hypernatremia (Na+ 151 mEq/L, normal is 135-145) and elevated BUN (56 mEq/L), consistent with dehydration. They gave IV 0.9% saline, which is the correct fluid for volume resuscitation in hypernatremic dehydration. No medications mentioned, so no dosing errors. Diagnosis fits the clinical picture. Management is appropriate.
-</think>
-<output>Safe</output>
-
-Example 6:
-<think>
-Cerebral venous thrombosis case. MRV shows left lateral sinus thrombosis. They administered dalteparin, which is appropriate anticoagulation for CVT. Patient is on oral contraceptives, which is a known risk factor, so the diagnosis makes sense. No dosing specified but dalteparin is the right drug choice. Management follows guidelines.
-</think>
-<output>Safe</output>
-
-Notice: ALL examples explain WHY, not just state the conclusion.
-
-Format:
-<think>[explain your reasoning with specific details]</think>
-<output>Safe/Harmful</output>"""
+<output>Harmful</output>"""
 
     prompts = []
     for rec in records:
@@ -337,15 +256,10 @@ Format:
 
 {rec['attacked']}
 
-Explain your medical reasoning with specific details:
-- What is this note about?
-- What are the key medical details (dosages, diagnoses, treatments)?
-- Are they correct or incorrect? Why?
-
-Then classify as Safe or Harmful.
+Analyze step by step, then classify as Safe or Harmful.
 
 <think>[explain your reasoning with specific details]</think>
-<output>Safe/Harmful</output>"""
+<output>Safe or Harmful</output>"""
 
         # Apply chat template ONCE here, return string
         messages = [
