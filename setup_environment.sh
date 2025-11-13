@@ -7,6 +7,18 @@ echo "Medical Reward Model - Environment Setup"
 echo "=========================================="
 echo ""
 
+# Step 0: Install screen for background processes
+echo "Step 0: Installing screen..."
+if command -v screen &> /dev/null; then
+    echo "✓ screen already installed"
+else
+    echo "Installing screen via apt-get..."
+    sudo apt-get update && sudo apt-get install -y screen
+    echo "✓ screen installed successfully"
+fi
+
+echo ""
+
 # Detect OS
 OS="$(uname -s)"
 case "${OS}" in
@@ -59,7 +71,7 @@ echo ""
 
 # Step 2: Create conda environment in workspace
 echo "Step 2: Creating conda environment 'medical_reward' in workspace..."
-ENV_DIR="$(pwd)/envs/medical_reward"
+ENV_DIR="/workspace/miniconda3/envs/medical_reward"
 
 if [ -d "${ENV_DIR}" ]; then
     echo "⚠️  Environment already exists at ${ENV_DIR}"
@@ -124,15 +136,39 @@ else
         chmod 600 "${HF_TOKEN_PATH}"
         
         # Install huggingface_hub if needed
-        if ! command -v huggingface-cli &> /dev/null; then
+        if ! command -v hf &> /dev/null; then
             echo "Installing huggingface_hub..."
             pip install -q huggingface_hub
         fi
         
-        # Login with token
-        echo "${HF_TOKEN}" | huggingface-cli login --token "${HF_TOKEN}"
+        # Login with token using modern CLI
+        hf auth login --token "${HF_TOKEN}"
         echo "✓ Hugging Face token saved to ${HF_TOKEN_PATH}"
     fi
+fi
+
+echo ""
+
+# Step 5: Download the model
+echo "Step 5: Downloading model from Hugging Face..."
+MODEL_DIR="$(pwd)/trainer_output/qwen3-4b-medical-selfplay-sft"
+
+if [ -d "${MODEL_DIR}" ] && [ "$(ls -A ${MODEL_DIR})" ]; then
+    echo "⚠️  Model directory already exists and is not empty: ${MODEL_DIR}"
+    read -p "Do you want to re-download the model? (y/n) " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        echo "Downloading model..."
+        hf download Abdine/qwen3-4b-medical-selfplay-sft --local-dir "${MODEL_DIR}"
+        echo "✓ Model downloaded to ${MODEL_DIR}"
+    else
+        echo "✓ Using existing model"
+    fi
+else
+    echo "Downloading model Abdine/qwen3-4b-medical-selfplay-sft..."
+    mkdir -p "${MODEL_DIR}"
+    hf download Abdine/qwen3-4b-medical-selfplay-sft --local-dir "${MODEL_DIR}"
+    echo "✓ Model downloaded to ${MODEL_DIR}"
 fi
 
 echo ""
@@ -143,14 +179,16 @@ echo ""
 echo "IMPORTANT: Everything is stored in the workspace to persist across SSH restarts"
 echo ""
 echo "To activate the environment, run:"
-echo "  conda activate $(pwd)/envs/medical_reward"
+echo "  conda activate /workspace/miniconda3/envs/medical_reward"
 echo ""
 echo "Or add this to your session startup:"
-echo "  export PATH=$(pwd)/miniconda3/bin:\$PATH"
-echo "  conda activate $(pwd)/envs/medical_reward"
+echo "  export PATH=/workspace/miniconda3/bin:\$PATH"
+echo "  conda activate /workspace/miniconda3/envs/medical_reward"
 echo "  export HF_HOME=$(pwd)/.huggingface"
 echo ""
 echo "To verify installation, run:"
 echo "  python -c 'import torch; print(f\"PyTorch: {torch.__version__}\")'"
 echo "  python -c 'import transformers; print(f\"Transformers: {transformers.__version__}\")'"
+echo ""
+echo "Model location: ${MODEL_DIR}"
 echo ""

@@ -7,4 +7,5 @@ trl
 scikit-learn
 vllm
 hf
+hf_transfer
 wandb
