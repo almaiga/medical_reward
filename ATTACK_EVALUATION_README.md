@@ -133,10 +133,36 @@ Plus summary statistics:
 - Consider if the task is realistic
 - Check if errors are actually detectable without original note
 
+## Example Workflow
+
+```bash
+# 1. Run evaluation (50 samples takes ~10-15 min on GPU)
+python evaluate_attack_plausibility.py \
+    --input "data/Trainer Output Interactions.jsonl" \
+    --max-samples 50
+
+# 2. If parsing fails, re-parse the results
+python reparse_evaluation_results.py \
+    --input "results/attack_plausibility_eval_TIMESTAMP.csv"
+
+# 3. Get comprehensive summary with recommendations
+python summarize_attack_quality.py \
+    --input "results/attack_plausibility_eval_TIMESTAMP.csv"
+
+# 4. Manually inspect interesting cases
+python quick_attack_comparison.py \
+    --input "data/Trainer Output Interactions.jsonl" \
+    --filter-successful \
+    --num-examples 10
+```
+
 ## Files
 
 - `evaluate_attack_plausibility.py`: Main evaluation script using medgemma-4b
+- `reparse_evaluation_results.py`: Fix JSON parsing issues in existing results
+- `summarize_attack_quality.py`: Comprehensive analysis with recommendations
 - `quick_attack_comparison.py`: Quick visual inspection tool
+- `analyze_attack_difficulty.py`: Statistical analysis of attack characteristics
 - `run_attack_evaluation.sh`: Convenience wrapper script
 - `ATTACK_EVALUATION_README.md`: This file
 

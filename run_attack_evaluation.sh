@@ -4,7 +4,7 @@
 set -e
 
 # Default values
-INPUT_FILE="results/selfplay/Trainer Output Qwen3-4B Medical Selfplay Interactions (9).jsonl"
+INPUT_FILE="results/selfplay/adversarial_all.jsonl"
 MAX_SAMPLES=50
 MODEL="google/medgemma-4b-it"
 

@@ -79,6 +79,12 @@ Provide your analysis in JSON format:
         
         # Try to parse JSON from response
         try:
+            # Remove markdown code blocks if present
+            if '```json' in response:
+                response = response.split('```json')[1].split('```')[0].strip()
+            elif '```' in response:
+                response = response.split('```')[1].split('```')[0].strip()
+            
             # Look for JSON in the response
             start_idx = response.find('{')
             end_idx = response.rfind('}') + 1
@@ -92,7 +98,7 @@ Provide your analysis in JSON format:
                     "impact": "unknown",
                     "reasoning": response
                 }
-        except json.JSONDecodeError:
+        except (json.JSONDecodeError, IndexError):
             result = {
                 "plausibility": "unknown",
                 "difficulty": "unknown",
