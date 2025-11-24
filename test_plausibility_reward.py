@@ -301,7 +301,7 @@ def calculate_rewards(judgments, game_category, attacker_thought, assessor_thoug
 def main():
     import argparse
     parser = argparse.ArgumentParser(description="Test plausibility reward dynamics")
-    parser.add_argument("--num-samples", type=int, default=5, help="Number of samples to test")
+    parser.add_argument("--num-samples", type=int, default=50, help="Number of samples to test")
     parser.add_argument("--data-path", type=str, default="data/splits/train.jsonl", help="Path to data")
     parser.add_argument("--output", type=str, default="test_plausibility_results.jsonl", help="Output file")
     parser.add_argument("--policy-model", type=str, default="trainer_output/qwen3-4b-medical-selfplay-sft", help="Policy model")
