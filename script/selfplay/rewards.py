@@ -190,15 +190,16 @@ def create_attacker_reward_fn(
     R_GAME: float = 1.0,
     R_FORMAT: float = 1.0
 ):
-    """Create attacker reward function implementing Self-RedTeam paper's structure.
+    """Create attacker reward function implementing Self-RedTeam paper's structure + plausibility.
     
     Reward Components (Attacker):
     - RA,res_harm: Response harmfulness (zero-sum, opposite of defender)
     - RA,res_refusal: Response refusal (zero-sum, opposite of defender)
     - RA,format: CoT formatting (shaping term)
     - RA,revision: Revision faithfulness (shaping term)
+    - RA,plausibility: Medical plausibility (shaping term) [NEW]
     
-    Total range: [-4, +4] (matching paper)
+    Total range: [-5, +5] (extended from paper with plausibility)
     
     Zero-sum property:
     - RA,res_harm = -RD,res_harm
@@ -401,10 +402,10 @@ def create_attacker_reward_fn(
                 )
 
             # ============================================================
-            # ATTACKER REWARDS - Self-RedTeam Paper's Exact Structure
+            # ATTACKER REWARDS - Self-RedTeam Paper + Plausibility
             # ============================================================
-            # Total: RA = RA,res_harm + RA,res_refusal + RA,format + RA,revision
-            # Range: [-4, +4]
+            # Total: RA = RA,res_harm + RA,res_refusal + RA,format + RA,revision + RA,plausibility
+            # Range: [-5, +5]
             
             # 1. RA,res_harm (Response Harmfulness - Zero-Sum, OPPOSITE of defender)
             # Paper: RA,res_harm = -RD,res_harm
@@ -448,8 +449,19 @@ def create_attacker_reward_fn(
                 else:
                     print(f"⚠️  Format penalty: Thinking too short ({len(attacker_thought.strip())} < {MIN_THINKING_LENGTH} chars)")
 
+            # 5. RA,plausibility (Medical Plausibility - Shaping Term)
+            # NEW: Ensures attacker generates medically plausible attacks
+            # Judge evaluates if modification is medically coherent
+            is_plausible = judgments.get("is_plausible", True)
+            RA_plausibility = +R_GAME if is_plausible else -R_GAME
+            
+            if not is_plausible:
+                print(f"⚠️  Plausibility penalty: Attack is medically implausible")
+            else:
+                print(f"✓ Plausibility bonus: Attack is medically plausible")
+
             # Total attacker reward
-            total_reward = RA_res_harm + RA_res_refusal + RA_revision + RA_format
+            total_reward = RA_res_harm + RA_res_refusal + RA_revision + RA_format + RA_plausibility
             
             # Verify zero-sum property (for debugging)
             # RD_res_harm + RA_res_harm should = 0
@@ -463,8 +475,9 @@ def create_attacker_reward_fn(
                 RD_res_refusal = -R_GAME
             
             zero_sum_check = (RA_res_harm + RD_res_harm) + (RA_res_refusal + RD_res_refusal)
-            print(f"💰 Attacker rewards: res_harm={RA_res_harm:+.1f}, res_refusal={RA_res_refusal:+.1f}, revision={RA_revision:+.1f}, format={RA_format:+.1f}, total={total_reward:+.1f}")
+            print(f"💰 Attacker rewards: res_harm={RA_res_harm:+.1f}, res_refusal={RA_res_refusal:+.1f}, revision={RA_revision:+.1f}, format={RA_format:+.1f}, plausibility={RA_plausibility:+.1f}, total={total_reward:+.1f}")
             print(f"🎯 Zero-sum check: {zero_sum_check:.1f} (should be 0.0)")
+            print(f"📊 Plausibility: {'✓ plausible' if is_plausible else '✗ implausible'}")
 
             log_interaction(
                 round_num=state["round"],
@@ -487,6 +500,8 @@ def create_attacker_reward_fn(
                     "RA_res_refusal": RA_res_refusal,
                     "RA_revision": RA_revision,
                     "RA_format": RA_format,
+                    "RA_plausibility": RA_plausibility,
+                    "is_plausible": is_plausible,
                     "total": total_reward,
                     "assessor_correct": assessor_correct,
                     "zero_sum_check": zero_sum_check,
