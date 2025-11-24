@@ -10,13 +10,22 @@ Test the plausibility reward system WITHOUT policy training. This simulates one 
 
 ## Quick Start
 
-### Run Test (5 samples, quick)
+### Option 1: Simple Test (Recommended First)
 ```bash
+# Test with predefined examples (no data loading needed)
+python test_plausibility_simple.py
+```
+
+This tests 5 hand-crafted examples to verify the plausibility reward works correctly.
+
+### Option 2: Full Test (With Real Data)
+```bash
+# Run test with 5 samples from your dataset
 python test_plausibility_reward.py --num-samples 5
 ```
 
-### Run Test (20 samples, more thorough)
 ```bash
+# Run test with 20 samples (more thorough)
 python test_plausibility_reward.py --num-samples 20 --output test_results_20.jsonl
 ```
 

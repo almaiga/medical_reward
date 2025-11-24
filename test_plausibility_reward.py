@@ -21,8 +21,10 @@ from transformers import AutoTokenizer, AutoModelForCausalLM
 import sys
 sys.path.append('script')
 from selfplay.judge import get_judge_assessment
-from selfplay.prompts import make_attacker_prompts, make_assessor_prompts
+from selfplay.prompts import build_attacker_prompts, make_assessor_prompts
 from selfplay.utils import parse_response
+from selfplay.data import load_and_prepare_data
+from datasets import Dataset
 
 
 def load_models(
@@ -63,20 +65,31 @@ def load_test_data(data_path="data/splits/train.jsonl", num_samples=10):
     return samples
 
 
-def run_attacker(original_note, game_category, policy_model, policy_tok, device):
+def run_attacker(sample, game_category, policy_model, policy_tok, device, few_shot_examples):
     """Run attacker to generate modified note."""
     print(f"\n{'='*80}")
     print("ATTACKER TURN")
     print(f"{'='*80}")
     print(f"Game category: {game_category}")
+    
+    # Get notes based on game category
+    if "harmful" in game_category:
+        original_note = sample.get("error_note", sample.get("text", ""))
+    else:
+        original_note = sample.get("clean_note", sample.get("text", ""))
+    
     print(f"Original note (first 200 chars): {original_note[:200]}...")
     
-    # Create attacker prompt
-    attacker_data = [{
-        "original": original_note,
-        "game_category": game_category
-    }]
-    attacker_ds = make_attacker_prompts(attacker_data, policy_tok)
+    # Create dataset for attacker
+    attacker_data = Dataset.from_dict({
+        "game_category": [game_category],
+        "error_note": [sample.get("error_note", original_note)],
+        "clean_note": [sample.get("clean_note", original_note)],
+        "error_type": [sample.get("error_type", "unknown")]
+    })
+    
+    # Build attacker prompts
+    attacker_ds = build_attacker_prompts(attacker_data, few_shot_examples, policy_tok, num_shots=2)
     attacker_prompt = attacker_ds[0]["prompt"]
     
     print(f"\nAttacker prompt (first 300 chars):\n{attacker_prompt[:300]}...\n")
@@ -104,7 +117,7 @@ def run_attacker(original_note, game_category, policy_model, policy_tok, device)
     print(f"Attacker thought: {thought[:200] if thought else 'None'}...")
     print(f"Attacked note (first 200 chars): {attacked_note[:200]}...")
     
-    return attacked_note, thought, completion
+    return original_note, attacked_note, thought, completion
 
 
 def run_assessor(attacked_note, policy_model, policy_tok, device):
@@ -310,10 +323,24 @@ def main():
     )
     device = policy_model.device
     
-    # Load test data
-    print(f"\nLoading test data from {args.data_path}...")
-    samples = load_test_data(args.data_path, args.num_samples)
-    print(f"Loaded {len(samples)} samples")
+    # Load test data and few-shot examples
+    print(f"\nLoading data...")
+    try:
+        ds_originals, ds_few_shot = load_and_prepare_data(num_samples=args.num_samples)
+        print(f"Loaded {len(ds_originals)} samples and {len(ds_few_shot)} few-shot examples")
+        samples = [dict(ds_originals[i]) for i in range(len(ds_originals))]
+    except Exception as e:
+        print(f"Warning: Could not load with load_and_prepare_data: {e}")
+        print(f"Falling back to simple data loading...")
+        samples = load_test_data(args.data_path, args.num_samples)
+        # Create empty few-shot dataset
+        ds_few_shot = Dataset.from_dict({
+            "game_category": [],
+            "error_note": [],
+            "clean_note": [],
+            "error_type": []
+        })
+        print(f"Loaded {len(samples)} samples")
     
     # Run tests
     results = []
@@ -323,13 +350,12 @@ def main():
         print(f"SAMPLE {i+1}/{len(samples)}")
         print(f"{'#'*80}")
         
-        original_note = sample.get("text", sample.get("original", ""))
         game_category = sample.get("game_category", "adversarial_harmful")
         
         try:
             # 1. Attacker generates attack
-            attacked_note, attacker_thought, attacker_completion = run_attacker(
-                original_note, game_category, policy_model, policy_tok, device
+            original_note, attacked_note, attacker_thought, attacker_completion = run_attacker(
+                sample, game_category, policy_model, policy_tok, device, ds_few_shot
             )
             
             # 2. Assessor evaluates
