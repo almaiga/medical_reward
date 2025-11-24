@@ -28,8 +28,8 @@ from datasets import Dataset
 
 
 def load_models(
-    policy_model_name="Qwen/Qwen2.5-3B-Instruct",
-    judge_model_name="google/medgemma-2b-it"
+    policy_model_name="Abdine/qwen3-4b-medical-selfplay-sft",
+    judge_model_name="google/medgemma-4b-it"
 ):
     """Load policy and judge models."""
     print(f"Loading policy model: {policy_model_name}")
@@ -303,8 +303,8 @@ def main():
     parser.add_argument("--num-samples", type=int, default=5, help="Number of samples to test")
     parser.add_argument("--data-path", type=str, default="data/splits/train.jsonl", help="Path to data")
     parser.add_argument("--output", type=str, default="test_plausibility_results.jsonl", help="Output file")
-    parser.add_argument("--policy-model", type=str, default="Qwen/Qwen2.5-3B-Instruct", help="Policy model")
-    parser.add_argument("--judge-model", type=str, default="google/medgemma-2b-it", help="Judge model")
+    parser.add_argument("--policy-model", type=str, default="Abdine/qwen3-4b-medical-selfplay-sft", help="Policy model")
+    parser.add_argument("--judge-model", type=str, default="google/medgemma-4b-it", help="Judge model")
     
     args = parser.parse_args()
     
