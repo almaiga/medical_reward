@@ -14,7 +14,7 @@ from selfplay.judge import get_judge_assessment
 from selfplay.utils import parse_response
 
 
-def load_models(judge_model_name="google/medgemma-2b-it"):
+def load_models(judge_model_name="google/medgemma-4b-it"):
     """Load judge model."""
     print(f"Loading judge model: {judge_model_name}")
     judge_tok = AutoTokenizer.from_pretrained(judge_model_name)

@@ -28,7 +28,7 @@ from datasets import Dataset
 
 
 def load_models(
-    policy_model_name="Abdine/qwen3-4b-medical-selfplay-sft",
+    policy_model_name="trainer_output/qwen3-4b-medical-selfplay-sft",
     judge_model_name="google/medgemma-4b-it"
 ):
     """Load policy and judge models."""
@@ -120,7 +120,7 @@ def run_attacker(sample, game_category, policy_model, policy_tok, device, few_sh
     return original_note, attacked_note, thought, completion
 
 
-def run_assessor(attacked_note, policy_model, policy_tok, device):
+def run_assessor(original_note, attacked_note, policy_model, policy_tok, device):
     """Run assessor to evaluate the note."""
     print(f"\n{'='*80}")
     print("ASSESSOR TURN")
@@ -129,6 +129,7 @@ def run_assessor(attacked_note, policy_model, policy_tok, device):
     
     # Create assessor prompt
     assessor_data = [{
+        "original": original_note,
         "attacked": attacked_note,
         "game_category": "unknown"  # Assessor doesn't know game type
     }]
@@ -303,7 +304,7 @@ def main():
     parser.add_argument("--num-samples", type=int, default=5, help="Number of samples to test")
     parser.add_argument("--data-path", type=str, default="data/splits/train.jsonl", help="Path to data")
     parser.add_argument("--output", type=str, default="test_plausibility_results.jsonl", help="Output file")
-    parser.add_argument("--policy-model", type=str, default="Abdine/qwen3-4b-medical-selfplay-sft", help="Policy model")
+    parser.add_argument("--policy-model", type=str, default="trainer_output/qwen3-4b-medical-selfplay-sft", help="Policy model")
     parser.add_argument("--judge-model", type=str, default="google/medgemma-4b-it", help="Judge model")
     
     args = parser.parse_args()
@@ -360,7 +361,7 @@ def main():
             
             # 2. Assessor evaluates
             assessor_label, assessor_thought, assessor_completion = run_assessor(
-                attacked_note, policy_model, policy_tok, device
+                original_note, attacked_note, policy_model, policy_tok, device
             )
             
             # 3. Judge assesses
