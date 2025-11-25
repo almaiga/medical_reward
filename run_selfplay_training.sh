@@ -19,11 +19,11 @@ fi
 
 # Configuration
 JUDGE_MODEL="google/medgemma-4b-it"
-NUM_SAMPLES=64
-NUM_GENERATIONS=8  # Increased for better reward variance
+NUM_SAMPLES=256
+NUM_GENERATIONS=4  # Increased for better reward variance
 LEARNING_RATE=5e-6  # Increased from 1e-5 to restore meaningful gradients
-ROUNDS=3
-MAX_ASSESSOR_BATCH=64
+ROUNDS=4
+MAX_ASSESSOR_BATCH=256
 
 # Optional: Set custom output directory for the final model
 # Leave empty to use default (trainer_output/<timestamp>_<model>_grpo_final)
