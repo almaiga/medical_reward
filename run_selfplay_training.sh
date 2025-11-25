@@ -20,10 +20,15 @@ fi
 # Configuration
 JUDGE_MODEL="google/medgemma-4b-it"
 NUM_SAMPLES=256
-NUM_GENERATIONS=4  # Increased for better reward variance
-LEARNING_RATE=5e-6  # Increased from 1e-5 to restore meaningful gradients
+NUM_GENERATIONS=4  # Reduced for more diversity
+LEARNING_RATE=5e-6
 ROUNDS=4
 MAX_ASSESSOR_BATCH=256
+
+# GPU Utilization Settings
+PER_DEVICE_BATCH_SIZE=16      # Increased to 8 for better GPU utilization
+GRADIENT_ACCUMULATION_STEPS=16 # Keep at 8
+# Effective batch size: 8 × 8 = 64
 
 # Optional: Set custom output directory for the final model
 # Leave empty to use default (trainer_output/<timestamp>_<model>_grpo_final)
@@ -75,7 +80,9 @@ CMD="python3 script/train_selfplay_advanced.py \
     --num_generations $NUM_GENERATIONS \
     --learning_rate $LEARNING_RATE \
     --rounds $ROUNDS \
-    --max_assessor_batch $MAX_ASSESSOR_BATCH"
+    --max_assessor_batch $MAX_ASSESSOR_BATCH \
+    --per_device_train_batch_size $PER_DEVICE_BATCH_SIZE \
+    --gradient_accumulation_steps $GRADIENT_ACCUMULATION_STEPS"
 
 if [ -n "$OUTPUT_DIR" ]; then
     CMD="$CMD --output_dir \"$OUTPUT_DIR\""
