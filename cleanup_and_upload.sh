@@ -10,7 +10,7 @@ echo "MODEL CLEANUP AND UPLOAD"
 echo "=========================================="
 
 # Get the latest training directory
-LATEST_MODEL=$(ls -td trainer_output/qwen3_sft_complete_* | head -1)
+LATEST_MODEL=$(ls -td trainer_output/*/ | head -1 | sed 's:/$::')
 
 if [ -z "$LATEST_MODEL" ]; then
     echo "❌ No trained model found"
@@ -19,12 +19,24 @@ fi
 
 echo "📁 Found model: $LATEST_MODEL"
 
-# Clean up intermediate checkpoints (keep only final model)
-if ls "$LATEST_MODEL"/checkpoint-* 1> /dev/null 2>&1; then
+# Check for checkpoints
+CHECKPOINTS=$(find "$LATEST_MODEL" -type d -name "checkpoint-*" 2>/dev/null)
+
+if [ -n "$CHECKPOINTS" ]; then
     echo ""
-    echo "🗑️  Removing intermediate checkpoints..."
-    rm -rf "$LATEST_MODEL"/checkpoint-*
-    echo "✅ Checkpoints deleted"
+    echo "🗑️  Found checkpoints to delete:"
+    echo "$CHECKPOINTS"
+    
+    # Calculate size
+    CHECKPOINT_SIZE=$(du -sh "$LATEST_MODEL"/checkpoint-* 2>/dev/null | awk '{sum+=$1} END {print sum}')
+    echo "💾 Space to free: ~${CHECKPOINT_SIZE}GB"
+    
+    read -p "Delete checkpoints? (y/n) " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        rm -rf "$LATEST_MODEL"/checkpoint-*
+        echo "✅ Checkpoints deleted"
+    fi
 else
     echo "✅ No checkpoints found (already clean)"
 fi
