@@ -26,8 +26,8 @@ ROUNDS=4
 MAX_ASSESSOR_BATCH=256
 
 # GPU Utilization Settings
-PER_DEVICE_BATCH_SIZE=16      # Increased to 8 for better GPU utilization
-GRADIENT_ACCUMULATION_STEPS=16 # Keep at 8
+PER_DEVICE_BATCH_SIZE=8      # Increased to 8 for better GPU utilization
+GRADIENT_ACCUMULATION_STEPS=8 # Keep at 8
 # Effective batch size: 8 × 8 = 64
 
 # Optional: Set custom output directory for the final model
