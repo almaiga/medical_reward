@@ -20,7 +20,7 @@ fi
 # Configuration
 JUDGE_MODEL="google/medgemma-4b-it"
 NUM_SAMPLES=256
-NUM_GENERATIONS=8  # Reduced for more diversity
+NUM_GENERATIONS=4  # Reduced for more diversity
 LEARNING_RATE=5e-6
 ROUNDS=4
 MAX_ASSESSOR_BATCH=256
